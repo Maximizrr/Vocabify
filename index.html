@@ -1,0 +1,2346 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vocabify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&family=Merriweather:wght@400;700&family=Caveat:wght@500;700&display=swap">
+<style>
+/* Layout: sticky top bar with nav, single centered column (max 1080px), cards only for working areas; fixed version label bottom-left; pet stage overlays the start page. */
+:root{
+  --bg:#eef2f6; --surface:#ffffff; --surface-2:#e4eaf1; --ink:#162030; --muted:#566377; --line:#d3dbe6;
+  --brand:#284b7a; --brand-soft:#dfe7f3; --check:#2f9e5b;
+  --en:#cf3d35; --la:#2c9455; --fr:#e3880b;
+  --en-soft:#fbe4e2; --la-soft:#dff2e6; --fr-soft:#fcecd2;
+  --coin:#d99a0b; --coin-soft:#fbf0d2; --good:#2c9455; --bad:#c9372f; --warn:#b97606;
+  --wood:#a86b3c; --wood-2:#c98a52; --metal:#e0b63c;
+  --shadow:0 1px 2px rgba(22,32,48,.06),0 6px 20px -8px rgba(22,32,48,.18);
+  --f-display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Nunito Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --acc:var(--brand); --acc-soft:var(--brand-soft); --on-acc:#ffffff;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10151d; --surface:#18202b; --surface-2:#212b38; --ink:#e7edf5; --muted:#9aa7ba; --line:#2c3746;
+  --brand:#8fb1e6; --brand-soft:#22324a; --check:#4cc27e;
+  --en:#f06b60; --la:#4cc27e; --fr:#f4a93a;
+  --en-soft:#3a2120; --la-soft:#1b3326; --fr-soft:#3a2c14;
+  --coin:#f2bd3d; --coin-soft:#3a3016; --good:#4cc27e; --bad:#f06b60; --warn:#f4a93a;
+  --wood:#8a5630; --wood-2:#a96e3f; --metal:#d9ad35;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -10px rgba(0,0,0,.6);
+  --on-acc:#0f141b;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#10151d; --surface:#18202b; --surface-2:#212b38; --ink:#e7edf5; --muted:#9aa7ba; --line:#2c3746;
+  --brand:#8fb1e6; --brand-soft:#22324a; --check:#4cc27e;
+  --en:#f06b60; --la:#4cc27e; --fr:#f4a93a;
+  --en-soft:#3a2120; --la-soft:#1b3326; --fr-soft:#3a2c14;
+  --coin:#f2bd3d; --coin-soft:#3a3016; --good:#4cc27e; --bad:#f06b60; --warn:#f4a93a;
+  --wood:#8a5630; --wood-2:#a96e3f; --metal:#d9ad35;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -10px rgba(0,0,0,.6);
+  --on-acc:#0f141b;
+  color-scheme:dark;
+}
+body[data-lang="en"]{--acc:var(--en);--acc-soft:var(--en-soft)}
+body[data-lang="la"]{--acc:var(--la);--acc-soft:var(--la-soft)}
+body[data-lang="fr"]{--acc:var(--fr);--acc-soft:var(--fr-soft)}
+
+*{box-sizing:border-box}
+body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--f-display);line-height:1.15;margin:0;text-wrap:balance;font-weight:700}
+h1{font-size:clamp(1.7rem,4vw,2.3rem)}
+h2{font-size:1.35rem}
+h3{font-size:1.08rem}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px;border-radius:6px}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.eyebrow{font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;font-weight:800;color:var(--muted)}
+
+/* buttons & inputs */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45em;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);padding:.55em 1.05em;border-radius:12px;font-weight:700;cursor:pointer;transition:transform .12s,background .15s,border-color .15s;white-space:nowrap}
+.btn:hover{border-color:var(--acc)}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,var(--line))}
+.btn.danger.solid{background:var(--bad);color:#fff;border-color:var(--bad)}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.ghost:hover{background:var(--surface-2)}
+.btn.small{padding:.35em .75em;font-size:.88rem;border-radius:10px}
+.btn.big{padding:.8em 1.4em;font-size:1.05rem;border-radius:14px}
+.field{display:flex;flex-direction:column;gap:.3rem;min-width:0}
+.field label{font-weight:700;font-size:.88rem}
+.input,select.input,textarea.input{width:100%;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:.6em .8em;min-width:0}
+.input:focus{border-color:var(--acc);outline:none;box-shadow:0 0 0 3px var(--acc-soft)}
+textarea.input{resize:vertical;min-height:7rem;line-height:1.5}
+.row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.row.end{justify-content:flex-end}
+.spacer{flex:1}
+
+/* app shell */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1080px;margin:0 auto;padding:.55rem 16px;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:.45rem;font-family:var(--f-display);font-weight:800;font-size:1.35rem;color:var(--brand);letter-spacing:-.01em;background:none;border:0;cursor:pointer;padding:0}
+.brand svg{width:38px;height:32px}
+.nav{display:flex;gap:.2rem;overflow-x:auto;scrollbar-width:none;order:3;width:100%}
+.nav::-webkit-scrollbar{display:none}
+.nav button{border:0;background:transparent;padding:.45em .85em;border-radius:10px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;position:relative}
+.nav button:hover{color:var(--ink);background:var(--surface-2)}
+.nav button[aria-current="page"]{color:var(--ink);background:var(--surface)}
+.nav button[aria-current="page"]::after{content:"";position:absolute;left:.85em;right:.85em;bottom:2px;height:3px;border-radius:3px;background:var(--acc)}
+.badge{display:inline-grid;place-items:center;min-width:1.3em;height:1.3em;padding:0 .3em;border-radius:99px;background:var(--bad);color:#fff;font-size:.72rem;font-weight:800;margin-left:.3em;vertical-align:1px}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:.5rem}
+.coin-pill{display:inline-flex;align-items:center;gap:.4em;background:var(--coin-soft);color:var(--ink);font-weight:800;padding:.3em .8em .3em .4em;border-radius:99px;font-variant-numeric:tabular-nums}
+.coin{width:1.25em;height:1.25em;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffe9a3,var(--coin) 60%);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--coin) 70%,#7a5200);display:inline-block;flex:none}
+.user-chip{font-weight:700;font-size:.9rem;color:var(--muted)}
+@media (min-width:820px){.nav{order:0;width:auto}}
+
+main{max-width:1080px;margin:0 auto;padding-block:1.6rem 5rem;padding-inline:16px;display:flex;flex-direction:column;gap:1.4rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:1.3rem;box-shadow:var(--shadow);min-width:0}
+.card-head{display:flex;align-items:baseline;gap:.8rem;flex-wrap:wrap;margin-bottom:1rem}
+.version{position:fixed;left:12px;bottom:calc(8px + env(safe-area-inset-bottom,0px));font-size:.75rem;color:var(--muted);background:var(--surface);border:1px solid var(--line);padding:.15em .6em;border-radius:99px;z-index:40;font-variant-numeric:tabular-nums}
+.tabs{display:flex;gap:.3rem;border-bottom:1.5px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.tabs button{border:0;background:none;padding:.6em .9em;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1.5px;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--acc)}
+.empty{padding:2rem 1rem;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:.8rem;align-items:center}
+.empty strong{color:var(--ink);font-family:var(--f-display);font-size:1.15rem}
+
+/* login */
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding-block:2rem;padding-inline:16px}
+.login{width:100%;max-width:400px;display:flex;flex-direction:column;gap:1.4rem}
+.logo-big{display:flex;flex-direction:column;align-items:center;gap:.2rem}
+.logo-big svg{width:150px;height:125px}
+.logo-big .word{font-family:var(--f-display);font-weight:800;font-size:2.6rem;color:var(--brand);letter-spacing:-.02em;line-height:1}
+.logo-big .tag{color:var(--muted);font-size:.95rem}
+.logo-check{stroke-dasharray:140;stroke-dashoffset:140;animation:draw .9s .25s cubic-bezier(.6,0,.3,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.login form{display:flex;flex-direction:column;gap:.9rem}
+.err{color:var(--bad);font-weight:700;font-size:.9rem}
+.note{background:var(--surface-2);border-radius:12px;padding:.8rem 1rem;font-size:.9rem;color:var(--muted)}
+
+/* home */
+.hello{display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-end;justify-content:space-between}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:.9rem 1rem;display:flex;flex-direction:column;gap:.15rem;min-width:0}
+.stat .v{font-family:var(--f-display);font-weight:800;font-size:1.9rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat .l{font-size:.82rem;color:var(--muted);font-weight:700}
+.bar{height:10px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin-top:.35rem}
+.bar i{display:block;height:100%;background:var(--check);border-radius:99px;transition:width .5s}
+@media (max-width:560px){.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:1/-1}}
+
+.path{position:relative;padding:3.2rem .5rem 2.6rem;overflow-x:auto}
+.path-inner{position:relative;min-width:520px;height:18px;margin:0 30px}
+.track{position:absolute;inset:4px 0;border-radius:99px;background:repeating-linear-gradient(90deg,var(--surface-2) 0 12px,transparent 12px 18px);border:1.5px dashed var(--line)}
+.track-fill{position:absolute;left:0;top:4px;bottom:4px;border-radius:99px;background:var(--check);transition:width .6s}
+.marker{position:absolute;top:-34px;transform:translateX(-50%);background:var(--ink);color:var(--bg);font-weight:800;font-size:.78rem;padding:.12em .55em;border-radius:8px;font-variant-numeric:tabular-nums;white-space:nowrap;transition:left .6s}
+.marker::after{content:"";position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--ink);border-bottom:0}
+.milestone{position:absolute;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:.25rem}
+.chest{width:62px;height:54px;border:0;background:none;padding:0;cursor:default;position:relative}
+.chest svg{width:100%;height:100%;overflow:visible}
+.chest .lid{transform-origin:6px 18px;transition:transform .5s}
+.chest.locked svg{filter:grayscale(1);opacity:.55}
+.chest.ready{cursor:pointer;animation:wiggle 1.6s ease-in-out infinite}
+.chest.ready::before{content:"";position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--coin) 45%,transparent),transparent 70%);z-index:-1}
+.chest.open .lid{transform:rotate(-28deg)}
+@keyframes wiggle{0%,70%,100%{transform:rotate(0)}75%{transform:rotate(-7deg)}85%{transform:rotate(7deg)}95%{transform:rotate(-3deg)}}
+.ms-label{position:absolute;top:100%;margin-top:.15rem;font-size:.78rem;font-weight:800;color:var(--muted);white-space:nowrap;text-align:center}
+.ms-label b{color:var(--coin)}
+
+/* learn config */
+.chips{display:flex;flex-wrap:wrap;gap:.45rem}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:99px;padding:.32em .85em;font-weight:700;font-size:.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:.4em}
+.chip[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.lang-dot{width:.65em;height:.65em;border-radius:50%;display:inline-block;flex:none}
+.lang-dot.en{background:var(--en)}.lang-dot.la{background:var(--la)}.lang-dot.fr{background:var(--fr)}
+.lang-tag{display:inline-flex;align-items:center;gap:.35em;font-size:.75rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:.2em .6em;border-radius:6px}
+.lang-tag.en{background:var(--en-soft);color:var(--en)}.lang-tag.la{background:var(--la-soft);color:var(--la)}.lang-tag.fr{background:var(--fr-soft);color:var(--fr)}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;flex-wrap:wrap;max-width:100%}
+.seg button{border:0;background:var(--surface);padding:.5em .9em;font-weight:700;cursor:pointer;color:var(--muted)}
+.seg button+button{border-left:1.5px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--acc-soft);color:var(--ink)}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.6rem}
+.mode{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:.8rem .9rem;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:.2rem}
+.mode b{font-family:var(--f-display);font-size:1.05rem}
+.mode span{font-size:.85rem;color:var(--muted)}
+.mode em{font-style:normal;font-size:.8rem;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
+.mode[aria-pressed="true"]{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.cfg{display:flex;flex-direction:column;gap:1.2rem}
+.cfg-group{display:flex;flex-direction:column;gap:.5rem}
+
+/* quiz */
+.quiz{display:flex;flex-direction:column;gap:1rem}
+.quiz-word{font-family:var(--f-display);font-weight:700;font-size:clamp(1.9rem,6vw,3rem);line-height:1.1;overflow-wrap:anywhere;padding:.6rem 0}
+.quiz form{display:flex;gap:.6rem;flex-wrap:wrap}
+.quiz form .input{flex:1 1 220px;font-size:1.15rem;padding:.75em 1em}
+.fb{border-radius:14px;padding:.85rem 1rem;font-weight:700;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+.fb.right{background:var(--la-soft);color:var(--good)}
+.fb.wrong{background:var(--en-soft);color:var(--bad)}
+.fb .sol{color:var(--ink);font-weight:800}
+.coin-pop{display:inline-flex;align-items:center;gap:.3em;color:var(--coin);animation:pop .5s}
+@keyframes pop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
+.quiz.shake .input{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* tables */
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;font-size:.93rem}
+th,td{text-align:left;padding:.55rem .8rem;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.75rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);background:var(--surface-2);font-weight:800;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.n{font-variant-numeric:tabular-nums;text-align:right}
+th.n{text-align:right}
+.ok{color:var(--good);font-weight:800}.no{color:var(--bad);font-weight:800}
+.rate{display:inline-block;min-width:3.2em;text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
+
+/* sections grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.8rem}
+.sec-card{border:1.5px solid var(--line);background:var(--surface);border-radius:16px;padding:1rem;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:.5rem;min-width:0}
+.sec-card:hover{border-color:var(--ink)}
+.sec-card h3{overflow-wrap:anywhere}
+.sec-card .meta{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:var(--muted);font-weight:700}
+.add-row{display:grid;grid-template-columns:1fr 1fr auto;gap:.6rem;align-items:end}
+.add-row.four{grid-template-columns:1fr 1fr auto auto}
+@media (max-width:600px){.add-row,.add-row.four{grid-template-columns:1fr}}
+.panel{border:1.5px dashed var(--line);border-radius:16px;padding:1rem;display:flex;flex-direction:column;gap:.8rem;background:color-mix(in srgb,var(--surface-2) 45%,var(--surface))}
+.scan-thumb{max-height:180px;border-radius:10px;border:1px solid var(--line)}
+.invite{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;border:1.5px solid var(--line);border-radius:14px;padding:.9rem 1rem}
+.invite .who{flex:1;min-width:200px}
+.inline-confirm{display:inline-flex;gap:.4rem;align-items:center;flex-wrap:wrap;font-weight:700;font-size:.9rem}
+
+/* shop */
+.shop-head{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.shop-head .coin-pill{margin-left:auto;font-size:1.15rem;padding:.4em 1em .4em .5em}
+.pets{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.8rem}
+.pet-card{border:1.5px solid var(--line);background:var(--surface);border-radius:18px;padding:1rem;display:flex;flex-direction:column;gap:.55rem;min-width:0}
+.pet-card .ava{width:76px;height:76px;border-radius:22px;background:var(--surface-2);display:grid;place-items:center;font-size:44px;line-height:1}
+.pet-card p{font-size:.88rem;color:var(--muted);flex:1}
+.pet-card .price{display:flex;align-items:center;gap:.35em;font-weight:800;font-variant-numeric:tabular-nums}
+.pet-card.owned{border-color:var(--check)}
+.owned-list{display:flex;gap:.6rem;flex-wrap:wrap}
+.own{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:.5rem .8rem .5rem .5rem;display:flex;align-items:center;gap:.5rem;cursor:pointer;font-weight:700}
+.own .e{font-size:28px;width:40px;height:40px;display:grid;place-items:center;background:var(--surface-2);border-radius:12px}
+.own[aria-pressed="true"]{border-color:var(--check);box-shadow:0 0 0 3px color-mix(in srgb,var(--check) 25%,transparent)}
+
+/* wiki */
+.art-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.8rem}
+.art-card{border:1.5px solid var(--line);background:var(--surface);border-radius:16px;padding:1.1rem;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:.5rem;min-width:0}
+.art-card:hover{border-color:var(--ink)}
+.art-card h3{font-size:1.2rem;overflow-wrap:anywhere}
+.art-card .ex{font-size:.9rem;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.art-meta{display:flex;gap:.8rem;flex-wrap:wrap;font-size:.82rem;color:var(--muted);font-weight:700;align-items:center}
+.status{font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:.2em .55em;border-radius:6px}
+.status.pending{background:var(--fr-soft);color:var(--warn)}
+.status.approved{background:var(--la-soft);color:var(--good)}
+.status.rejected{background:var(--en-soft);color:var(--bad)}
+.article{max-width:68ch;margin:0 auto;display:flex;flex-direction:column;gap:1rem;width:100%}
+.article h1{font-size:clamp(1.8rem,5vw,2.6rem)}
+.article .body{font-size:1.05rem;line-height:1.7;display:flex;flex-direction:column;gap:.9rem;overflow-wrap:anywhere}
+.article .body h2{font-size:1.4rem;margin-top:.6rem}
+.article .body ul{margin:0;padding-left:1.3rem}
+.article .body figure{margin:0}
+.article .body figure img{border-radius:12px;border:1px solid var(--line)}
+.article .sources{border-top:1px solid var(--line);padding-top:1rem;font-size:.88rem;color:var(--muted)}
+.article .sources ol{margin:.4rem 0 0;padding-left:1.3rem;overflow-wrap:anywhere}
+.font-sans{font-family:var(--f-body)}
+.font-serif{font-family:"Merriweather",Georgia,serif}
+.font-serif .body{font-size:1rem}
+.font-hand{font-family:"Caveat","Comic Sans MS",cursive}
+.font-hand .body{font-size:1.45rem;line-height:1.45}
+.font-round{font-family:var(--f-display)}
+.like{border:1.5px solid var(--line);background:var(--surface);border-radius:99px;padding:.45em 1em;font-weight:800;cursor:pointer;display:inline-flex;gap:.45em;align-items:center}
+.like[aria-pressed="true"]{border-color:var(--bad);color:var(--bad);background:var(--en-soft)}
+.like svg{width:1.1em;height:1.1em}
+.thumbs{display:flex;gap:.6rem;flex-wrap:wrap}
+.thumb{position:relative;border:1px solid var(--line);border-radius:10px;padding:.35rem;display:flex;flex-direction:column;gap:.3rem;align-items:center;background:var(--surface)}
+.thumb img{width:110px;height:80px;object-fit:cover;border-radius:6px}
+
+/* modal & toast */
+.modal-bg{position:fixed;inset:0;background:rgba(10,15,25,.55);display:grid;place-items:center;z-index:80;padding:16px}
+.modal{background:var(--surface);border-radius:22px;padding:1.6rem;max-width:380px;width:100%;text-align:center;display:flex;flex-direction:column;gap:.9rem;align-items:center;box-shadow:var(--shadow)}
+.modal .big-chest{width:130px;height:112px}
+.modal .big-chest .lid{transform-origin:6px 18px;animation:lidOpen .7s .35s forwards}
+@keyframes lidOpen{to{transform:rotate(-32deg)}}
+.reward{font-family:var(--f-display);font-weight:800;font-size:2.4rem;color:var(--coin);display:flex;align-items:center;gap:.3em;opacity:0;animation:pop .5s .9s forwards}
+.toasts{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:.5rem;z-index:90;max-width:calc(100% - 32px)}
+.toast{background:var(--ink);color:var(--bg);padding:.65rem 1rem;border-radius:12px;font-weight:700;box-shadow:var(--shadow);animation:pop .3s}
+
+/* pets */
+#petStage{position:fixed;inset:0;pointer-events:none;z-index:25;overflow:hidden}
+.pet{position:absolute;left:0;top:0;width:60px;height:60px;pointer-events:auto;cursor:pointer;will-change:transform}
+.pet-flip{width:100%;height:100%;transition:transform .2s}
+.pet-body{width:100%;height:100%;font-size:52px;line-height:60px;text-align:center;user-select:none;filter:drop-shadow(0 4px 3px rgba(0,0,0,.18))}
+.pet.walking .pet-body{animation:bob .45s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-4px) rotate(-3deg)}}
+.pet-body.roll{animation:roll .9s ease-in-out}
+@keyframes roll{to{transform:rotate(-360deg)}}
+.pet-body.bounce{animation:bounce .5s ease-out 2}
+@keyframes bounce{40%{transform:translateY(-18px) scaleY(1.05)}}
+.pet-body.munch{animation:munch .3s ease-in-out 6}
+@keyframes munch{50%{transform:scaleY(.9) translateY(3px)}}
+.pet-body.raise{animation:raise .9s ease-in-out}
+@keyframes raise{30%,70%{transform:rotate(14deg) translateY(-6px)}}
+.pet-body.sleep{animation:sleep 2.6s ease-in-out}
+@keyframes sleep{20%,80%{transform:rotate(-10deg) scale(.95)}}
+.shell{width:52px;height:30px;margin:22px auto 0;border-radius:52px 52px 10px 10px;background:radial-gradient(circle at 30% 30%,#9ccf6b,#4f8a2b);box-shadow:inset 0 -5px 0 rgba(0,0,0,.18);position:relative}
+.shell::before{content:"";position:absolute;inset:6px 10px 8px;border-radius:30px 30px 4px 4px;background:repeating-conic-gradient(from 20deg,rgba(0,0,0,.14) 0 12deg,transparent 12deg 45deg)}
+.fx{position:absolute;left:0;top:0;pointer-events:none;will-change:transform,opacity}
+.say{background:var(--surface);color:var(--ink);font-weight:800;font-family:var(--f-display);font-size:1.05rem;padding:.15em .65em;border-radius:12px;border:2px solid var(--ink);white-space:nowrap;animation:say 1.6s forwards}
+@keyframes say{0%{transform:translateY(8px) scale(.6);opacity:0}15%{transform:translateY(0) scale(1);opacity:1}80%{opacity:1}100%{transform:translateY(-14px);opacity:0}}
+.bubble{width:12px;height:12px;border-radius:50%;border:2px solid #6fb7ea;background:rgba(160,215,250,.35);animation:rise 2.2s ease-out forwards}
+@keyframes rise{0%{transform:translate(0,0) scale(.5);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx),-140px) scale(1.3);opacity:0}}
+.drop{width:9px;height:12px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#4aa3df;animation:spray 1.1s cubic-bezier(.3,.6,.6,1) forwards}
+@keyframes spray{0%{transform:translate(0,0);opacity:1}50%{transform:translate(calc(var(--dx)*.6),var(--up))}100%{transform:translate(var(--dx),40px);opacity:0}}
+.emo{font-size:30px;line-height:1;animation:emo 2s forwards}
+@keyframes emo{0%{transform:scale(.3);opacity:0}15%{transform:scale(1);opacity:1}85%{opacity:1}100%{opacity:0;transform:scale(.6)}}
+.yarn{font-size:26px;animation:yarn 1.8s ease-out forwards}
+@keyframes yarn{0%{transform:translateX(0) rotate(0)}60%{transform:translateX(var(--dx)) rotate(540deg)}100%{transform:translateX(var(--dx)) rotate(560deg);opacity:0}}
+.zzz{font-family:var(--f-display);font-weight:800;color:var(--muted);font-size:1.2rem;animation:zzz 2.4s forwards}
+@keyframes zzz{0%{opacity:0;transform:translate(0,0)}20%{opacity:1}100%{opacity:0;transform:translate(24px,-50px)}}
+.prop{position:absolute;pointer-events:none}
+.branch-v{width:16px;border-radius:8px;background:linear-gradient(90deg,var(--wood),var(--wood-2) 50%,var(--wood))}
+.branch-h{height:14px;border-radius:8px;background:linear-gradient(180deg,var(--wood-2),var(--wood))}
+.leaf{position:absolute;width:22px;height:12px;border-radius:12px 0;background:var(--la)}
+.spinner{width:18px;height:18px;border:3px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.splash{min-height:100vh;display:grid;place-items:center}
+/* settings */
+.theme-pick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem;max-width:520px}
+.theme-opt{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:.6rem;display:flex;flex-direction:column;gap:.5rem;align-items:center;cursor:pointer}
+.theme-opt[aria-pressed="true"]{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.swatch{width:100%;height:58px;border-radius:9px;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;gap:6px;padding:0 12px}
+.swatch i{display:block;height:6px;border-radius:3px;width:70%;opacity:.85}
+.changelog{display:flex;flex-direction:column;gap:.8rem}
+.changelog ul{margin:.25rem 0 0;padding-left:1.2rem;color:var(--muted)}
+/* learning mode */
+.learnbar .topbar-in{flex-wrap:nowrap}
+.learnbar .brand{cursor:default}
+.mode-tag{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:.25em .6em;border-radius:6px;background:var(--acc-soft);color:var(--ink)}
+.learn-progress{flex:1;min-width:0;display:flex;flex-direction:column;gap:.25rem}
+.learn-progress span{font-size:.8rem;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.learn-progress .bar{margin:0;height:8px}
+.learn-progress .bar i{background:var(--acc)}
+.learn-main{max-width:760px}
+@media (max-width:560px){.learnbar .brand span.word{display:none}.learnbar .coin-pill{display:none}}
+.summary{display:flex;flex-direction:column;gap:1.2rem;align-items:center;text-align:center}
+.summary .score{font-family:var(--f-display);font-weight:800;font-size:clamp(2.6rem,9vw,3.6rem);line-height:1;font-variant-numeric:tabular-nums}
+.summary .stats{width:100%}
+.wrong-list{width:100%;text-align:left}
+/* sending */
+.send-box{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+@media (max-width:700px){.send-box{grid-template-columns:1fr}}
+.send-box .panel{margin:0}
+.user-pick{display:flex;flex-wrap:wrap;gap:.4rem}
+.sent-row{display:flex;gap:.8rem;align-items:center;flex-wrap:wrap;padding:.6rem 0;border-bottom:1px solid var(--line)}
+.sent-row:last-child{border-bottom:0}
+/* admin activity */
+.online{display:inline-flex;align-items:center;gap:.35em;font-weight:700;white-space:nowrap}
+.online i{width:.6em;height:.6em;border-radius:50%;background:var(--line);display:inline-block}
+.online.now i{background:var(--good);box-shadow:0 0 0 3px color-mix(in srgb,var(--good) 25%,transparent)}
+.online.now{color:var(--good)}
+.spark{display:block}
+.spark rect{fill:var(--brand)}
+.spark rect.today{fill:var(--check)}
+.spark rect.zero{fill:var(--line)}
+.user-link{background:none;border:0;padding:0;font-weight:800;color:var(--ink);cursor:pointer;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.user-link:hover{text-decoration-color:var(--ink)}
+tr.sel td{background:var(--brand-soft)}
+.chart-wrap{overflow-x:auto}
+.chart-wrap svg{display:block;min-width:520px;max-width:760px;width:100%;height:auto}
+.chart-wrap text{fill:var(--muted);font-size:11px;font-family:var(--f-body)}
+.chart-wrap .v{fill:var(--ink);font-weight:800}
+.chart-wrap .grid{stroke:var(--line);stroke-width:1}
+.chart-wrap .b-ok{fill:var(--check)}
+.chart-wrap .b-all{fill:var(--surface-2)}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .logo-check{stroke-dashoffset:0}
+}
+</style>
+
+<div id="app"><div class="splash"><div class="logo-big" id="splashLogo"></div></div></div>
+<div id="petStage" hidden></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div class="version" id="version"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>
+"use strict";
+const APP_VERSION = "1.0.4";
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
+  authDomain: "vocabify-8abb9.firebaseapp.com",
+  projectId: "vocabify-8abb9",
+  storageBucket: "vocabify-8abb9.firebasestorage.app",
+  messagingSenderId: "683312640028",
+  appId: "1:683312640028:web:81c0c05fdc588776ba6fd9"
+};
+const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
+const TESSERACT_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
+const CHANGELOG = [
+  { v: "1.0.4", items: ["Cloud-Speicher: Konten und Lernstände auf allen Geräten gleich", "Sichere Anmeldung über Firebase", "Kostenloser Foto-Scan direkt im Browser"] },
+  { v: "1.0.3", items: ["Neuer Menüpunkt „Einstellungen“", "Theme wählbar: Hell, Dunkel oder wie das Gerät", "Eigenes Tagesziel festlegen", "App-Version prüfen und aktualisieren"] },
+  { v: "1.0.2", items: ["Sprache wählen beim Lernen, bei Erfolge und bei den Abschnitten", "Am Rundenende nur die falschen Vokabeln wiederholen"] },
+  { v: "1.0.1", items: ["Eigener Lernmodus mit Abschluss-Bildschirm", "Abschnitte an Nutzer senden oder als Datei verschicken", "Admin: Online-Status und Lernverlauf der Nutzer"] },
+  { v: "1.0.0", items: ["Erste Version von Vocabify"] }
+];
+const TEST_MODE = false;
+const LANGS = {
+  en: { name: "Englisch", short: "EN", sample: "the house" },
+  la: { name: "Latein", short: "LA", sample: "domus" },
+  fr: { name: "Französisch", short: "FR", sample: "la maison" }
+};
+const MILESTONES = [30, 50, 100];
+const PET_PRICE = 250;
+const C = { acc: "vf_accounts", sec: "vf_sections", inv: "vf_invites", art: "vf_articles", roles: "vf_roles", logins: "vf_logins", meta: "vf_meta" };
+
+const PET_DEFS = {
+  dog:      { name: "Hund",        e: "🐕", kind: "walk",   speed: 75,  desc: "Läuft herum, bellt hin und wieder und macht eine Rolle.", acts: ["bark", "roll"] },
+  cat:      { name: "Katze",       e: "🐈", kind: "walk",   speed: 55,  desc: "Streift umher, miaut und spielt mit dem Wollknäuel.", acts: ["meow", "yarn"] },
+  fish:     { name: "Fisch",       e: "🐠", kind: "swim",   speed: 60,  desc: "Schwimmt über den Bildschirm und pustet Blubberblasen.", acts: ["bubbles"] },
+  turtle:   { name: "Schildkröte", e: "🐢", kind: "walk",   speed: 16,  desc: "Läuft gemächlich. Tippst du sie an, zieht sie sich in den Panzer zurück.", acts: [] },
+  koala:    { name: "Koala",       e: "🐨", kind: "climb",  speed: 28,  desc: "Klettert am Ast, winkt, nascht Eukalyptus und hält ein Nickerchen.", acts: ["wave", "leaf", "sleep"], front: true },
+  kangaroo: { name: "Känguru",     e: "🦘", kind: "hop",    speed: 120, desc: "Hüpft herum. Nach je 10 richtigen Vokabeln: Rückwärtssalto durchs Bild!", acts: [] },
+  monkey:   { name: "Affe",        e: "🐒", kind: "branch",             desc: "Springt von Ast zu Ast und isst eine Banane.", acts: ["banana"] },
+  elephant: { name: "Elefant",     e: "🐘", kind: "walk",   speed: 34,  desc: "Trompetet laut und spritzt Wasser aus dem Rüssel.", acts: ["trumpet", "spray"] },
+  panda:    { name: "Panda",       e: "🐼", kind: "walk",   speed: 26,  desc: "Tapst gemütlich herum und mampft Bambus.", acts: ["bamboo"], front: true },
+  frog:     { name: "Frosch",      e: "🐸", kind: "hop",    speed: 150, desc: "Hüpft in großen Sprüngen über den Bildschirm.", acts: ["croak"], front: true }
+};
+
+const MODES = {
+  general: { name: "Generelles Lernen", desc: "Gemischter Pool aller Vokabeln" },
+  older:   { name: "Ältere Vokabeln",   desc: "Schon mindestens 3-mal beantwortet" },
+  errors:  { name: "Fehler-Fokus",      desc: "Hohe Fehlerquote zuerst" },
+  newest:  { name: "Neueste Vokabeln",  desc: "Die 20 zuletzt hinzugefügten" }
+};
+
+/* ---------- helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const clone = o => JSON.parse(JSON.stringify(o));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function todayKey(d = new Date()) {
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+function fmtDate(ts) {
+  try { return new Date(ts).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" }); } catch { return ""; }
+}
+function lsGet(k) { try { return localStorage.getItem(k); } catch { return null; } }
+function lsSet(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch {} }
+async function hashPw(pw, salt) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(salt + ":" + pw));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+function toast(msg) {
+  const el = document.createElement("div");
+  el.className = "toast"; el.textContent = msg;
+  $("#toasts").append(el);
+  setTimeout(() => el.remove(), 3200);
+}
+const COIN = '<i class="coin" aria-hidden="true"></i>';
+
+const LOGO_SVG = (big) => `<svg viewBox="0 0 120 100" aria-hidden="true">
+  <path d="M8 30 Q34 20 60 32 L60 90 Q34 78 8 88 Z" fill="var(--surface)" stroke="var(--brand)" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M112 30 Q86 20 60 32 L60 90 Q86 78 112 88 Z" fill="var(--surface)" stroke="var(--brand)" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M18 44 Q34 39 48 44 M18 56 Q30 52 42 55 M74 64 Q88 60 102 64 M78 76 Q90 72 102 76" stroke="var(--line)" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path class="${big ? "logo-check" : ""}" d="M32 46 L57 74 L96 10" fill="none" stroke="var(--check)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+const CHEST_SVG = `<svg viewBox="0 0 48 40" aria-hidden="true">
+  <rect x="4" y="17" width="40" height="21" rx="3" fill="var(--wood)"/>
+  <rect x="4" y="26" width="40" height="2.5" fill="var(--wood-2)" opacity=".7"/>
+  <g class="lid"><path d="M4 19 Q4 5 24 5 Q44 5 44 19 Z" fill="var(--wood-2)"/><rect x="4" y="16" width="40" height="4" fill="var(--metal)"/></g>
+  <rect x="20" y="15" width="8" height="10" rx="1.6" fill="var(--metal)"/>
+  <circle cx="24" cy="20.5" r="1.4" fill="var(--wood)"/>
+</svg>`;
+
+/* ---------- storage: cloud db when available, else this browser ---------- */
+const Store = {
+  db: null, auth: null, cloud: false, chains: {}, err: null,
+  async init() {
+    try {
+      if (!window.firebase) throw new Error("sdk");
+      firebase.initializeApp(FIREBASE_CONFIG);
+      this.auth = firebase.auth();
+      this.db = firebase.firestore();
+      if (window.VOCABIFY_EMULATOR) { this.db.useEmulator("127.0.0.1", 8080); this.auth.useEmulator("http://127.0.0.1:9099"); }
+      await this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+      this.cloud = true;
+    } catch (e) { this.cloud = false; this.err = e; }
+  },
+  ref(c, id) { return this.db.collection(c).doc(id); },
+  _chain(key, fn) {
+    const p = (this.chains[key] || Promise.resolve()).catch(() => {}).then(fn);
+    this.chains[key] = p;
+    return p;
+  },
+  async get(c, id) { const s = await this.ref(c, id).get(); return s.exists ? s.data() : null; },
+  set(c, id, data) { return this._chain(c + "/" + id, () => this.ref(c, id).set(clone(data))); },
+  update(c, id, data) { return this._chain(c + "/" + id, () => this.ref(c, id).update(clone(data))); },
+  del(c, id) { return this._chain(c + "/" + id, () => this.ref(c, id).delete()); },
+  async list(c, field, value) {
+    let q = this.db.collection(c);
+    if (field) q = q.where(field, "==", value);
+    const snap = await q.limit(1000).get();
+    return snap.docs.map(d => Object.assign(d.data(), { id: d.id }));
+  },
+  batch(ops) {
+    const b = this.db.batch();
+    for (const [type, c, id, data] of ops) {
+      if (type === "set") b.set(this.ref(c, id), clone(data));
+      else if (type === "update") b.update(this.ref(c, id), clone(data));
+      else b.delete(this.ref(c, id));
+    }
+    return b.commit();
+  }
+};
+
+/* ---------- state ---------- */
+const S = {
+  me: null, sections: [], articles: [], invites: [], accounts: [],
+  view: "home", vocabTab: "sections", openSection: null, statsFilter: "all", statsLang: "", secLang: "",
+  wikiTab: "list", openArticle: null, adminTab: "users",
+  cfg: { secs: [], dir: "f2d", mode: "general", size: 20, lang: "" },
+  learn: null, confirm: null, shareOpen: false, scan: null, draft: null,
+  sample: null, sampleImages: false, loginErr: "", setup: false,
+  sent: [], userNames: [], allSections: [], adminUser: null, sendTo: ""
+};
+
+const dirty = new Set(); let saveTimer = 0;
+function markDirty(key) { dirty.add(key); clearTimeout(saveTimer); saveTimer = setTimeout(flush, 1200); }
+async function flush() {
+  clearTimeout(saveTimer);
+  const keys = [...dirty]; dirty.clear();
+  for (const k of keys) {
+    try {
+      if (k === "me" && S.me) {
+        const m = S.me;
+        await Store.update(C.acc, m.username, { coins: m.coins, pets: m.pets, activePet: m.activePet, daily: m.daily, settings: m.settings || {}, totalCorrect: m.totalCorrect || 0,
+          totalAnswered: m.totalAnswered || 0, hist: m.hist || [], lastSeen: m.lastSeen || Date.now() });
+      } else if (k.startsWith("sec:")) {
+        const s = S.sections.find(x => x.id === k.slice(4));
+        if (s) await Store.set(C.sec, s.id, s);
+      }
+    } catch (e) {
+      if (e && e.code === "quota_exceeded") toast("Speicher voll: Bitte alte Abschnitte löschen.");
+      else toast("Speichern fehlgeschlagen. Prüfe deine Verbindung.");
+    }
+  }
+}
+document.addEventListener("visibilitychange", () => { if (document.hidden) flush(); });
+window.addEventListener("pagehide", () => flush());
+
+/* ---------- daily reset ---------- */
+function freshDaily() { return { date: todayKey(), count: 0, chests: [], coined: [] }; }
+function ensureDay() {
+  if (!S.me) return false;
+  if (!S.me.daily || S.me.daily.date !== todayKey()) { S.me.daily = freshDaily(); markDirty("me"); return true; }
+  return false;
+}
+setInterval(() => {
+  if (S.me && ensureDay()) { toast("Neuer Tag: Lernpfad und Ziele wurden zurückgesetzt."); render(); }
+}, 30000);
+
+/* activity: last online + learning history (last 60 days) */
+function touchOnline() { if (!S.me) return; S.me.lastSeen = Date.now(); markDirty("me"); }
+setInterval(() => { if (S.me && !document.hidden) touchOnline(); }, 120000);
+function bumpHist(correct) {
+  const d = todayKey();
+  const h = Array.isArray(S.me.hist) ? S.me.hist : (S.me.hist = []);
+  let e = h.find(x => x.d === d);
+  if (!e) { e = { d, c: 0, a: 0 }; h.push(e); }
+  e.a++; if (correct) e.c++;
+  h.sort((x, y) => x.d < y.d ? -1 : 1);
+  while (h.length > 60) h.shift();
+  S.me.totalAnswered = (S.me.totalAnswered || 0) + 1;
+  S.me.lastSeen = Date.now();
+}
+function histDays(acc, n) {
+  const map = {}; (Array.isArray(acc.hist) ? acc.hist : []).forEach(e => { map[e.d] = e; });
+  const out = [];
+  for (let i = n - 1; i >= 0; i--) {
+    const dt = new Date(); dt.setHours(12, 0, 0, 0); dt.setDate(dt.getDate() - i);
+    const k = todayKey(dt); const e = map[k] || {};
+    out.push({ d: k, date: dt, c: +e.c || 0, a: +e.a || 0 });
+  }
+  return out;
+}
+function lastSeenText(ts) {
+  if (!ts) return { t: "noch nie", now: false };
+  const diff = Date.now() - ts;
+  if (diff < 3 * 60000) return { t: "online", now: true };
+  if (diff < 60 * 60000) return { t: "vor " + Math.round(diff / 60000) + " Min.", now: false };
+  const d = new Date(ts), today = todayKey(), y = new Date(); y.setDate(y.getDate() - 1);
+  const time = d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+  if (todayKey(d) === today) return { t: "heute, " + time, now: false };
+  if (todayKey(d) === todayKey(y)) return { t: "gestern, " + time, now: false };
+  const days = Math.floor(diff / 86400000);
+  return { t: days < 7 ? "vor " + days + " Tagen" : d.toLocaleDateString("de-DE", { day: "numeric", month: "short", year: "numeric" }), now: false };
+}
+/* settings: theme + personal daily goal */
+const GOAL_DEFAULT = 100;
+function getGoal() { const g = S.me && S.me.settings && +S.me.settings.goal; return g >= 5 && g <= 1000 ? Math.round(g) : GOAL_DEFAULT; }
+function applyTheme(t) {
+  if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+  else delete document.documentElement.dataset.theme;
+  lsSet("vocabify11:theme", t || "system");
+}
+function setSetting(key, val) {
+  S.me.settings = Object.assign({}, S.me.settings || {}, { [key]: val });
+  markDirty("me");
+}
+function likesEarned() {
+  if (!S.me) return 0;
+  return S.articles.filter(a => a.author === S.me.username && a.status === "approved")
+    .reduce((n, a) => n + (a.likes || []).length, 0);
+}
+function coinsTotal() { return S.me ? (S.me.coins || 0) + likesEarned() : 0; }
+function isAdmin() { return S.me && S.me.role === "admin"; }
+
+/* ---------- boot & auth ---------- */
+async function boot() {
+  applyTheme(lsGet("vocabify11:theme") || "system");
+  const lastV = lsGet("vocabify11:lastVersion");
+  if (lastV && lastV !== APP_VERSION) setTimeout(() => toast("Aktualisiert auf Version " + APP_VERSION + ". Neuerungen findest du unter Einstellungen."), 1200);
+  lsSet("vocabify11:lastVersion", APP_VERSION);
+  $("#splashLogo").innerHTML = LOGO_SVG(true) + '<div class="word">Vocabify</div><div class="tag">Verbinde…</div>';
+  $("#version").textContent = "Version " + APP_VERSION;
+  await Store.init();
+  if (!Store.cloud) {
+    $("#splashLogo").innerHTML = LOGO_SVG(false) + '<div class="word">Vocabify</div><p class="note" style="max-width:340px;text-align:center;margin-top:1rem">Keine Verbindung zum Server. Prüfe deine Internetverbindung und lade die Seite neu.</p>';
+    return;
+  }
+  const user = await new Promise(r => { const un = Store.auth.onAuthStateChanged(u => { un(); r(u); }); });
+  if (user) {
+    try { const acc = await accountForUser(user); if (acc) { await enterApp(acc); return; } } catch {}
+    try { await Store.auth.signOut(); } catch {}
+  }
+  await showLogin();
+}
+async function accountForUser(user) {
+  const role = await Store.get(C.roles, user.uid);
+  if (!role || !role.username) return null;
+  return await Store.get(C.acc, role.username);
+}
+async function initSample() {
+  try {
+    if (!window.claude || !window.claude.use) return;
+    const s = await window.claude.use("sample");
+    if (!s) return;
+    S.sample = s;
+    const lim = await s.limits().catch(() => null);
+    S.sampleImages = !!(lim && lim.images);
+    if (S.view === "vocab") render();
+  } catch {}
+}
+
+async function seedDemo() {
+  const now = Date.now(), day = 86400000;
+  const admin = await makeAccount("admin", "test123", "admin");
+  const lena = await makeAccount("lena", "test123", "user");
+  const tom = await makeAccount("tom", "test123", "user");
+  const mkHist = (pattern, todayC) => pattern.map((c, i) => {
+    const dt = new Date(); dt.setHours(12, 0, 0, 0); dt.setDate(dt.getDate() - (pattern.length - 1 - i));
+    const cc = i === pattern.length - 1 ? todayC : c;
+    return { d: todayKey(dt), c: cc, a: cc ? cc + Math.round(cc * .25) : 0 };
+  }).filter(e => e.a > 0);
+  lena.coins = 320; lena.daily = { date: todayKey(), count: 27, chests: [], coined: [] };
+  lena.hist = mkHist([22, 35, 0, 41, 30, 0, 18, 52, 33, 0, 45, 38, 60, 27], 27);
+  lena.totalCorrect = 214 + lena.hist.reduce((n, e) => n + e.c, 0); lena.totalAnswered = Math.round(lena.totalCorrect * 1.24);
+  lena.lastSeen = now - 25 * 60000;
+  await Store.set(C.acc, "lena", lena);
+  tom.coins = 85; tom.daily = { date: todayKey(), count: 0, chests: [], coined: [] };
+  tom.hist = mkHist([10, 0, 0, 14, 0, 8, 0, 0, 12, 0, 0, 0, 0, 0], 0);
+  tom.totalCorrect = tom.hist.reduce((n, e) => n + e.c, 0); tom.totalAnswered = Math.round(tom.totalCorrect * 1.6);
+  tom.lastSeen = now - 5 * day - 3 * 3600000;
+  await Store.set(C.acc, "tom", tom);
+  admin.coins = 40; admin.hist = mkHist([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0], 0); admin.totalCorrect = 6; admin.totalAnswered = 7;
+  admin.lastSeen = now - day;
+  await Store.set(C.acc, "admin", admin);
+  const mk = (owner, name, lang, pairs, stats) => ({ id: uid(), owner, name, lang, createdAt: now - 5 * day,
+    vocab: pairs.map(([f, d], i) => ({ id: uid(), f, d, r: (stats[i] || [0, 0])[0], w: (stats[i] || [0, 0])[1], added: now - (pairs.length - i) * 3600000 })) });
+  const secs = [
+    mk("lena", "Unit 3 – At school", "en", [["school", "Schule"], ["teacher", "Lehrer, Lehrerin"], ["pupil", "Schüler, Schülerin"], ["to learn", "lernen"], ["homework", "Hausaufgaben"], ["break", "Pause"], ["timetable", "Stundenplan"], ["subject", "Schulfach"], ["to forget", "vergessen"], ["difficult", "schwierig"], ["easy", "leicht, einfach"], ["classroom", "Klassenzimmer"]],
+      [[5, 0], [3, 2], [1, 4], [6, 0], [2, 3], [4, 1], [0, 3], [2, 2]]),
+    mk("lena", "Lektion 5 – Forum Romanum", "la", [["forum", "Marktplatz"], ["templum", "Tempel"], ["senator", "Senator"], ["populus", "Volk"], ["clamare", "rufen, schreien"], ["videre", "sehen"], ["audire", "hören"], ["magnus", "groß"], ["multi", "viele"], ["semper", "immer"]],
+      [[4, 1], [3, 0], [2, 0], [1, 3], [0, 4], [5, 0], [2, 2]]),
+    mk("lena", "Unité 2 – Ma famille", "fr", [["la mère", "die Mutter"], ["le père", "der Vater"], ["le frère", "der Bruder"], ["la sœur", "die Schwester"], ["les grands-parents", "die Großeltern"], ["le chien", "der Hund"], ["habiter", "wohnen"], ["aimer", "lieben, mögen"]],
+      [[2, 0], [2, 1], [0, 2], [1, 1]]),
+    mk("tom", "Vocabulary – Hobbies", "en", [["hobby", "Hobby"], ["to swim", "schwimmen"], ["to read", "lesen"], ["football", "Fußball"], ["to play", "spielen"]], [[2, 1], [1, 2]]),
+    mk("admin", "Irregular verbs", "en", [["to go", "gehen"], ["to see", "sehen"], ["to take", "nehmen"]], [])
+  ];
+  for (const sec of secs) await Store.set(C.sec, sec.id, sec);
+  await Store.set(C.inv, uid(), { from: "admin", to: "lena", createdAt: now - 3600000,
+    section: { name: "Irregular verbs", lang: "en", vocab: [{ f: "to go", d: "gehen" }, { f: "to see", d: "sehen" }, { f: "to take", d: "nehmen" }] } });
+  const arts = [
+    { author: "admin", title: "Warum Wiederholen nach Plan so gut wirkt", font: "serif", status: "approved", likes: ["lena"], createdAt: now - 4 * day,
+      body: "Wer eine Vokabel einmal lernt, hat sie nach ein paar Tagen oft wieder vergessen. Das zeigt die Vergessenskurve, die Hermann Ebbinghaus schon im 19. Jahrhundert beschrieben hat.\n\n## Der Trick: Abstände vergrößern\n\nWiederhole ein Wort kurz nach dem Lernen, dann nach einem Tag, nach drei Tagen und nach einer Woche. Jede Wiederholung macht die Erinnerung stabiler.\n\n- Lerne lieber jeden Tag 15 Minuten als einmal pro Woche zwei Stunden\n- Nutze den Modus **Fehler-Fokus** für Wörter, die du oft falsch hast\n- Der Lernpfad mit seinen Truhen hilft dir, jeden Tag dranzubleiben",
+      sources: ["Ebbinghaus, H. (1885): Über das Gedächtnis", "https://de.wikipedia.org/wiki/Vergessenskurve"], images: [] },
+    { author: "lena", title: "Eselsbrücken, die wirklich hängen bleiben", font: "hand", status: "approved", likes: ["admin"], createdAt: now - 2 * day,
+      body: "Mein liebster Trick: Ich denke mir zu jedem schweren Wort ein lustiges Bild aus.\n\n**difficult** klingt für mich wie „Die Fee kalt“. Eine frierende Fee hat es schwierig!\n\nJe verrückter das Bild, desto besser merke ich es mir.",
+      sources: [], images: [] },
+    { author: "lena", title: "Laut lernen statt leise lesen", font: "round", status: "pending", likes: [], createdAt: now - 3600000,
+      body: "Wenn ich Vokabeln laut ausspreche, merke ich sie mir viel besser. Probiert es mal aus!", sources: [], images: [] }
+  ];
+  for (const a of arts) await Store.set(C.art, uid(), a);
+}
+async function showLogin() {
+  S.me = null;
+  let cfg = null;
+  try { cfg = await Store.get(C.meta, "config"); } catch {}
+  S.setup = !cfg;
+  render();
+}
+async function enterApp(acc) {
+  S.me = acc;
+  if (!S.me.pets) S.me.pets = [];
+  if (S.me.coins == null) S.me.coins = 0;
+  ensureDay();
+  touchOnline();
+  if (!S.me.settings) S.me.settings = {};
+  applyTheme(S.me.settings.theme || lsGet("vocabify11:theme") || "system");
+  await loadData();
+  S.view = lsGet("vocabify11:returnView") === "settings" ? "settings" : "home";
+  lsSet("vocabify11:returnView", null);
+  render();
+}
+/* shared data comes from other people: normalise it before it reaches markup */
+const safeLang = l => (LANGS[l] ? l : "en");
+const safeImg = s => (typeof s === "string" && /^data:image\/(jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(s) ? s : null);
+function cleanVocab(v) { return { id: String(v.id || uid()), f: String(v.f ?? ""), d: String(v.d ?? ""), r: +v.r || 0, w: +v.w || 0, added: +v.added || 0, lastSeen: +v.lastSeen || 0 }; }
+function cleanSection(s) { return Object.assign(s, { lang: safeLang(s.lang), name: String(s.name || "Abschnitt"), vocab: (Array.isArray(s.vocab) ? s.vocab : []).map(cleanVocab) }); }
+function cleanInvite(i) {
+  const sec = i.section || {};
+  return Object.assign(i, { from: String(i.from || "?"), createdAt: +i.createdAt || 0,
+    section: { name: String(sec.name || "Abschnitt"), lang: safeLang(sec.lang), vocab: (Array.isArray(sec.vocab) ? sec.vocab : []).map(v => ({ f: String(v.f ?? ""), d: String(v.d ?? "") })) } });
+}
+function cleanArticle(a) {
+  return Object.assign(a, {
+    title: String(a.title || "Ohne Titel"), author: String(a.author || "?"), body: String(a.body || ""),
+    font: FONTS[a.font] ? a.font : "sans", status: ["pending", "approved", "rejected"].includes(a.status) ? a.status : "pending",
+    likes: Array.isArray(a.likes) ? a.likes.map(String) : [], images: (Array.isArray(a.images) ? a.images : []).map(safeImg).filter(Boolean),
+    sources: (Array.isArray(a.sources) ? a.sources : []).map(String), createdAt: +a.createdAt || 0
+  });
+}
+async function loadArticles() {
+  if (isAdmin()) return (await Store.list(C.art)).map(cleanArticle);
+  const [pub, mine] = await Promise.all([Store.list(C.art, "status", "approved"), Store.list(C.art, "author", S.me.username)]);
+  const map = {}; pub.concat(mine).forEach(a => { map[a.id] = a; });
+  return Object.values(map).map(cleanArticle);
+}
+async function loadPeople() {
+  try { S.userNames = (await Store.list(C.acc)).map(a => String(a.username)).filter(u => S.me && u !== S.me.username).sort(); } catch {}
+}
+async function loadSent() {
+  try { S.sent = (await Store.list(C.inv, "from", S.me.username)).map(cleanInvite).sort((a, b) => b.createdAt - a.createdAt); } catch {}
+}
+async function loadAdmin() {
+  try {
+    const [accs, secs] = await Promise.all([Store.list(C.acc), Store.list(C.sec)]);
+    S.accounts = accs; S.allSections = secs.map(cleanSection);
+  } catch {}
+}
+async function loadData() {
+  const u = S.me.username;
+  const [secs, arts, invs] = await Promise.all([
+    Store.list(C.sec, "owner", u).catch(() => []),
+    loadArticles().catch(() => []),
+    Store.list(C.inv, "to", u).catch(() => [])
+  ]);
+  S.sections = secs.map(cleanSection).sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+  S.articles = arts;
+  S.invites = invs.map(cleanInvite);
+  await loadPeople();
+  await loadSent();
+  if (isAdmin()) await loadAdmin();
+}
+setInterval(async () => {
+  if (!S.me || document.hidden) return;
+  try {
+    const invs = (await Store.list(C.inv, "to", S.me.username)).map(cleanInvite);
+    if (invs.length > S.invites.length) toast("Neue Einladung: Jemand hat dir einen Abschnitt geschickt.");
+    const changed = invs.length !== S.invites.length;
+    S.invites = invs;
+    if (changed && !(S.learn && S.view === "home")) render();
+  } catch {}
+}, 45000);
+
+function authErrorText(e) {
+  const c = e && e.code || "";
+  if (c.includes("too-many-requests")) return "Zu viele Versuche. Warte ein paar Minuten und versuche es dann noch einmal.";
+  if (c.includes("network")) return "Keine Internetverbindung. Prüfe dein WLAN oder deine mobilen Daten.";
+  if (c.includes("wrong-password") || c.includes("invalid-credential") || c.includes("user-not-found") || c.includes("invalid-login")) return "Benutzername oder Passwort stimmt nicht.";
+  return "Anmeldung gerade nicht möglich. Versuche es gleich noch einmal.";
+}
+async function doLogin(form) {
+  const u = form.username.value.trim().toLowerCase();
+  const p = form.password.value;
+  S.loginErr = "";
+  try {
+    const login = u && validUsername(u) ? await Store.get(C.logins, u) : null;
+    if (!login || !login.email) { S.loginErr = "Benutzername oder Passwort stimmt nicht."; render(); return; }
+    const cred = await Store.auth.signInWithEmailAndPassword(login.email, p);
+    const acc = await accountForUser(cred.user);
+    if (!acc) { await Store.auth.signOut(); S.loginErr = "Dieses Konto wurde deaktiviert. Frag deinen Admin."; render(); return; }
+    await enterApp(acc);
+  } catch (e) { S.loginErr = authErrorText(e); render(); }
+}
+function validUsername(u) { return /^[a-z0-9._-]{3,24}$/.test(u); }
+function newEmail(u) { return u + "." + Date.now().toString(36) + Math.random().toString(36).slice(2, 5) + "@" + EMAIL_DOMAIN; }
+function accountDoc(username, role, userId) {
+  return { username, role, uid: userId, coins: 0, pets: [], activePet: null, daily: freshDaily(), totalCorrect: 0, totalAnswered: 0,
+    hist: [], settings: {}, lastSeen: 0, createdAt: Date.now() };
+}
+let secondaryAuth = null;
+/* creates a login without signing the admin out (second Firebase instance) */
+async function createAuthUser(email, password) {
+  if (!secondaryAuth) {
+    const app = firebase.apps.find(a => a.name === "secondary") || firebase.initializeApp(FIREBASE_CONFIG, "secondary");
+    secondaryAuth = app.auth();
+    if (window.VOCABIFY_EMULATOR) secondaryAuth.useEmulator("http://127.0.0.1:9099");
+    await secondaryAuth.setPersistence(firebase.auth.Auth.Persistence.NONE);
+  }
+  const cred = await secondaryAuth.createUserWithEmailAndPassword(email, password);
+  const newUid = cred.user.uid;
+  await secondaryAuth.signOut();
+  return newUid;
+}
+async function makeAccount(username, password, role) {
+  const email = newEmail(username);
+  const newUid = await createAuthUser(email, password);
+  const acc = accountDoc(username, role, newUid);
+  await Store.batch([["set", C.roles, newUid, { username, role }], ["set", C.logins, username, { email }], ["set", C.acc, username, acc]]);
+  return acc;
+}
+async function doSetup(form) {
+  const u = form.username.value.trim().toLowerCase(), p = form.password.value;
+  if (!validUsername(u)) { S.loginErr = "Benutzername: 3–24 Zeichen, nur a–z, 0–9, Punkt, Minus, Unterstrich."; render(); return; }
+  if (p.length < 6) { S.loginErr = "Das Passwort braucht mindestens 6 Zeichen."; render(); return; }
+  try {
+    const email = newEmail(u);
+    const cred = await Store.auth.createUserWithEmailAndPassword(email, p);
+    const myUid = cred.user.uid;
+    const acc = accountDoc(u, "admin", myUid);
+    try {
+      await Store.batch([["set", C.roles, myUid, { username: u, role: "admin" }], ["set", C.logins, u, { email }], ["set", C.acc, u, acc],
+        ["set", C.meta, "config", { setupAt: Date.now(), admin: u }]]);
+    } catch (e) {
+      try { await cred.user.delete(); } catch {}
+      S.loginErr = "Die App ist bereits eingerichtet. Melde dich mit deinem Konto an."; await showLogin(); return;
+    }
+    await enterApp(acc);
+    seedStarterArticles(u);
+    toast("Admin-Konto angelegt. Willkommen!");
+  } catch (e) { S.loginErr = "Einrichtung fehlgeschlagen. Prüfe, ob in Firebase „E-Mail/Passwort“ aktiviert ist."; render(); }
+}
+async function seedStarterArticles(author) {
+  const now = Date.now();
+  const arts = [
+    { title: "Warum Wiederholen nach Plan so gut wirkt", font: "serif",
+      body: "Wer eine Vokabel einmal lernt, hat sie nach ein paar Tagen oft wieder vergessen. Das zeigt die Vergessenskurve, die Hermann Ebbinghaus schon im 19. Jahrhundert beschrieben hat.\n\n## Der Trick: Abstände vergrößern\n\nWiederhole ein Wort kurz nach dem Lernen, dann nach einem Tag, nach drei Tagen und nach einer Woche. Jede Wiederholung macht die Erinnerung stabiler.\n\n- Lerne lieber jeden Tag 15 Minuten als einmal pro Woche zwei Stunden\n- Nutze den Modus **Fehler-Fokus** für Wörter, die du oft falsch hast\n- Am Rundenende kannst du **nur die falschen wiederholen**",
+      sources: ["Ebbinghaus, H. (1885): Über das Gedächtnis", "https://de.wikipedia.org/wiki/Vergessenskurve"] },
+    { title: "Eselsbrücken, die wirklich hängen bleiben", font: "hand",
+      body: "Denk dir zu jedem schweren Wort ein lustiges Bild aus.\n\n**difficult** klingt wie „Die Fee kalt“. Eine frierende Fee hat es schwierig!\n\nJe verrückter das Bild, desto besser bleibt es im Kopf.", sources: [] }
+  ];
+  try {
+    for (let i = 0; i < arts.length; i++) {
+      const id = uid();
+      const doc = Object.assign({ author, status: "approved", likes: [], images: [], createdAt: now - i * 1000 }, arts[i]);
+      await Store.set(C.art, id, doc);
+      S.articles.push(cleanArticle(Object.assign({ id }, doc)));
+    }
+  } catch {}
+}
+async function logout() {
+  await flush();
+  try { await Store.auth.signOut(); } catch {}
+  S.learn = null; S.view = "home"; Pets.unmount();
+  await showLogin();
+}
+
+/* ---------- vocabulary helpers ---------- */
+function allVocab(secIds) {
+  const out = [];
+  for (const s of S.sections) {
+    if (secIds && secIds.length && !secIds.includes(s.id)) continue;
+    for (const v of s.vocab || []) out.push({ s, v });
+  }
+  return out;
+}
+/* selected sections, or every section of the chosen language */
+function effSecs(secs, lang) {
+  if (secs && secs.length) return secs;
+  if (!lang) return null;
+  const ids = S.sections.filter(s => s.lang === lang).map(s => s.id);
+  return ids.length ? ids : ["-"];
+}
+function usedLangs() { return Object.keys(LANGS).filter(l => S.sections.some(s => s.lang === l)); }
+function langPicker(act, cur) {
+  const langs = usedLangs();
+  if (langs.length < 2 && !cur) return "";
+  return `<div class="chips" role="group" aria-label="Sprache">
+    <button class="chip" data-act="${act}" data-k="" aria-pressed="${!cur}">Alle Sprachen</button>
+    ${langs.map(l => { const n = S.sections.filter(s => s.lang === l).length;
+      return `<button class="chip" data-act="${act}" data-k="${l}" aria-pressed="${cur === l}"><span class="lang-dot ${l}"></span>${LANGS[l].name}<span class="muted num" style="font-weight:600">${n}</span></button>`; }).join("")}
+  </div>`;
+}
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function poolFor(mode, secIds) {
+  let items = allVocab(secIds);
+  if (mode === "older") items = items.filter(x => (x.v.r || 0) + (x.v.w || 0) >= 3);
+  if (mode === "errors") items = items.filter(x => (x.v.w || 0) > 0 && x.v.w / ((x.v.r || 0) + x.v.w) >= 0.3)
+    .sort((a, b) => b.v.w / (b.v.r + b.v.w) - a.v.w / (a.v.r + a.v.w));
+  if (mode === "newest") items = items.sort((a, b) => (b.v.added || 0) - (a.v.added || 0)).slice(0, 20);
+  return items;
+}
+function norm(s) {
+  return String(s || "").toLowerCase().normalize("NFC")
+    .replace(/\([^)]*\)|\[[^\]]*\]/g, " ")
+    .replace(/[.!?¿¡"„“”'’`´…]/g, " ").replace(/\s+/g, " ").trim();
+}
+const ARTICLE_RE = /^(the|to|a|an|der|die|das|den|dem|ein|eine|einen|sich|le|la|les|l|un|une|des|se|s)\s+/;
+function stripArt(s) { let p; do { p = s; s = s.replace(ARTICLE_RE, ""); } while (s !== p); return s; }
+function variants(sol) {
+  const base = String(sol || "").replace(/\([^)]*\)/g, " ");
+  return base.split(/[,;\/]|\s+oder\s+|\s+or\s+|\s+ou\s+/i).map(norm).filter(Boolean).concat([norm(sol)]);
+}
+function lev(a, b) {
+  if (Math.abs(a.length - b.length) > 1) return 2;
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++)
+    d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[a.length][b.length];
+}
+function checkAnswer(given, sol) {
+  const g = norm(given);
+  if (!g) return { ok: false };
+  const vs = variants(sol);
+  for (const v of vs) if (g === v || stripArt(g) === stripArt(v)) return { ok: true };
+  for (const v of vs) { const sv = stripArt(v); if (sv.length >= 6 && lev(stripArt(g), sv) <= 1) return { ok: true, typo: true }; }
+  return { ok: false };
+}
+
+/* ---------- learning ---------- */
+function newRound(extra) {
+  return Object.assign({ mode: S.cfg.mode, dir: S.cfg.dir, secs: effSecs(S.cfg.secs, S.cfg.lang), size: S.cfg.size, n: 0, right: 0, cur: null, state: "ask", last: null,
+    coin: false, typo: false, coinsEarned: 0, wrongs: [], finished: false, startedAt: Date.now(), queue: null, retry: false }, extra || {});
+}
+function repeatWrongs() {
+  const prev = S.learn; if (!prev) return;
+  const q = shuffle(prev.wrongs.filter(w => { const s = S.sections.find(x => x.id === w.sid); return s && s.vocab.some(v => v.id === w.vid); }).map(w => ({ sid: w.sid, vid: w.vid })));
+  if (!q.length) { toast("Keine falschen Vokabeln zum Wiederholen."); return; }
+  S.learn = newRound({ mode: prev.mode, dir: prev.dir, secs: prev.secs, size: q.length, queue: q, retry: true });
+  window.scrollTo({ top: 0 });
+  nextQuestion();
+}
+function startLearning() {
+  const pool = poolFor(S.cfg.mode, effSecs(S.cfg.secs, S.cfg.lang));
+  if (!pool.length) { toast("Für diesen Modus gibt es noch keine passenden Vokabeln."); return; }
+  S.learn = newRound();
+  window.scrollTo({ top: 0 });
+  nextQuestion();
+}
+function nextQuestion() {
+  const L = S.learn; if (!L || L.finished) return;
+  clearTimeout(L.timer);
+  if (L.size && L.n >= L.size) { finishLearning(); return; }
+  if (L.queue) {
+    let item = null;
+    while (L.queue.length && !item) {
+      const q = L.queue.shift(); const s = S.sections.find(x => x.id === q.sid); const v = s && s.vocab.find(x => x.id === q.vid);
+      if (v) item = { s, v };
+    }
+    if (!item) { finishLearning(); return; }
+    const dir = L.dir === "mix" ? (Math.random() < .5 ? "f2d" : "d2f") : L.dir;
+    L.cur = { sid: item.s.id, vid: item.v.id, dir };
+    L.state = "ask"; L.given = ""; L.coin = false; L.typo = false; L.last = item.v.id;
+    render(); return;
+  }
+  const pool = poolFor(L.mode, L.secs);
+  if (!pool.length) { finishLearning(); return; }
+  let cands = pool.length > 1 ? pool.filter(x => x.v.id !== L.last) : pool;
+  if (L.mode === "errors") cands = cands.slice(0, Math.max(5, Math.ceil(cands.length / 2)));
+  const pick = cands[Math.floor(Math.random() * cands.length)];
+  const dir = L.dir === "mix" ? (Math.random() < .5 ? "f2d" : "d2f") : L.dir;
+  L.cur = { sid: pick.s.id, vid: pick.v.id, dir };
+  L.state = "ask"; L.given = ""; L.coin = false; L.typo = false; L.last = pick.v.id;
+  render();
+}
+function finishLearning() {
+  const L = S.learn; if (!L) return;
+  clearTimeout(L.timer);
+  if (!L.n) { S.learn = null; render(); return; }
+  L.finished = true; L.cur = null;
+  flush(); render(); window.scrollTo({ top: 0 });
+}
+function leaveLearning() {
+  const L = S.learn; if (L) clearTimeout(L.timer);
+  S.learn = null; flush(); render(); window.scrollTo({ top: 0 });
+}
+function curItem() {
+  const L = S.learn; if (!L || !L.cur) return null;
+  const s = S.sections.find(x => x.id === L.cur.sid); if (!s) return null;
+  const v = (s.vocab || []).find(x => x.id === L.cur.vid); if (!v) return null;
+  return { s, v };
+}
+function registerCorrect(s, v) {
+  ensureDay();
+  const L = S.learn, d = S.me.daily;
+  d.count++; S.me.totalCorrect = (S.me.totalCorrect || 0) + 1;
+  const key = s.id + ":" + v.id;
+  L.coin = false;
+  if (!d.coined.includes(key)) { d.coined.push(key); S.me.coins = (S.me.coins || 0) + 1; L.coin = true; L.coinsEarned++; }
+  L.right++;
+  L.wrongs = L.wrongs.filter(x => x.vid !== v.id || x.counted);
+  Pets.onCorrect(L.right);
+  if (d.count === getGoal()) setTimeout(() => toast("Tagesziel erreicht! " + getGoal() + " Vokabeln heute."), 600);
+  const reached = MILESTONES.find(m => d.count === m);
+  if (reached) setTimeout(() => toast("Truhe bei " + reached + " Vokabeln freigeschaltet! Öffne sie im Lernpfad."), 300);
+  markDirty("me");
+}
+function submitAnswer(val) {
+  const L = S.learn, it = curItem(); if (!L || !it) return;
+  const { s, v } = it;
+  const sol = L.cur.dir === "f2d" ? v.d : v.f;
+  const res = checkAnswer(val, sol);
+  L.given = val; L.n++; v.lastSeen = Date.now();
+  bumpHist(res.ok);
+  if (res.ok) {
+    v.r = (v.r || 0) + 1; L.state = "right"; L.typo = !!res.typo;
+    registerCorrect(s, v);
+    clearTimeout(L.timer);
+    if (!res.typo) L.timer = setTimeout(() => { if (S.learn === L && L.state === "right") nextQuestion(); }, 1100);
+  } else {
+    v.w = (v.w || 0) + 1; L.state = "wrong";
+    if (!L.wrongs.some(x => x.vid === v.id)) L.wrongs.push({ sid: s.id, vid: v.id });
+  }
+  markDirty("sec:" + s.id);
+  render();
+  if (!res.ok) { const q = $(".quiz"); if (q) { q.classList.add("shake"); setTimeout(() => q.classList.remove("shake"), 400); } }
+}
+function overrideCorrect() {
+  const L = S.learn, it = curItem(); if (!L || !it || L.state !== "wrong") return;
+  it.v.w = Math.max(0, (it.v.w || 1) - 1); it.v.r = (it.v.r || 0) + 1;
+  L.state = "right"; L.typo = false;
+  const he = (S.me.hist || []).find(x => x.d === todayKey()); if (he) he.c++;
+  L.wrongs = L.wrongs.filter(x => x.vid !== it.v.id);
+  registerCorrect(it.s, it.v);
+  markDirty("sec:" + it.s.id);
+  render();
+  L.timer = setTimeout(() => { if (S.learn === L && L.state === "right") nextQuestion(); }, 900);
+}
+function openChest(m) {
+  ensureDay();
+  const d = S.me.daily;
+  if (d.count < m || d.chests.some(c => c.t === m)) return;
+  const r = Math.random();
+  const amt = r < .5 ? 10 : r < .9 ? 20 : 50;
+  d.chests.push({ t: m, amt });
+  S.me.coins = (S.me.coins || 0) + amt;
+  markDirty("me"); flush();
+  render();
+  openModal(`<div class="big-chest">${CHEST_SVG}</div>
+    <h2>Truhe ${MILESTONES.indexOf(m) + 1} geöffnet</h2>
+    <div class="reward">${COIN}+${amt}</div>
+    <p class="muted">${amt === 50 ? "Jackpot! Das war die seltene 50er-Truhe." : "Weiter so, morgen wartet ein neuer Lernpfad."}</p>
+    <button class="btn primary" data-act="closeModal">Einsammeln</button>`);
+}
+
+/* ---------- modal ---------- */
+function openModal(html) {
+  closeModal();
+  const bg = document.createElement("div");
+  bg.className = "modal-bg"; bg.id = "modal";
+  bg.innerHTML = `<div class="modal" role="dialog" aria-modal="true">${html}</div>`;
+  bg.addEventListener("click", e => { if (e.target === bg) closeModal(); });
+  document.body.append(bg);
+  const b = bg.querySelector("button"); if (b) b.focus();
+}
+function closeModal() { const m = $("#modal"); if (m) m.remove(); }
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+/* ---------- rendering ---------- */
+function setLang() {
+  let lang = "";
+  if (S.view === "home" && S.learn) { const it = curItem(); if (it) lang = it.s.lang; }
+  if (S.view === "home" && !S.learn && S.cfg.lang) lang = S.cfg.lang;
+  if (S.view === "vocab" && !S.openSection && S.vocabTab === "stats" && S.statsLang) lang = S.statsLang;
+  if (S.view === "vocab" && S.openSection) { const s = S.sections.find(x => x.id === S.openSection); if (s) lang = s.lang; }
+  if (lang) document.body.dataset.lang = lang; else delete document.body.dataset.lang;
+}
+function render() {
+  const app = $("#app");
+  if (!S.me) {
+    delete document.body.dataset.lang;
+    app.innerHTML = loginView();
+    Pets.setVisible(false);
+    return;
+  }
+  setLang();
+  const active = document.activeElement;
+  const keepId = active && active.id;
+  const keepVal = keepId && active.value;
+  if (S.learn) app.innerHTML = learnHeader() + `<main id="main" class="learn-main">${S.learn.finished ? summaryView() : `<section class="card">${quizView()}</section>`}</main>`;
+  else app.innerHTML = headerView() + `<main id="main">${viewHtml()}</main>`;
+  if (keepId) {
+    const el = document.getElementById(keepId);
+    if (el && el.id !== "answer") { el.focus(); if (keepVal != null && el.value !== undefined && el.value === "") el.value = keepVal; }
+  }
+  const ans = $("#answer");
+  if (ans && S.learn && S.learn.state === "ask") ans.focus({ preventScroll: true });
+  const nextBtn = $("#nextBtn"); if (nextBtn) nextBtn.focus({ preventScroll: true });
+  const wantPet = (S.view === "home" || S.learn) && S.me.activePet && S.me.pets.includes(S.me.activePet);
+  if (wantPet) { if (Pets.id !== S.me.activePet) Pets.mount(S.me.activePet); Pets.setVisible(true); }
+  else Pets.setVisible(false);
+}
+function loginView() {
+  const setup = S.setup;
+  return `<div class="login-wrap"><div class="login">
+    <div class="logo-big">${LOGO_SVG(true)}<div class="word">Vocabify</div><div class="tag">Vokabeln lernen, Münzen sammeln</div></div>
+    <div class="card">
+      <form data-form="${setup ? "setup" : "login"}" autocomplete="on">
+        <h2>${setup ? "Admin-Konto einrichten" : "Anmelden"}</h2>
+        ${setup ? `<p class="note">Erster Start: Lege jetzt das Admin-Konto an. Weitere Konten erstellst du danach im Admin-Bereich.</p>` : ""}
+        <div class="field"><label for="lu">Benutzername</label><input class="input" id="lu" name="username" autocomplete="username" required autocapitalize="none" spellcheck="false"></div>
+        <div class="field"><label for="lp">Passwort</label><input class="input" id="lp" name="password" type="password" autocomplete="${setup ? "new-password" : "current-password"}" required></div>
+        ${S.loginErr ? `<p class="err" role="alert">${esc(S.loginErr)}</p>` : ""}
+        <button class="btn primary big" type="submit">${setup ? "Admin anlegen" : "Anmelden"}</button>
+        ${setup ? "" : `<p class="muted" style="font-size:.85rem">Noch kein Konto? Konten werden vom Admin angelegt.</p>`}
+      </form>
+    </div>
+    ${TEST_MODE ? `<div class="note"><b>Testversion</b> mit Beispieldaten. Melde dich an als<br><b>lena</b> / <b>test123</b> (Schülerin mit 320 Münzen, 27 Vokabeln heute),<br><b>tom</b> / <b>test123</b> (zweiter Schüler zum Hin- und Herschicken)<br>oder <b>admin</b> / <b>test123</b> (Admin-Bereich).<br><button class="btn small" data-act="resetDemo" style="margin-top:.5rem">Testdaten zurücksetzen</button></div>` : ""}
+    ${Store.cloud || TEST_MODE ? "" : `<p class="note">Cloud-Speicher ist in dieser Ansicht nicht verfügbar. Daten werden nur in diesem Browser gespeichert.</p>`}
+  </div></div>`;
+}
+function settingsView() {
+  const st = S.me.settings || {};
+  const theme = st.theme || "system";
+  const goal = getGoal();
+  const themes = [["light", "Hell", "#ffffff", "#162030"], ["dark", "Dunkel", "#18202b", "#e7edf5"], ["system", "Wie Gerät", "linear-gradient(135deg,#ffffff 50%,#18202b 50%)", "#7d8899"]];
+  const lastCheck = lsGet("vocabify11:lastCheck");
+  return `<h1>Einstellungen</h1>
+  <section class="card">
+    <div class="card-head"><h2>Darstellung</h2><span class="muted" style="font-size:.88rem">Gilt für dein Konto auf allen Geräten</span></div>
+    <div class="theme-pick">${themes.map(([k, l, bg, fg]) => `<button class="theme-opt" data-act="setTheme" data-k="${k}" aria-pressed="${theme === k}">
+      <span class="swatch" style="background:${bg}"><i style="background:${fg}"></i><i style="background:${fg};width:40%"></i></span><b>${l}</b></button>`).join("")}</div>
+  </section>
+  <section class="card">
+    <div class="card-head"><h2>Tagesziel</h2><span class="muted" style="font-size:.88rem">Nur für dich. Die Truhen bleiben bei 30, 50 und 100.</span></div>
+    <div class="chips" style="margin-bottom:1rem">${[20, 30, 50, 75, 100, 150, 200].map(g => `<button class="chip" data-act="setGoal" data-k="${g}" aria-pressed="${goal === g}">${g} Vokabeln</button>`).join("")}</div>
+    <form data-form="goal" class="row">
+      <div class="field" style="flex:0 1 220px"><label for="goal-in">Eigenes Ziel</label><input class="input" id="goal-in" name="goal" type="number" min="5" max="1000" step="1" value="${goal}"></div>
+      <button class="btn" type="submit" style="align-self:flex-end">Speichern</button>
+      <span class="muted" style="align-self:flex-end;padding-bottom:.6rem">Heute: ${S.me.daily.count} von ${goal}</span>
+    </form>
+  </section>
+  <section class="card">
+    <div class="card-head"><h2>App-Version</h2></div>
+    <div class="row" style="margin-bottom:1rem">
+      <div style="display:flex;flex-direction:column;gap:.1rem;min-width:0"><span class="eyebrow">Installiert</span><span style="font-family:var(--f-display);font-weight:800;font-size:1.6rem">Version ${APP_VERSION}</span>
+        <span class="muted" style="font-size:.85rem">${lastCheck ? "Zuletzt geprüft: " + new Date(+lastCheck).toLocaleString("de-DE", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "Noch nicht geprüft"}</span></div>
+      <span class="spacer"></span>
+      <button class="btn primary" data-act="updateApp" ${S.updating ? "disabled" : ""}>${S.updating ? '<span class="spinner"></span> Aktualisiere…' : "Version aktualisieren"}</button>
+    </div>
+    ${TEST_MODE ? `<p class="note" style="margin-bottom:1rem">Testversion: Die App lädt sich neu und übernimmt dabei alle Änderungen. Bekommst du eine neue Datei (z. B. vocabify-1.0.4.html), öffne sie einfach im selben Browser. Deine Daten bleiben erhalten.</p>` : ""}
+    <h3 style="margin-bottom:.5rem">Was ist neu</h3>
+    <div class="changelog">${CHANGELOG.map(c => `<div><b>Version ${c.v}${c.v === APP_VERSION ? ' <span class="status approved">aktuell</span>' : ""}</b><ul>${c.items.map(i => `<li>${esc(i)}</li>`).join("")}</ul></div>`).join("")}</div>
+  </section>`;
+}
+function learnHeader() {
+  const L = S.learn;
+  const done = L.finished;
+  const label = done ? "Runde abgeschlossen" : L.size ? `Frage ${Math.min(L.n + (L.state === "ask" ? 1 : 0), L.size)} von ${L.size}` : `${L.n} beantwortet · Endlos`;
+  const pct = done ? 100 : L.size ? Math.min(100, L.n / L.size * 100) : 0;
+  return `<header class="topbar learnbar"><div class="topbar-in">
+    <span class="brand" aria-label="Vocabify">${LOGO_SVG(false)}<span class="word">Vocabify</span></span>
+    <span class="mode-tag">Lernmodus</span>
+    <div class="learn-progress"><span>${label}</span>${L.size || done ? `<div class="bar"><i style="width:${pct}%"></i></div>` : ""}</div>
+    <span class="coin-pill" title="Deine Münzen">${COIN}<span class="num">${coinsTotal()}</span></span>
+    ${done ? "" : `<button class="btn small" data-act="stop">Beenden</button>`}
+  </div></header>`;
+}
+function summaryView() {
+  const L = S.learn;
+  const pct = L.n ? Math.round(L.right / L.n * 100) : 0;
+  const mins = Math.max(1, Math.round((Date.now() - L.startedAt) / 60000));
+  const msg = pct >= 90 ? "Hervorragend!" : pct >= 70 ? "Stark gemacht!" : pct >= 50 ? "Gut geübt!" : "Dranbleiben lohnt sich!";
+  const wrongRows = L.wrongs.map(w => {
+    const s = S.sections.find(x => x.id === w.sid); const v = s && s.vocab.find(x => x.id === w.vid);
+    return v ? `<tr><td>${esc(v.f)}</td><td>${esc(v.d)}</td><td><span class="lang-dot ${s.lang}"></span> ${esc(s.name)}</td></tr>` : "";
+  }).join("");
+  return `<section class="card summary">
+      <p class="eyebrow">${L.retry ? "Wiederholung der Fehler" : L.size && L.n >= L.size ? "Runde fertig" : "Runde beendet"}</p>
+      <h1>${msg}</h1>
+      <div class="score">${L.right} / ${L.n}</div>
+      <p class="muted">${pct} % richtig in etwa ${mins} Minute${mins === 1 ? "" : "n"}</p>
+      <div class="stats">
+        <div class="stat"><span class="l">Münzen verdient</span><span class="v" style="display:flex;align-items:center;justify-content:center;gap:.3em">${COIN}${L.coinsEarned}</span></div>
+        <div class="stat"><span class="l">Heute insgesamt</span><span class="v">${S.me.daily.count}</span></div>
+        <div class="stat"><span class="l">Nächste Truhe</span><span class="v">${(() => { const m = MILESTONES.find(x => S.me.daily.count < x); return m ? "noch " + (m - S.me.daily.count) : "alle!"; })()}</span></div>
+      </div>
+      ${!L.wrongs.length && L.n ? `<p class="fb right" style="justify-content:center">Keine Fehler in dieser Runde!</p>` : ""}
+      ${wrongRows ? `<div class="wrong-list"><h3 style="margin-bottom:.6rem">Diese ${L.wrongs.length} Vokabel${L.wrongs.length === 1 ? "" : "n"} solltest du wiederholen</h3>
+        <div class="table-wrap"><table><thead><tr><th>Vokabel</th><th>Deutsch</th><th>Abschnitt</th></tr></thead><tbody>${wrongRows}</tbody></table></div></div>` : ""}
+      <div class="row" style="justify-content:center">
+        ${L.wrongs.length ? `<button class="btn primary big" id="nextBtn" data-act="repeatWrong">Nur die falschen wiederholen (${L.wrongs.length})</button>` : ""}
+        <button class="btn big" data-act="again">Neue Runde</button>
+        <button class="btn ${L.wrongs.length ? "" : "primary"} big" ${L.wrongs.length ? "" : 'id="nextBtn"'} data-act="leave">Zur Startseite</button>
+      </div>
+    </section>`;
+}
+function headerView() {
+  const pend = S.invites.length;
+  const pendArt = isAdmin() ? S.articles.filter(a => a.status === "pending").length : 0;
+  const tab = (v, label, badge) => `<button data-act="nav" data-v="${v}" ${S.view === v ? 'aria-current="page"' : ""}>${label}${badge ? `<span class="badge">${badge}</span>` : ""}</button>`;
+  return `<header class="topbar"><div class="topbar-in">
+    <button class="brand" data-act="nav" data-v="home" aria-label="Vocabify Startseite">${LOGO_SVG(false)}Vocabify${TEST_MODE ? ' <span class="status pending" style="font-family:var(--f-body)">Test</span>' : ""}</button>
+    <nav class="nav" aria-label="Hauptmenü">
+      ${tab("home", "Startseite")}${tab("vocab", "Vokabeln", pend)}${tab("shop", "Shop")}${tab("wiki", "Wiki")}${tab("settings", "Einstellungen")}${isAdmin() ? tab("admin", "Admin", pendArt) : ""}
+    </nav>
+    <div class="top-right">
+      <span class="coin-pill" title="Deine Münzen">${COIN}<span class="num">${coinsTotal()}</span></span>
+      <span class="user-chip">${esc(S.me.username)}</span>
+      <button class="btn small ghost" data-act="logout">Abmelden</button>
+    </div>
+  </div></header>`;
+}
+function viewHtml() {
+  switch (S.view) {
+    case "vocab": return vocabView();
+    case "shop": return shopView();
+    case "wiki": return wikiView();
+    case "admin": return isAdmin() ? adminView() : homeView();
+    case "settings": return settingsView();
+    default: return homeView();
+  }
+}
+
+/* home */
+function homeView() {
+  const d = S.me.daily, c = d.count;
+  const goal = getGoal();
+  const dateStr = new Date().toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" });
+  return `<section class="hello">
+      <div><p class="eyebrow">${esc(dateStr)}</p><h1>Hallo ${esc(S.me.username)}!</h1></div>
+    </section>
+    <section class="stats">
+      <div class="stat"><span class="l">Heute gelernt</span><span class="v">${c}</span><span class="l">richtige Vokabeln</span></div>
+      <div class="stat"><span class="l">Tagesziel</span><span class="v">${Math.min(c, goal)}<span class="muted" style="font-size:1rem"> / ${goal}</span></span><div class="bar"><i style="width:${Math.min(100, c / goal * 100)}%"></i></div></div>
+      <div class="stat"><span class="l">Münzen</span><span class="v" style="display:flex;align-items:center;gap:.3em">${COIN}${coinsTotal()}</span><span class="l">max. 1 Münze pro Vokabel und Tag</span></div>
+    </section>
+    <section class="card">
+      <div class="card-head"><h2>Dein Lernpfad</h2><span class="muted" style="font-size:.88rem">Setzt sich um 00:00 Uhr zurück</span></div>
+      ${pathView(c)}
+    </section>
+    <section class="card">${S.learn ? quizView() : configView()}</section>`;
+}
+function pathView(c) {
+  const pct = v => Math.min(100, v) + "%";
+  const chests = MILESTONES.map((m, i) => {
+    const opened = S.me.daily.chests.find(x => x.t === m);
+    const cls = opened ? "open" : c >= m ? "ready" : "locked";
+    const label = opened ? `<b>+${opened.amt}</b> erhalten` : c >= m ? "Antippen!" : `${m} Vokabeln`;
+    return `<div class="milestone" style="left:${pct(m)}">
+      <button class="chest ${cls}" ${cls === "ready" ? `data-act="chest" data-m="${m}" aria-label="Truhe ${i + 1} öffnen"` : `aria-label="Truhe ${i + 1}: ${opened ? "geöffnet" : "gesperrt"}" tabindex="-1"`}>${CHEST_SVG}</button>
+      <span class="ms-label">${label}</span></div>`;
+  }).join("");
+  return `<div class="path"><div class="path-inner">
+    <div class="track"></div><div class="track-fill" style="width:${pct(c)}"></div>
+    <span class="marker" style="left:${pct(c)}">${c}</span>
+    ${chests}
+  </div></div>
+  <p class="muted" style="font-size:.85rem">Truhen enthalten 10 Münzen (50 %), 20 Münzen (40 %) oder 50 Münzen (10 %).</p>`;
+}
+function configView() {
+  if (!S.sections.length) {
+    return `<div class="empty"><strong>Noch keine Vokabeln</strong><p>Lege unter „Vokabeln“ deinen ersten Abschnitt an, tippe Wörter ein oder scanne ein Vokabelblatt.</p>
+      <button class="btn primary" data-act="nav" data-v="vocab">Ersten Abschnitt anlegen</button></div>`;
+  }
+  if (S.cfg.lang && !S.sections.some(s => s.lang === S.cfg.lang)) S.cfg.lang = "";
+  const shown = S.sections.filter(s => !S.cfg.lang || s.lang === S.cfg.lang);
+  S.cfg.secs = S.cfg.secs.filter(id => shown.some(s => s.id === id));
+  const scope = effSecs(S.cfg.secs, S.cfg.lang);
+  const allOn = !S.cfg.secs.length;
+  const lp = langPicker("cfgLang", S.cfg.lang);
+  const chips = `<button class="chip" data-act="cfgSec" data-id="" aria-pressed="${allOn}">Alle Abschnitte${S.cfg.lang ? " (" + LANGS[S.cfg.lang].name + ")" : ""}</button>` +
+    shown.map(s => `<button class="chip" data-act="cfgSec" data-id="${s.id}" aria-pressed="${S.cfg.secs.includes(s.id)}"><span class="lang-dot ${s.lang}"></span>${esc(s.name)}</button>`).join("");
+  const dirs = [["f2d", "Fremdsprache → Deutsch"], ["d2f", "Deutsch → Fremdsprache"], ["mix", "Gemischt"]]
+    .map(([k, l]) => `<button data-act="cfgDir" data-k="${k}" aria-pressed="${S.cfg.dir === k}">${l}</button>`).join("");
+  const modes = Object.entries(MODES).map(([k, m]) => {
+    const n = poolFor(k, scope).length;
+    return `<button class="mode" data-act="cfgMode" data-k="${k}" aria-pressed="${S.cfg.mode === k}"><b>${m.name}</b><span>${m.desc}</span><em>${n} Vokabel${n === 1 ? "" : "n"}</em></button>`;
+  }).join("");
+  const n = poolFor(S.cfg.mode, scope).length;
+  return `<div class="cfg">
+    <div class="card-head" style="margin:0"><h2>Lernen</h2></div>
+    ${lp ? `<div class="cfg-group"><span class="eyebrow">Sprache</span>${lp}</div>` : ""}
+    <div class="cfg-group"><span class="eyebrow">Abschnitte</span><div class="chips">${chips}</div></div>
+    <div class="cfg-group"><span class="eyebrow">Richtung</span><div class="seg">${dirs}</div></div>
+    <div class="cfg-group"><span class="eyebrow">Lernmodus</span><div class="modes">${modes}</div></div>
+    <div class="cfg-group"><span class="eyebrow">Rundenlänge</span><div class="seg">${[[10, "10 Fragen"], [20, "20 Fragen"], [30, "30 Fragen"], [0, "Endlos"]]
+      .map(([k, l]) => `<button data-act="cfgSize" data-k="${k}" aria-pressed="${S.cfg.size === k}">${l}</button>`).join("")}</div></div>
+    <div class="row"><button class="btn primary big" data-act="start" ${n ? "" : "disabled"}>Lernen starten →</button>
+      <span class="muted">${n ? n + " Vokabeln im Pool" : "Keine passenden Vokabeln für diesen Modus"}</span></div>
+  </div>`;
+}
+function quizView() {
+  const L = S.learn, it = curItem();
+  if (!it) return `<div class="empty"><strong>Diese Vokabel gibt es nicht mehr.</strong><button class="btn" data-act="next">Weiter</button></div>`;
+  const { s, v } = it;
+  const f2d = L.cur.dir === "f2d";
+  const prompt = f2d ? v.f : v.d;
+  const sol = f2d ? v.d : v.f;
+  const target = f2d ? "Deutsche" : LANGS[s.lang].name.replace(/isch$/, "ische");
+  let fb = "";
+  if (L.state === "right") {
+    fb = `<div class="fb right" role="status">Richtig!${L.typo ? ` <span>Kleiner Tippfehler, gemeint war: <span class="sol">${esc(sol)}</span></span>` : ""}
+      ${L.coin ? `<span class="coin-pop">${COIN}+1</span>` : `<span class="muted" style="font-weight:600">Heute schon belohnt</span>`}
+      ${L.typo ? `<span class="spacer"></span><button class="btn small" id="nextBtn" data-act="next">Weiter</button>` : ""}</div>`;
+  } else if (L.state === "wrong") {
+    fb = `<div class="fb wrong" role="status"><span>Leider falsch. Richtig ist: <span class="sol">${esc(sol)}</span></span><span class="spacer"></span>
+      <button class="btn small" data-act="override">Ich hatte recht</button>
+      <button class="btn small primary" id="nextBtn" data-act="next">Weiter</button></div>`;
+  }
+  return `<div class="quiz">
+    <div class="row">
+      <span class="lang-tag ${s.lang}">${LANGS[s.lang].name}</span>
+      <span class="muted" style="font-weight:700;font-size:.9rem">${esc(s.name)} · ${L.retry ? "Fehler wiederholen" : MODES[L.mode].name}</span>
+      <span class="spacer"></span>
+      <span class="num muted" style="font-weight:800">${L.right} / ${L.n} richtig</span>
+    </div>
+    <div><p class="eyebrow">Übersetze ins ${esc(target)}</p><div class="quiz-word">${esc(prompt)}</div></div>
+    <form data-form="answer" autocomplete="off">
+      <input class="input" id="answer" name="a" placeholder="Deine Antwort" autocapitalize="none" spellcheck="false" ${L.state !== "ask" ? `value="${esc(L.given)}" readonly` : ""} aria-label="Antwort">
+      ${L.state === "ask" ? `<button class="btn primary big" type="submit">Prüfen</button>` : ""}
+    </form>
+    ${fb}
+    <p class="muted" style="font-size:.85rem">Bisher bei dieser Vokabel: <span class="ok">${v.r || 0} richtig</span> · <span class="no">${v.w || 0} falsch</span>. Mehrere Lösungen trennst du in der Liste mit Komma.</p>
+  </div>`;
+}
+
+/* vocab */
+function vocabView() {
+  const tabs = [["sections", "Abschnitte"], ["stats", "Erfolge"], ["invites", "Einladungen" + (S.invites.length ? ` <span class="badge">${S.invites.length}</span>` : "")]]
+    .map(([k, l]) => `<button role="tab" data-act="vtab" data-k="${k}" aria-selected="${S.vocabTab === k}">${l}</button>`).join("");
+  let body = "";
+  if (S.vocabTab === "stats") body = statsView();
+  else if (S.vocabTab === "invites") body = invitesView();
+  else body = S.openSection ? sectionDetail() : sectionsGrid();
+  return `<h1>Vokabeln</h1><div class="tabs" role="tablist">${tabs}</div>${body}`;
+}
+function sectionsGrid() {
+  if (S.secLang && !S.sections.some(s => s.lang === S.secLang)) S.secLang = "";
+  const lpSec = langPicker("secLang", S.secLang);
+  const cards = S.sections.filter(s => !S.secLang || s.lang === S.secLang).map(s => {
+    const n = (s.vocab || []).length;
+    const r = (s.vocab || []).reduce((a, v) => a + (v.r || 0), 0), w = (s.vocab || []).reduce((a, v) => a + (v.w || 0), 0);
+    return `<button class="sec-card" data-act="openSec" data-id="${s.id}">
+      <span class="lang-tag ${s.lang}">${LANGS[s.lang].name}</span>
+      <h3>${esc(s.name)}</h3>
+      <div class="meta"><span class="num">${n} Vokabel${n === 1 ? "" : "n"}</span><span class="num"><span class="ok">${r}</span> / <span class="no">${w}</span></span></div>
+    </button>`;
+  }).join("");
+  return `<section class="card">
+    <div class="card-head"><h2>Neuer Abschnitt</h2></div>
+    <form data-form="newSec" class="add-row">
+      <div class="field"><label for="ns-name">Name</label><input class="input" id="ns-name" name="name" placeholder="z. B. Unit 3 – At school" required maxlength="60"></div>
+      <div class="field"><label for="ns-lang">Sprache</label><select class="input" id="ns-lang" name="lang">
+        <option value="en">Englisch – Deutsch</option><option value="la">Latein – Deutsch</option><option value="fr">Französisch – Deutsch</option></select></div>
+      <button class="btn primary" type="submit">Anlegen</button>
+    </form>
+  </section>
+  <section class="card">
+    <div class="card-head"><h2>Vokabeldatei importieren</h2><span class="muted" style="font-size:.88rem">Eine Datei, die dir jemand geschickt hat (.vocab.txt)</span></div>
+    <div class="row"><label class="btn" for="imp-file">Datei auswählen</label><input type="file" id="imp-file" accept=".txt,.csv,text/plain" hidden>
+      <span class="muted" style="font-size:.88rem">Die Vokabeln werden als neuer Abschnitt angelegt.</span></div>
+  </section>
+  ${lpSec ? `<div class="cfg-group"><span class="eyebrow">Sprache</span>${lpSec}</div>` : ""}
+  ${S.sections.length ? `<div class="grid">${cards}</div>` : `<div class="empty"><strong>Noch keine Abschnitte</strong><p>Lege oben deinen ersten Abschnitt an, zum Beispiel eine Lektion aus deinem Schulbuch.</p></div>`}`;
+}
+function sendPanel(s) {
+  const others = S.userNames;
+  return `<div class="send-box" style="margin-bottom:.4rem">
+    <form data-form="share" class="panel">
+      <h3>An einen Nutzer senden</h3>
+      <p class="muted" style="font-size:.88rem">Die Person bekommt eine Einladung unter „Vokabeln → Einladungen“ und kann annehmen oder ablehnen.</p>
+      ${others.length ? `<div class="user-pick">${others.map(u => `<button type="button" class="chip" data-act="pickUser" data-u="${esc(u)}" aria-pressed="${S.sendTo === u}">${esc(u)}</button>`).join("")}</div>` : `<p class="muted">Es gibt noch keine anderen Nutzer.</p>`}
+      <div class="row"><input class="input" id="share-user" name="to" placeholder="Benutzername" value="${esc(S.sendTo)}" required autocapitalize="none" style="flex:1 1 160px"><button class="btn primary" type="submit">Senden</button></div>
+    </form>
+    <div class="panel">
+      <h3>Als Datei verschicken</h3>
+      <p class="muted" style="font-size:.88rem">Lädt eine Textdatei herunter, die du per WhatsApp, E-Mail oder USB-Stick weitergeben kannst. Der Empfänger importiert sie unter „Abschnitte“.</p>
+      <div class="row"><button class="btn" data-act="exportSec">Datei herunterladen</button><span class="muted" style="font-size:.85rem">${(s.vocab || []).length} Vokabeln</span></div>
+    </div>
+  </div>`;
+}
+function sectionDetail() {
+  const s = S.sections.find(x => x.id === S.openSection);
+  if (!s) { S.openSection = null; return sectionsGrid(); }
+  const L = LANGS[s.lang];
+  const rows = (s.vocab || []).slice().reverse().map(v => `<tr>
+      <td>${esc(v.f)}</td><td>${esc(v.d)}</td>
+      <td class="n ok">${v.r || 0}</td><td class="n no">${v.w || 0}</td>
+      <td class="n">${S.confirm === "v:" + v.id
+        ? `<span class="inline-confirm">Löschen? <button class="btn small danger solid" data-act="delVocab" data-id="${v.id}">Ja</button><button class="btn small" data-act="cancelConfirm">Nein</button></span>`
+        : `<button class="btn small ghost" data-act="askConfirm" data-k="v:${v.id}" aria-label="${esc(v.f)} löschen">Löschen</button>`}</td></tr>`).join("");
+  return `<div class="row"><button class="btn small ghost" data-act="closeSec">← Alle Abschnitte</button></div>
+  <section class="card">
+    <div class="card-head" style="align-items:center">
+      <div style="display:flex;flex-direction:column;gap:.35rem;min-width:0"><span class="lang-tag ${s.lang}">${L.name} – Deutsch</span><h2 style="overflow-wrap:anywhere">${esc(s.name)}</h2></div>
+      <span class="spacer"></span>
+      <button class="btn small ${S.shareOpen ? "" : "primary"}" data-act="toggleShare">${S.shareOpen ? "Senden schließen" : "Abschnitt senden"}</button>
+      ${S.confirm === "sec" ? `<span class="inline-confirm">Abschnitt mit allen Vokabeln löschen? <button class="btn small danger solid" data-act="delSec">Löschen</button><button class="btn small" data-act="cancelConfirm">Abbrechen</button></span>`
+        : `<button class="btn small danger" data-act="askConfirm" data-k="sec">Löschen</button>`}
+    </div>
+    ${S.shareOpen ? sendPanel(s) : ""}
+    <form data-form="addVocab" class="add-row" style="margin-top:.4rem">
+      <div class="field"><label for="av-f">${L.name}</label><input class="input" id="av-f" name="f" placeholder="${esc(L.sample)}" required autocapitalize="none"></div>
+      <div class="field"><label for="av-d">Deutsch</label><input class="input" id="av-d" name="d" placeholder="das Haus" required></div>
+      <button class="btn primary" type="submit">Hinzufügen</button>
+    </form>
+    <div class="row" style="margin-top:.9rem"><button class="btn small" data-act="toggleScan">${S.scan ? "Foto-Scan schließen" : "Foto-Scan / Liste einfügen"}</button>
+      <span class="muted" style="font-size:.85rem">Mehrere Lösungen mit Komma trennen, z. B. „groß, riesig“.</span></div>
+    ${S.scan ? scanPanel(s) : ""}
+  </section>
+  <section class="card">
+    <div class="card-head"><h2>${(s.vocab || []).length} Vokabeln</h2></div>
+    ${rows ? `<div class="table-wrap"><table><thead><tr><th>${L.name}</th><th>Deutsch</th><th class="n">Richtig</th><th class="n">Falsch</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
+      : `<div class="empty"><strong>Noch leer</strong><p>Tippe oben deine erste Vokabel ein oder scanne ein Vokabelblatt.</p></div>`}
+  </section>`;
+}
+function scanPanel(s) {
+  const sc = S.scan;
+  const L = LANGS[s.lang];
+  const preview = sc.rows && sc.rows.length ? `
+    <div class="table-wrap"><table><thead><tr><th></th><th>${L.name}</th><th>Deutsch</th></tr></thead><tbody>
+      ${sc.rows.map((r, i) => `<tr><td><input type="checkbox" id="sr-c-${i}" data-act="scanToggle" data-i="${i}" ${r.on ? "checked" : ""} aria-label="Zeile übernehmen"></td>
+        <td><input class="input" id="sr-f-${i}" data-scan="${i}" data-k="f" value="${esc(r.f)}"></td>
+        <td><input class="input" id="sr-d-${i}" data-scan="${i}" data-k="d" value="${esc(r.d)}"></td></tr>`).join("")}
+    </tbody></table></div>
+    <div class="row"><button class="btn small" data-act="scanSwap">Spalten tauschen</button><span class="spacer"></span>
+      <button class="btn primary" data-act="scanSave">${sc.rows.filter(r => r.on).length} Vokabeln übernehmen</button></div>` : "";
+  return `<div class="panel" style="margin-top:.8rem">
+    <h3>Vokabelblatt scannen</h3>
+    <div class="row">
+        <label class="btn" for="scan-file">Foto aufnehmen oder wählen</label>
+        <input type="file" id="scan-file" accept="image/*" hidden>
+        ${sc.img ? `<button class="btn primary" data-act="scanRun" ${sc.busy ? "disabled" : ""}>${sc.busy ? `<span class="spinner"></span> ${esc(sc.progress || "Erkenne Text…")}` : "Text erkennen"}</button>` : ""}
+      </div>
+      ${sc.imgUrl ? `<img class="scan-thumb" src="${sc.imgUrl}" alt="Gewähltes Vokabelblatt">` : ""}
+      <p class="muted" style="font-size:.85rem">Die Texterkennung läuft kostenlos direkt in deinem Browser. Beim ersten Scan werden einmalig etwa 10 bis 20 MB Sprachdaten geladen. Prüfe die erkannten Wörter danach kurz.</p>
+    <div class="field"><label for="scan-text">Erkannter Text (oder selbst einfügen)</label>
+      <textarea class="input" id="scan-text" placeholder="house – Haus&#10;school = Schule&#10;teacher	Lehrer">${esc(sc.text || "")}</textarea></div>
+    <div class="row"><button class="btn" data-act="scanParse">In Spalten aufteilen</button>${sc.err ? `<span class="err">${esc(sc.err)}</span>` : ""}</div>
+    ${preview}
+  </div>`;
+}
+function statsView() {
+  if (S.statsLang && !S.sections.some(s => s.lang === S.statsLang)) S.statsLang = "";
+  const items = allVocab(S.statsFilter === "all" ? effSecs([], S.statsLang) : [S.statsFilter]);
+  const rows = items.map(({ s, v }) => ({ s, v, n: (v.r || 0) + (v.w || 0), q: (v.r || 0) + (v.w || 0) ? (v.w || 0) / ((v.r || 0) + (v.w || 0)) : -1 }))
+    .sort((a, b) => b.q - a.q || b.n - a.n);
+  const totR = items.reduce((a, x) => a + (x.v.r || 0), 0), totW = items.reduce((a, x) => a + (x.v.w || 0), 0);
+  const opts = `<option value="all">Alle Abschnitte${S.statsLang ? " (" + LANGS[S.statsLang].name + ")" : ""}</option>` + S.sections.filter(s => !S.statsLang || s.lang === S.statsLang).map(s => `<option value="${s.id}" ${S.statsFilter === s.id ? "selected" : ""}>${esc(s.name)}</option>`).join("");
+  const lp = langPicker("statsLang", S.statsLang);
+  return `${lp ? `<div class="cfg-group"><span class="eyebrow">Sprache</span>${lp}</div>` : ""}
+    <section class="stats">
+      <div class="stat"><span class="l">Vokabeln</span><span class="v">${items.length}</span></div>
+      <div class="stat"><span class="l">Richtig beantwortet</span><span class="v ok">${totR}</span></div>
+      <div class="stat"><span class="l">Falsch beantwortet</span><span class="v no">${totW}</span></div>
+    </section>
+    <section class="card">
+      <div class="card-head" style="align-items:center"><h2>Erfolge pro Vokabel</h2><span class="spacer"></span>
+        <select class="input" id="stats-filter" data-change="statsFilter" style="width:auto;max-width:100%">${opts}</select></div>
+      ${rows.length ? `<div class="table-wrap"><table><thead><tr><th>Vokabel</th><th>Deutsch</th><th>Abschnitt</th><th class="n">Richtig</th><th class="n">Falsch</th><th class="n">Fehlerquote</th></tr></thead><tbody>
+        ${rows.map(x => `<tr><td>${esc(x.v.f)}</td><td>${esc(x.v.d)}</td><td><span class="lang-dot ${x.s.lang}"></span> ${esc(x.s.name)}</td>
+          <td class="n ok">${x.v.r || 0}</td><td class="n no">${x.v.w || 0}</td>
+          <td class="n"><span class="rate" style="color:${x.q < 0 ? "var(--muted)" : x.q >= .5 ? "var(--bad)" : x.q >= .25 ? "var(--warn)" : "var(--good)"}">${x.q < 0 ? "–" : Math.round(x.q * 100) + " %"}</span></td></tr>`).join("")}
+      </tbody></table></div>` : `<div class="empty"><strong>Noch keine Statistik</strong><p>Sobald du lernst, siehst du hier für jede Vokabel, wie oft du richtig und falsch lagst.</p></div>`}
+    </section>`;
+}
+function invitesView() {
+  const recv = !S.invites.length ? `<div class="empty"><strong>Keine offenen Einladungen</strong><p>Wenn dir jemand einen Abschnitt schickt, kannst du ihn hier annehmen oder ablehnen.</p></div>`
+    : `<section class="card" style="display:flex;flex-direction:column;gap:.7rem">
+    <div class="card-head" style="margin:0"><h2>Für dich</h2></div>
+    ${S.invites.map(i => `<div class="invite">
+      <div class="who"><span class="lang-tag ${i.section.lang}">${LANGS[i.section.lang].name}</span>
+        <h3 style="margin-top:.3rem">${esc(i.section.name)}</h3>
+        <p class="muted" style="font-size:.9rem">von <b>${esc(i.from)}</b> · ${(i.section.vocab || []).length} Vokabeln · ${fmtDate(i.createdAt)}</p></div>
+      <button class="btn" data-act="declineInv" data-id="${i.id}">Ablehnen</button>
+      <button class="btn primary" data-act="acceptInv" data-id="${i.id}">Annehmen</button>
+    </div>`).join("")}
+  </section>`;
+  const sent = S.sent.length ? `<section class="card">
+    <div class="card-head"><h2>Von dir gesendet</h2><span class="muted" style="font-size:.88rem">Warten auf Annahme</span></div>
+    ${S.sent.map(i => `<div class="sent-row"><span class="lang-dot ${i.section.lang}"></span><b style="flex:1;min-width:140px">${esc(i.section.name)}</b>
+      <span class="muted">an <b>${esc(i.to)}</b> · ${fmtDate(i.createdAt)}</span>
+      ${S.confirm === "inv:" + i.id ? `<span class="inline-confirm"><button class="btn small danger solid" data-act="cancelInv" data-id="${i.id}">Zurückziehen</button><button class="btn small" data-act="cancelConfirm">Nein</button></span>`
+        : `<button class="btn small ghost" data-act="askConfirm" data-k="inv:${i.id}">Zurückziehen</button>`}</div>`).join("")}
+  </section>` : "";
+  return recv + sent;
+}
+
+/* shop */
+function shopView() {
+  const owned = S.me.pets;
+  const total = coinsTotal();
+  const own = owned.length ? `<section class="card">
+      <div class="card-head"><h2>Mein Besitz</h2><span class="muted" style="font-size:.88rem">Wähle, welches Tier auf der Startseite herumläuft.</span></div>
+      <div class="owned-list">
+        <button class="own" data-act="setPet" data-id="" aria-pressed="${!S.me.activePet}"><span class="e" style="font-size:16px">–</span>Keins</button>
+        ${owned.map(id => `<button class="own" data-act="setPet" data-id="${id}" aria-pressed="${S.me.activePet === id}"><span class="e">${PET_DEFS[id].e}</span>${PET_DEFS[id].name}</button>`).join("")}
+      </div></section>` : `<p class="note">Du besitzt noch kein Haustier. Sammle ${PET_PRICE} Münzen und hol dir deinen ersten Lernbegleiter.</p>`;
+  const cards = Object.entries(PET_DEFS).map(([id, p]) => {
+    const has = owned.includes(id);
+    const conf = S.confirm === "buy:" + id;
+    return `<article class="pet-card ${has ? "owned" : ""}">
+      <div class="ava" aria-hidden="true">${p.e}</div>
+      <h3>${p.name}</h3><p>${p.desc}</p>
+      <div class="row"><span class="price">${COIN}${PET_PRICE}</span><span class="spacer"></span>
+        ${has ? `<span class="ok">Gekauft</span>`
+          : conf ? `<button class="btn small" data-act="cancelConfirm">Nein</button><button class="btn small primary" data-act="buy" data-id="${id}">Kaufen!</button>`
+          : `<button class="btn small" data-act="askConfirm" data-k="buy:${id}" ${total < PET_PRICE ? "disabled" : ""}>${total < PET_PRICE ? `Noch ${PET_PRICE - total}` : "Kaufen"}</button>`}
+      </div></article>`;
+  }).join("");
+  return `<div class="shop-head"><h1>Shop</h1><span class="coin-pill">${COIN}<span class="num">${total}</span></span></div>
+    ${own}
+    <section><div class="card-head"><h2>Haustiere</h2><span class="muted" style="font-size:.88rem">Jedes Tier kostet ${PET_PRICE} Münzen</span></div>
+    <div class="pets">${cards}</div></section>`;
+}
+
+/* wiki */
+function md(text, images) {
+  const used = new Set();
+  const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\*(.+?)\*/g, "<em>$1</em>");
+  const blocks = String(text || "").replace(/\r/g, "").split(/\n{2,}/);
+  let html = blocks.map(b => {
+    const t = b.trim(); if (!t) return "";
+    const im = t.match(/^\[Bild (\d+)\]$/);
+    if (im) { const i = +im[1] - 1; if (images && images[i]) { used.add(i); return `<figure><img src="${images[i]}" alt="Bild ${i + 1}"></figure>`; } return ""; }
+    if (t.startsWith("## ")) return `<h2>${inline(t.slice(3))}</h2>`;
+    const lines = t.split("\n");
+    if (lines.every(l => /^\s*[-•]\s+/.test(l))) return `<ul>${lines.map(l => `<li>${inline(l.replace(/^\s*[-•]\s+/, ""))}</li>`).join("")}</ul>`;
+    return `<p>${lines.map(inline).join("<br>")}</p>`;
+  }).join("");
+  (images || []).forEach((src, i) => { if (!used.has(i)) html += `<figure><img src="${src}" alt="Bild ${i + 1}"></figure>`; });
+  return html;
+}
+const FONTS = { sans: "Standard", serif: "Buch", hand: "Handschrift", round: "Rund" };
+function wikiView() {
+  if (S.openArticle) return articleView();
+  const mine = S.articles.filter(a => a.author === S.me.username);
+  const tabs = [["list", "Artikel"], ["write", "Artikel schreiben"], ["mine", `Meine Artikel (${mine.length})`]]
+    .map(([k, l]) => `<button role="tab" data-act="wtab" data-k="${k}" aria-selected="${S.wikiTab === k}">${l}</button>`).join("");
+  let body;
+  if (S.wikiTab === "write") body = editorView();
+  else if (S.wikiTab === "mine") body = mine.length ? `<div class="art-list">${mine.sort((a, b) => b.createdAt - a.createdAt).map(a => artCard(a, true)).join("")}</div>`
+    : `<div class="empty"><strong>Du hast noch nichts geschrieben</strong><p>Teile deinen besten Lerntrick. Für jedes Like bekommst du 1 Münze.</p><button class="btn primary" data-act="wtab" data-k="write">Artikel schreiben</button></div>`;
+  else {
+    const pub = S.articles.filter(a => a.status === "approved").sort((a, b) => (b.likes || []).length - (a.likes || []).length || b.createdAt - a.createdAt);
+    body = pub.length ? `<div class="art-list">${pub.map(a => artCard(a)).join("")}</div>`
+      : `<div class="empty"><strong>Noch keine Artikel</strong><p>Schreib den ersten Artikel über Vokabeltricks. Nach der Freigabe durch den Admin ist er für alle sichtbar.</p></div>`;
+  }
+  return `<div><h1>Wiki</h1><p class="muted" style="margin-top:.3rem">Lerntricks, Gehirn-Hacks und alles rund ums Vokabellernen.</p></div>
+    <div class="tabs" role="tablist">${tabs}</div>${body}`;
+}
+function excerpt(t) { return String(t || "").replace(/\[Bild \d+\]/g, "").replace(/[#*]/g, "").replace(/\s+/g, " ").trim().slice(0, 180); }
+function artCard(a, showStatus) {
+  const st = { pending: "Wartet auf Freigabe", approved: "Veröffentlicht", rejected: "Abgelehnt" }[a.status];
+  return `<button class="art-card" data-act="openArt" data-id="${a.id}">
+    ${showStatus ? `<span class="status ${a.status}">${st}</span>` : ""}
+    <h3 class="font-${a.font || "sans"}">${esc(a.title)}</h3>
+    <p class="ex">${esc(excerpt(a.body))}</p>
+    <div class="art-meta"><span>von ${esc(a.author)}</span><span>♥ ${(a.likes || []).length}</span></div>
+  </button>`;
+}
+function articleView() {
+  const a = S.articles.find(x => x.id === S.openArticle);
+  if (!a) { S.openArticle = null; return wikiView(); }
+  const liked = (a.likes || []).includes(S.me.username);
+  const own = a.author === S.me.username;
+  const canLike = a.status === "approved" && !own;
+  const adminBar = isAdmin() && a.status === "pending" ? `<div class="panel"><b>Admin: Dieser Artikel wartet auf Freigabe.</b><div class="row">
+      <button class="btn primary" data-act="approveArt" data-id="${a.id}">Freigeben</button><button class="btn danger" data-act="rejectArt" data-id="${a.id}">Ablehnen</button></div></div>` : "";
+  return `<div class="row"><button class="btn small ghost" data-act="closeArt">← Zurück</button></div>
+    <article class="article font-${a.font || "sans"}">
+      ${adminBar}
+      ${a.status !== "approved" ? `<span class="status ${a.status}" style="align-self:flex-start">${a.status === "pending" ? "Wartet auf Freigabe" : "Abgelehnt"}</span>` : ""}
+      <h1>${esc(a.title)}</h1>
+      <div class="art-meta" style="font-family:var(--f-body)"><span>von <b>${esc(a.author)}</b></span><span>${fmtDate(a.createdAt)}</span></div>
+      <div class="body">${md(a.body, a.images)}</div>
+      ${(a.sources || []).length ? `<div class="sources" style="font-family:var(--f-body)"><b>Quellen</b><ol>${a.sources.map(s => `<li>${/^https?:\/\//.test(s) ? `<a href="${esc(s)}" target="_blank" rel="noopener">${esc(s)}</a>` : esc(s)}</li>`).join("")}</ol></div>` : ""}
+      <div class="row" style="font-family:var(--f-body)">
+        <button class="like" data-act="like" data-id="${a.id}" aria-pressed="${liked}" ${canLike && !liked ? "" : "disabled"}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.1C.9 8.4 3 4.5 6.7 4.5c2.1 0 3.6 1.2 4.3 2.4.7-1.2 2.2-2.4 4.3-2.4 3.7 0 5.8 3.9 4.3 7.4C19.5 16.4 12 21 12 21z" fill="currentColor"/></svg>
+          <span class="num">${(a.likes || []).length}</span></button>
+        <span class="muted" style="font-size:.88rem">${own ? "Für jedes Like bekommst du 1 Münze." : liked ? "Du hast diesen Artikel geliked." : canLike ? "Ein Like schenkt dem Autor 1 Münze." : ""}</span>
+      </div>
+    </article>`;
+}
+function editorView() {
+  const d = S.draft || (S.draft = { title: "", font: "sans", body: "", images: [], sources: "" });
+  return `<section class="card"><form data-form="article" style="display:flex;flex-direction:column;gap:1rem">
+    <div class="field"><label for="ar-title">Titel</label><input class="input" id="ar-title" data-draft="title" value="${esc(d.title)}" maxlength="90" required placeholder="z. B. Die Loci-Methode für Vokabeln"></div>
+    <div class="field"><label>Schriftart</label><div class="seg">${Object.entries(FONTS).map(([k, l]) =>
+      `<button type="button" class="font-${k}" data-act="draftFont" data-k="${k}" aria-pressed="${d.font === k}">${l}</button>`).join("")}</div></div>
+    <div class="field"><label for="ar-body">Text</label>
+      <textarea class="input font-${d.font}" id="ar-body" data-draft="body" style="min-height:14rem" placeholder="Schreib deinen Artikel…">${esc(d.body)}</textarea>
+      <span class="muted" style="font-size:.82rem">Leerzeile = neuer Absatz · „## “ am Zeilenanfang = Zwischenüberschrift · „- “ = Aufzählung · **fett** · *kursiv* · [Bild 1] setzt ein Bild an diese Stelle</span></div>
+    <div class="field"><label>Bilder (max. 3)</label>
+      <div class="thumbs">${d.images.map((src, i) => `<div class="thumb"><img src="${src}" alt="Bild ${i + 1}"><div class="row"><button type="button" class="btn small" data-act="insImg" data-i="${i}">[Bild ${i + 1}] einfügen</button><button type="button" class="btn small ghost" data-act="rmImg" data-i="${i}" aria-label="Bild entfernen">✕</button></div></div>`).join("")}</div>
+      ${d.images.length < 3 ? `<div><label class="btn small" for="ar-img">Bild hinzufügen</label><input type="file" id="ar-img" accept="image/*" hidden></div>` : ""}</div>
+    <div class="field"><label for="ar-src">Quellen (eine pro Zeile)</label><textarea class="input" id="ar-src" data-draft="sources" style="min-height:4.5rem" placeholder="Ebbinghaus, H. (1885): Über das Gedächtnis">${esc(d.sources)}</textarea></div>
+    <p class="note">Der Admin prüft deinen Artikel, bevor er im Wiki erscheint.</p>
+    <div class="row end"><button class="btn primary big" type="submit">Zur Freigabe einreichen</button></div>
+  </form></section>`;
+}
+
+/* admin */
+function sparkSvg(days, max) {
+  const w = 10, gap = 3, h = 26;
+  return `<svg class="spark" width="${days.length * (w + gap) - gap}" height="${h}" viewBox="0 0 ${days.length * (w + gap) - gap} ${h}" role="img" aria-label="Richtige Vokabeln der letzten ${days.length} Tage: ${days.map(d => d.c).join(", ")}">
+    ${days.map((d, i) => { const bh = d.c ? Math.max(3, Math.round(d.c / max * (h - 2))) : 2;
+      return `<rect class="${d.c ? (i === days.length - 1 ? "today" : "") : "zero"}" x="${i * (w + gap)}" y="${h - bh}" width="${w}" height="${bh}" rx="2"><title>${d.date.toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "numeric" })}: ${d.c} richtig</title></rect>`; }).join("")}
+  </svg>`;
+}
+function userChart(acc) {
+  const days = histDays(acc, 14);
+  const max = Math.max(10, ...days.map(d => d.a));
+  const nice = Math.ceil(max / 10) * 10;
+  const W = 560, H = 190, pl = 30, pr = 8, pt = 18, pb = 34, bw = (W - pl - pr) / days.length;
+  const y = v => pt + (H - pt - pb) * (1 - v / nice);
+  const ticks = [0, nice / 2, nice];
+  return `<div class="chart-wrap"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gelernte Vokabeln von ${esc(acc.username)} in den letzten 14 Tagen">
+    ${ticks.map(t => `<line class="grid" x1="${pl}" x2="${W - pr}" y1="${y(t)}" y2="${y(t)}"/><text x="${pl - 6}" y="${y(t) + 4}" text-anchor="end">${t}</text>`).join("")}
+    ${days.map((d, i) => {
+      const x = pl + i * bw + bw * .18, w = bw * .64;
+      const lab = d.date.toLocaleDateString("de-DE", { weekday: "short" }).slice(0, 2);
+      return `${d.a ? `<rect class="b-all" x="${x}" y="${y(d.a)}" width="${w}" height="${y(0) - y(d.a)}" rx="3"><title>${d.a} beantwortet</title></rect>` : ""}
+        ${d.c ? `<rect class="b-ok" x="${x}" y="${y(d.c)}" width="${w}" height="${y(0) - y(d.c)}" rx="3"><title>${d.c} richtig</title></rect>
+        <text class="v" x="${x + w / 2}" y="${y(d.a || d.c) - 5}" text-anchor="middle">${d.c}</text>` : ""}
+        <text x="${x + w / 2}" y="${H - 18}" text-anchor="middle">${lab}</text>
+        <text x="${x + w / 2}" y="${H - 5}" text-anchor="middle">${d.date.getDate()}.</text>`;
+    }).join("")}
+  </svg></div>
+  <div class="row" style="font-size:.82rem;color:var(--muted);gap:1rem"><span><span class="lang-dot" style="background:var(--check)"></span> richtig</span><span><span class="lang-dot" style="background:var(--surface-2);border:1px solid var(--line)"></span> beantwortet insgesamt</span></div>`;
+}
+function adminUsersView() {
+  const users = S.accounts.slice().sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
+  const today = todayKey();
+  const week = u => histDays(u, 7);
+  const sum = (arr, f) => arr.reduce((n, x) => n + f(x), 0);
+  const onlineNow = users.filter(u => lastSeenText(u.lastSeen).now).length;
+  const activeToday = users.filter(u => u.lastSeen && todayKey(new Date(u.lastSeen)) === today).length;
+  const learnedToday = sum(users, u => (u.daily && u.daily.date === today ? +u.daily.count || 0 : 0));
+  const learnedWeek = sum(users, u => sum(week(u), d => d.c));
+  const globalMax = Math.max(5, ...users.flatMap(u => week(u).map(d => d.c)));
+  const vocabCount = u => S.allSections.filter(s => s.owner === u).reduce((n, s) => n + s.vocab.length, 0);
+  const sel = users.find(u => u.username === S.adminUser);
+  let detail = "";
+  if (sel) {
+    const days14 = histDays(sel, 14);
+    const tA = +sel.totalAnswered || 0, tC = +sel.totalCorrect || 0;
+    const activeDays = days14.filter(d => d.a > 0).length;
+    const self = sel.username === S.me.username;
+    let act;
+    if (S.confirm === "u:" + sel.username) act = `<span class="inline-confirm">Konto und Abschnitte löschen? <button class="btn small danger solid" data-act="delUser" data-id="${esc(sel.username)}">Ja</button><button class="btn small" data-act="cancelConfirm">Nein</button></span>`;
+    else if (S.confirm === "pw:" + sel.username) act = `<form data-form="resetPw" data-id="${esc(sel.username)}" class="inline-confirm"><input class="input" id="rp-${esc(sel.username)}" name="pw" placeholder="Neues Passwort" minlength="6" required style="width:10rem"><button class="btn small primary" type="submit">Speichern</button><button type="button" class="btn small" data-act="cancelConfirm">Abbrechen</button></form>`;
+    else act = `${self ? "" : `<button class="btn small" data-act="askConfirm" data-k="pw:${esc(sel.username)}">Passwort ändern</button>`}${self ? "" : ` <button class="btn small danger" data-act="askConfirm" data-k="u:${esc(sel.username)}">Löschen</button>`}`;
+
+    detail = `<section class="card">
+      <div class="card-head" style="align-items:center"><h2>${esc(sel.username)}</h2>
+        <span class="online ${lastSeenText(sel.lastSeen).now ? "now" : ""}"><i></i>${lastSeenText(sel.lastSeen).t}</span><span class="spacer"></span>
+        <button class="btn small ghost" data-act="pickAdminUser" data-u="${esc(sel.username)}">Schließen</button></div>
+      <div class="stats" style="margin-bottom:1rem">
+        <div class="stat"><span class="l">Gelernt (14 Tage)</span><span class="v">${sum(days14, d => d.c)}</span><span class="l">an ${activeDays} von 14 Tagen aktiv</span></div>
+        <div class="stat"><span class="l">Gesamt richtig</span><span class="v">${tC}</span><span class="l">${tA ? Math.round(tC / tA * 100) + " % Trefferquote" : "noch keine Antworten"}</span></div>
+        <div class="stat"><span class="l">Vokabeln & Abschnitte</span><span class="v">${vocabCount(sel.username)}</span><span class="l">in ${S.allSections.filter(s => s.owner === sel.username).length} Abschnitten</span></div>
+      </div>
+      <h3 style="margin-bottom:.5rem">Letzte 14 Tage</h3>
+      ${userChart(sel)}
+      <div class="row" style="margin-top:1rem;border-top:1px solid var(--line);padding-top:1rem"><span class="muted" style="font-size:.88rem">Rolle: ${sel.role === "admin" ? "Admin" : "Nutzer"} · angelegt am ${fmtDate(sel.createdAt)}</span><span class="spacer"></span>${act}</div>
+    </section>`;
+  }
+  const rows = users.map(u => {
+    const ls = lastSeenText(u.lastSeen), wk = week(u);
+    const tA = +u.totalAnswered || 0, tC = +u.totalCorrect || 0;
+    const todayN = u.daily && u.daily.date === today ? +u.daily.count || 0 : 0;
+    const self = u.username === S.me.username;
+    return `<tr class="${S.adminUser === u.username ? "sel" : ""}">
+      <td><button class="user-link" data-act="pickAdminUser" data-u="${esc(u.username)}">${esc(u.username)}</button>${self ? ' <span class="muted">(du)</span>' : ""}<br><span class="muted" style="font-size:.8rem">${u.role === "admin" ? "Admin" : "Nutzer"}</span></td>
+      <td><span class="online ${ls.now ? "now" : ""}"><i></i>${ls.t}</span></td>
+      <td class="n">${todayN}</td>
+      <td>${sparkSvg(wk, globalMax)}<span class="muted num" style="font-size:.8rem">${sum(wk, d => d.c)} in 7 Tagen</span></td>
+      <td class="n">${tC}</td>
+      <td class="n">${tA ? Math.round(tC / tA * 100) + " %" : "–"}</td>
+      <td class="n">${vocabCount(u.username)}</td>
+      <td class="n">${+u.coins || 0}</td></tr>`;
+  }).join("");
+  return `<section class="stats" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+      <div class="stat"><span class="l">Nutzer</span><span class="v">${users.length}</span><span class="l">${onlineNow} gerade online</span></div>
+      <div class="stat"><span class="l">Heute aktiv</span><span class="v">${activeToday}</span><span class="l">waren heute eingeloggt</span></div>
+      <div class="stat"><span class="l">Heute gelernt</span><span class="v">${learnedToday}</span><span class="l">richtige Vokabeln, alle Nutzer</span></div>
+      <div class="stat"><span class="l">Letzte 7 Tage</span><span class="v">${learnedWeek}</span><span class="l">richtige Vokabeln, alle Nutzer</span></div>
+    </section>
+    ${detail}
+    <section class="card"><div class="card-head"><h2>Aktivität</h2><span class="muted" style="font-size:.88rem">Tippe auf einen Namen für Verlauf, Passwort und Löschen</span></div>
+    <div class="table-wrap"><table><thead><tr><th>Benutzer</th><th>Zuletzt online</th><th class="n">Heute</th><th>Letzte 7 Tage</th><th class="n">Gesamt richtig</th><th class="n">Trefferquote</th><th class="n">Vokabeln</th><th class="n">Münzen</th></tr></thead><tbody>
+    ${rows}</tbody></table></div></section>
+    <section class="card"><div class="card-head"><h2>Neues Konto anlegen</h2></div>
+      <form data-form="newUser" class="add-row four">
+        <div class="field"><label for="nu-name">Benutzername</label><input class="input" id="nu-name" name="username" required autocapitalize="none" spellcheck="false" placeholder="z. B. lena"></div>
+        <div class="field"><label for="nu-pw">Passwort</label><input class="input" id="nu-pw" name="password" required minlength="6" placeholder="mind. 6 Zeichen"></div>
+        <div class="field"><label for="nu-role">Rolle</label><select class="input" id="nu-role" name="role"><option value="user">Nutzer</option><option value="admin">Admin</option></select></div>
+        <button class="btn primary" type="submit">Anlegen</button>
+      </form>
+      <p class="muted" style="font-size:.85rem;margin-top:.8rem">Nutzer können sich nicht selbst registrieren. Gib Benutzername und Passwort an die Person weiter.</p></section>`;
+}
+function adminView() {
+  const pend = S.articles.filter(a => a.status === "pending");
+  const tabs = [["users", `Nutzer (${S.accounts.length})`], ["review", `Freigaben (${pend.length})`], ["articles", "Alle Artikel"]]
+    .map(([k, l]) => `<button role="tab" data-act="atab" data-k="${k}" aria-selected="${S.adminTab === k}">${l}</button>`).join("");
+  let body = "";
+  if (S.adminTab === "review") {
+    body = pend.length ? `<div class="art-list">${pend.map(a => artCard(a, true)).join("")}</div>`
+      : `<div class="empty"><strong>Alles erledigt</strong><p>Keine Artikel warten auf Freigabe.</p></div>`;
+  } else if (S.adminTab === "articles") {
+    const all = S.articles.slice().sort((a, b) => b.createdAt - a.createdAt);
+    body = all.length ? `<div class="table-wrap"><table><thead><tr><th>Titel</th><th>Autor</th><th>Status</th><th class="n">Likes</th><th></th></tr></thead><tbody>
+      ${all.map(a => `<tr><td><button class="btn small ghost" data-act="openArt" data-id="${a.id}" style="white-space:normal;text-align:left">${esc(a.title)}</button></td><td>${esc(a.author)}</td>
+        <td><span class="status ${a.status}">${{ pending: "offen", approved: "frei", rejected: "abgelehnt" }[a.status]}</span></td><td class="n">${(a.likes || []).length}</td>
+        <td class="n">${S.confirm === "a:" + a.id ? `<span class="inline-confirm"><button class="btn small danger solid" data-act="delArt" data-id="${a.id}">Löschen</button><button class="btn small" data-act="cancelConfirm">Nein</button></span>`
+          : `<button class="btn small ghost" data-act="askConfirm" data-k="a:${a.id}">Löschen</button>`}</td></tr>`).join("")}
+      </tbody></table></div>` : `<div class="empty"><strong>Noch keine Artikel</strong></div>`;
+  } else {
+    body = adminUsersView();
+  }
+  return `<div class="row"><h1>Admin</h1><span class="spacer"></span><button class="btn small" data-act="adminRefresh">Aktualisieren</button></div>
+    <div class="tabs" role="tablist">${tabs}</div>${body}`;
+}
+
+/* ---------- actions ---------- */
+const A = {
+  async resetDemo() {
+    for (const c of Object.values(C)) { Store.mem[c] = {}; lsSet("vocabify11:" + c, null); }
+    lsSet("vocabify11:session", null);
+    await showLogin(); toast("Testdaten wurden zurückgesetzt.");
+  },
+  async nav(t) {
+    S.view = t.dataset.v; S.confirm = null; S.openArticle = null;
+    if (S.view !== "home") { const L = S.learn; if (L) clearTimeout(L.timer); }
+    if (S.view === "wiki" || S.view === "admin") {
+      try { S.articles = await loadArticles(); } catch {}
+      if (S.view === "admin") await loadAdmin();
+    }
+    if (S.view === "vocab" && S.vocabTab === "invites") { try { S.invites = (await Store.list(C.inv, "to", S.me.username)).map(cleanInvite); } catch {} await loadSent(); }
+    render(); window.scrollTo({ top: 0 });
+  },
+  logout() { logout(); },
+  closeModal() { closeModal(); },
+  chest(t) { openChest(+t.dataset.m); },
+  cfgSec(t) {
+    const id = t.dataset.id;
+    if (!id) S.cfg.secs = [];
+    else S.cfg.secs = S.cfg.secs.includes(id) ? S.cfg.secs.filter(x => x !== id) : [...S.cfg.secs, id];
+    render();
+  },
+  cfgDir(t) { S.cfg.dir = t.dataset.k; render(); },
+  cfgMode(t) { S.cfg.mode = t.dataset.k; render(); },
+  start() { startLearning(); },
+  next() { nextQuestion(); },
+  stop() { finishLearning(); },
+  leave() { leaveLearning(); },
+  again() { S.learn = null; startLearning(); },
+  cfgSize(t) { S.cfg.size = +t.dataset.k; render(); },
+  setTheme(t) { setSetting("theme", t.dataset.k); applyTheme(t.dataset.k); render(); },
+  setGoal(t) { setSetting("goal", +t.dataset.k); render(); toast("Tagesziel: " + t.dataset.k + " Vokabeln."); },
+  async updateApp() {
+    S.updating = true; render();
+    await flush();
+    lsSet("vocabify11:lastCheck", String(Date.now()));
+    lsSet("vocabify11:returnView", "settings");
+    await sleep(700);
+    const url = location.href.split("#")[0];
+    location.replace(url.includes("?") ? url.replace(/([?&])v=\d+/, "$1v=" + Date.now()) : url + "?v=" + Date.now());
+  },
+  cfgLang(t) { S.cfg.lang = t.dataset.k; S.cfg.secs = []; render(); },
+  repeatWrong() { repeatWrongs(); },
+  statsLang(t) { S.statsLang = t.dataset.k; const s = S.sections.find(x => x.id === S.statsFilter); if (s && S.statsLang && s.lang !== S.statsLang) S.statsFilter = "all"; render(); },
+  secLang(t) { S.secLang = t.dataset.k; render(); },
+  override() { overrideCorrect(); },
+  vtab(t) { S.vocabTab = t.dataset.k; S.confirm = null; if (S.vocabTab === "invites") A.nav({ dataset: { v: "vocab" } }); else render(); },
+  openSec(t) { S.openSection = t.dataset.id; S.scan = null; S.shareOpen = false; S.confirm = null; render(); window.scrollTo({ top: 0 }); },
+  closeSec() { S.openSection = null; S.scan = null; S.shareOpen = false; S.confirm = null; render(); },
+  askConfirm(t) { S.confirm = t.dataset.k; render(); },
+  cancelConfirm() { S.confirm = null; render(); },
+  delVocab(t) {
+    const s = S.sections.find(x => x.id === S.openSection); if (!s) return;
+    s.vocab = s.vocab.filter(v => v.id !== t.dataset.id); S.confirm = null;
+    markDirty("sec:" + s.id); render();
+  },
+  async delSec() {
+    const id = S.openSection;
+    S.sections = S.sections.filter(s => s.id !== id); S.openSection = null; S.confirm = null;
+    S.cfg.secs = S.cfg.secs.filter(x => x !== id);
+    if (S.learn && S.learn.cur && S.learn.cur.sid === id) S.learn = null;
+    render();
+    try { await Store.del(C.sec, id); toast("Abschnitt gelöscht."); } catch { toast("Löschen fehlgeschlagen."); }
+  },
+  async toggleShare() { S.shareOpen = !S.shareOpen; S.sendTo = ""; if (S.shareOpen) await loadPeople(); render(); },
+  pickUser(t) { S.sendTo = t.dataset.u; render(); },
+  exportSec() { const s = S.sections.find(x => x.id === S.openSection); if (s) exportSection(s); },
+  async cancelInv(t) {
+    const id = t.dataset.id;
+    try { await Store.del(C.inv, id); S.sent = S.sent.filter(i => i.id !== id); S.confirm = null; toast("Einladung zurückgezogen."); } catch { toast("Zurückziehen fehlgeschlagen."); }
+    render();
+  },
+  toggleScan() { S.scan = S.scan ? null : { text: "", rows: null, img: null, imgUrl: "" }; render(); },
+  scanParse() {
+    const ta = $("#scan-text"); S.scan.text = ta ? ta.value : "";
+    const rows = parseVocabText(S.scan.text);
+    S.scan.err = rows.length ? "" : "Keine Wortpaare erkannt. Trenne die Spalten z. B. mit „–“, „=“ oder einem Tab.";
+    S.scan.rows = rows; render();
+  },
+  scanToggle(t) { const r = S.scan.rows[+t.dataset.i]; r.on = t.checked; render(); },
+  scanSwap() { S.scan.rows.forEach(r => { const f = r.f; r.f = r.d; r.d = f; }); render(); },
+  scanSave() {
+    const s = S.sections.find(x => x.id === S.openSection); if (!s) return;
+    const add = S.scan.rows.filter(r => r.on && r.f.trim() && r.d.trim());
+    const now = Date.now();
+    add.forEach((r, i) => s.vocab.push({ id: uid(), f: r.f.trim(), d: r.d.trim(), r: 0, w: 0, added: now + i }));
+    S.scan = null; markDirty("sec:" + s.id); flush(); render();
+    toast(add.length + " Vokabeln hinzugefügt.");
+  },
+async scanRun() {
+    const sc = S.scan, s = S.sections.find(x => x.id === S.openSection);
+    if (!sc || !sc.img || !s || sc.busy) return;
+    sc.busy = true; sc.err = ""; sc.progress = "Lade Texterkennung…"; render();
+    let worker = null;
+    try {
+      await loadScript(TESSERACT_URL);
+      const langs = [{ en: "eng", la: "lat", fr: "fra" }[s.lang] || "eng", "deu"];
+      sc.progress = "Lade Sprachdaten…"; render();
+      let lastPct = -1;
+      worker = await Tesseract.createWorker(langs, 1, { logger: m => {
+        if (m.status === "recognizing text") { const pct = Math.round(m.progress * 100); if (pct !== lastPct && pct % 10 === 0) { lastPct = pct; sc.progress = "Erkenne Text… " + pct + " %"; render(); } }
+      } });
+      const { data } = await worker.recognize(sc.img);
+      const text = String(data && data.text || "").replace(/[|]/g, " ").replace(/\n{2,}/g, "\n").trim();
+      sc.text = text;
+      sc.rows = parseVocabText(text);
+      sc.err = sc.rows.length ? "" : (text ? "Text erkannt, aber keine Wortpaare gefunden. Trenne die Spalten im Textfeld z. B. mit „–“ und tippe auf „In Spalten aufteilen“." : "Auf dem Foto wurde kein Text erkannt. Versuche ein schärferes Foto mit guter Beleuchtung.");
+    } catch (e) {
+      sc.err = "Die Texterkennung konnte nicht geladen werden. Prüfe deine Internetverbindung.";
+    } finally {
+      if (worker) { try { await worker.terminate(); } catch {} }
+    }
+    sc.busy = false; sc.progress = ""; render();
+  },
+  async acceptInv(t) {
+    const inv = S.invites.find(i => i.id === t.dataset.id); if (!inv) return;
+    const now = Date.now();
+    const sec = { id: uid(), owner: S.me.username, name: inv.section.name, lang: inv.section.lang, createdAt: now, from: inv.from,
+      vocab: (inv.section.vocab || []).map((v, i) => ({ id: uid(), f: v.f, d: v.d, r: 0, w: 0, added: now + i })) };
+    try {
+      await Store.set(C.sec, sec.id, sec);
+      await Store.del(C.inv, inv.id);
+      S.sections.push(sec); S.invites = S.invites.filter(i => i.id !== inv.id);
+      toast(`„${inv.section.name}“ wurde zu deinen Abschnitten hinzugefügt.`);
+    } catch { toast("Annehmen fehlgeschlagen. Versuche es noch einmal."); }
+    render();
+  },
+  async declineInv(t) {
+    const id = t.dataset.id;
+    try { await Store.del(C.inv, id); S.invites = S.invites.filter(i => i.id !== id); toast("Einladung abgelehnt."); }
+    catch { toast("Ablehnen fehlgeschlagen."); }
+    render();
+  },
+  async buy(t) {
+    const id = t.dataset.id;
+    if (S.me.pets.includes(id) || coinsTotal() < PET_PRICE) return;
+    S.me.coins -= PET_PRICE; S.me.pets.push(id);
+    if (!S.me.activePet) S.me.activePet = id;
+    S.confirm = null; markDirty("me"); await flush();
+    render(); toast(`${PET_DEFS[id].name} gekauft! Schau auf der Startseite vorbei.`);
+  },
+  setPet(t) { S.me.activePet = t.dataset.id || null; markDirty("me"); render(); toast(S.me.activePet ? PET_DEFS[S.me.activePet].name + " läuft jetzt auf der Startseite." : "Kein Haustier aktiv."); },
+  wtab(t) { S.wikiTab = t.dataset.k; render(); },
+  openArt(t) { S.openArticle = t.dataset.id; if (S.view === "admin") S.view = "wiki"; render(); window.scrollTo({ top: 0 }); },
+  closeArt() { S.openArticle = null; render(); },
+  async like(t) {
+    const id = t.dataset.id;
+    try {
+      const fresh = await Store.get(C.art, id); if (!fresh) return;
+      const likes = Array.isArray(fresh.likes) ? fresh.likes : [];
+      if (likes.includes(S.me.username) || fresh.author === S.me.username) return;
+      likes.push(S.me.username);
+      await Store.update(C.art, id, { likes });
+      const a = S.articles.find(x => x.id === id); if (a) a.likes = likes;
+      render(); toast("Danke! Der Autor bekommt 1 Münze.");
+    } catch { toast("Like konnte nicht gespeichert werden."); }
+  },
+  draftFont(t) { syncDraft(); S.draft.font = t.dataset.k; render(); },
+  insImg(t) {
+    syncDraft();
+    const tag = `[Bild ${+t.dataset.i + 1}]`;
+    S.draft.body = (S.draft.body.trimEnd() + "\n\n" + tag + "\n\n").replace(/^\n+/, "");
+    render(); const b = $("#ar-body"); if (b) { b.focus(); b.selectionStart = b.selectionEnd = b.value.length; }
+  },
+  rmImg(t) { syncDraft(); S.draft.images.splice(+t.dataset.i, 1); render(); },
+  async approveArt(t) { await setArtStatus(t.dataset.id, "approved"); },
+  async rejectArt(t) { await setArtStatus(t.dataset.id, "rejected"); },
+  async delArt(t) {
+    const id = t.dataset.id;
+    try { await Store.del(C.art, id); S.articles = S.articles.filter(a => a.id !== id); S.confirm = null; toast("Artikel gelöscht."); }
+    catch { toast("Löschen fehlgeschlagen."); }
+    render();
+  },
+  atab(t) { S.adminTab = t.dataset.k; S.confirm = null; render(); },
+  pickAdminUser(t) { S.adminUser = S.adminUser === t.dataset.u ? null : t.dataset.u; render(); },
+  async adminRefresh() {
+    try { await loadAdmin(); S.articles = await loadArticles(); toast("Aktualisiert."); } catch { toast("Aktualisieren fehlgeschlagen."); }
+    render();
+  },
+  async delUser(t) {
+    const u = t.dataset.id;
+    try {
+      const secs = await Store.list(C.sec, "owner", u);
+      for (const s of secs) await Store.del(C.sec, s.id);
+      const invs = (await Store.list(C.inv, "to", u)).concat(await Store.list(C.inv, "from", u));
+      for (const i of invs) await Store.del(C.inv, i.id);
+      const acc = S.accounts.find(a => a.username === u) || await Store.get(C.acc, u);
+      const ops = [["delete", C.acc, u], ["delete", C.logins, u]];
+      if (acc && acc.uid) ops.push(["delete", C.roles, acc.uid]);
+      await Store.batch(ops);
+      S.accounts = S.accounts.filter(a => a.username !== u); S.confirm = null;
+      toast(`Konto „${u}“ gelöscht.`);
+    } catch { toast("Löschen fehlgeschlagen."); }
+    render();
+  }
+};
+async function setArtStatus(id, status) {
+  try {
+    await Store.update(C.art, id, { status, reviewedAt: Date.now() });
+    const a = S.articles.find(x => x.id === id); if (a) a.status = status;
+    toast(status === "approved" ? "Artikel freigegeben. Er ist jetzt im Wiki sichtbar." : "Artikel abgelehnt.");
+  } catch { toast("Speichern fehlgeschlagen."); }
+  render();
+}
+function syncDraft() {
+  if (!S.draft) return;
+  document.querySelectorAll("[data-draft]").forEach(el => { S.draft[el.dataset.draft] = el.value; });
+}
+function exportSection(s) {
+  const lines = ["# Vocabify-Abschnitt", "# Name: " + s.name, "# Sprache: " + s.lang, "# " + LANGS[s.lang].name + " ; Deutsch"]
+    .concat((s.vocab || []).map(v => v.f.replace(/;/g, ",") + " ; " + v.d.replace(/;/g, ",")));
+  const blob = new Blob(["﻿" + lines.join("\r\n") + "\r\n"], { type: "text/plain;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = s.name.replace(/[^\wäöüÄÖÜß -]+/g, "").trim().replace(/\s+/g, "_").slice(0, 40) + ".vocab.txt";
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  toast("Datei heruntergeladen. Jetzt kannst du sie verschicken.");
+}
+async function importVocabFile(text, filename) {
+  text = String(text).replace(/^﻿/, "");
+  let name = "", lang = "";
+  const body = [];
+  for (const line of text.split(/\r?\n/)) {
+    const m = line.match(/^#\s*(Name|Sprache):\s*(.+)$/i);
+    if (m) { if (/name/i.test(m[1])) name = m[2].trim(); else lang = m[2].trim().toLowerCase(); continue; }
+    if (line.trim().startsWith("#")) continue;
+    body.push(line);
+  }
+  const rows = parseVocabText(body.join("\n"));
+  if (!rows.length) { toast("In der Datei wurden keine Vokabeln gefunden."); return; }
+  const now = Date.now();
+  const sec = { id: uid(), owner: S.me.username, name: (name || String(filename).replace(/\.(vocab\.)?(txt|csv)$/i, "").replace(/_/g, " ") || "Import").slice(0, 60),
+    lang: safeLang(lang), createdAt: now, vocab: rows.map((r, i) => ({ id: uid(), f: r.f, d: r.d, r: 0, w: 0, added: now + i })) };
+  S.sections.push(sec); S.openSection = sec.id; S.vocabTab = "sections"; render();
+  try { await Store.set(C.sec, sec.id, sec); toast(`„${sec.name}“ mit ${rows.length} Vokabeln importiert.`); } catch { toast("Speichern fehlgeschlagen."); }
+}
+const loadedScripts = {};
+function loadScript(src) {
+  if (!loadedScripts[src]) loadedScripts[src] = new Promise((res, rej) => {
+    const el = document.createElement("script"); el.src = src; el.onload = res; el.onerror = () => { delete loadedScripts[src]; rej(new Error("load")); };
+    document.head.append(el);
+  });
+  return loadedScripts[src];
+}
+function parseVocabText(text) {
+  const out = [];
+  for (let line of String(text || "").split(/\n/)) {
+    line = line.replace(/^\s*\d+[.)]\s*/, "").trim();
+    if (!line) continue;
+    let parts = line.split(/\t+|\s+[–—-]\s+|\s*=\s*|\s*:\s+|\s*;\s*|\s{2,}|\s*\|\s*/).map(x => x.trim()).filter(Boolean);
+    if (parts.length < 2) {
+      const toks = line.split(/\s+/);
+      const art = toks.findIndex((t, i) => i > 0 && /^(der|die|das)$/i.test(t));
+      if (art > 0) parts = [toks.slice(0, art).join(" "), toks.slice(art).join(" ")];
+      else if (toks.length === 2) parts = toks;
+    }
+    if (parts.length >= 2) out.push({ f: parts[0], d: parts.slice(1).join(", "), on: true });
+  }
+  return out;
+}
+
+/* ---------- forms ---------- */
+const F = {
+  login: f => doLogin(f),
+  setup: f => doSetup(f),
+  goal(f) {
+    const g = Math.round(+f.goal.value);
+    if (!(g >= 5 && g <= 1000)) { toast("Bitte ein Ziel zwischen 5 und 1000 eingeben."); return; }
+    setSetting("goal", g); render(); toast("Tagesziel: " + g + " Vokabeln.");
+  },
+  answer(f) {
+    const L = S.learn; if (!L) return;
+    if (L.state === "ask") submitAnswer(f.a.value);
+    else nextQuestion();
+  },
+  async newSec(f) {
+    const name = f.name.value.trim(); if (!name) return;
+    const sec = { id: uid(), owner: S.me.username, name, lang: f.lang.value, createdAt: Date.now(), vocab: [] };
+    S.sections.push(sec); S.openSection = sec.id; S.scan = null; render();
+    try { await Store.set(C.sec, sec.id, sec); } catch { toast("Speichern fehlgeschlagen."); }
+    const i = $("#av-f"); if (i) i.focus();
+  },
+  addVocab(f) {
+    const s = S.sections.find(x => x.id === S.openSection); if (!s) return;
+    const fv = f.f.value.trim(), dv = f.d.value.trim(); if (!fv || !dv) return;
+    s.vocab.push({ id: uid(), f: fv, d: dv, r: 0, w: 0, added: Date.now() });
+    markDirty("sec:" + s.id);
+    render();
+    const i = $("#av-f"); if (i) { i.value = ""; i.focus(); }
+    const d = $("#av-d"); if (d) d.value = "";
+  },
+  async share(f) {
+    const s = S.sections.find(x => x.id === S.openSection); if (!s) return;
+    const to = f.to.value.trim().toLowerCase();
+    if (to === S.me.username) { toast("Du kannst den Abschnitt nicht an dich selbst schicken."); return; }
+    try {
+      const acc = await Store.get(C.acc, to);
+      if (!acc) { toast(`Es gibt keinen Nutzer „${to}“.`); return; }
+      const id = uid();
+      await Store.set(C.inv, id, { from: S.me.username, to, createdAt: Date.now(),
+        section: { name: s.name, lang: s.lang, vocab: (s.vocab || []).map(v => ({ f: v.f, d: v.d })) } });
+      S.shareOpen = false; S.sendTo = ""; await loadSent(); render();
+      toast(`„${s.name}“ an ${to} gesendet.`);
+    } catch { toast("Einladung konnte nicht gesendet werden."); }
+  },
+  async article(f) {
+    syncDraft();
+    const d = S.draft;
+    if (!d.title.trim() || !d.body.trim()) { toast("Titel und Text dürfen nicht leer sein."); return; }
+    const doc = { author: S.me.username, title: d.title.trim(), font: d.font, body: d.body.trim(), images: d.images,
+      sources: d.sources.split("\n").map(x => x.trim()).filter(Boolean), status: "pending", likes: [], createdAt: Date.now() };
+    if (JSON.stringify(doc).length > 240000) { toast("Der Artikel ist zu groß. Entferne ein Bild."); return; }
+    const id = uid();
+    try {
+      await Store.set(C.art, id, doc);
+      S.articles.push(cleanArticle(Object.assign({ id }, doc))); S.draft = null; S.wikiTab = "mine"; render();
+      toast("Eingereicht! Der Admin prüft deinen Artikel.");
+    } catch { toast("Einreichen fehlgeschlagen."); }
+  },
+  async newUser(f) {
+    const u = f.username.value.trim().toLowerCase(), p = f.password.value, role = f.role.value;
+    if (!validUsername(u)) { toast("Benutzername: 3–24 Zeichen, nur a–z, 0–9, Punkt, Minus, Unterstrich."); return; }
+    if (p.length < 6) { toast("Das Passwort braucht mindestens 6 Zeichen."); return; }
+    try {
+      if (await Store.get(C.logins, u)) { toast(`„${u}“ gibt es schon.`); return; }
+      const acc = await makeAccount(u, p, role);
+      S.accounts.push(acc); render(); toast(`Konto „${u}“ angelegt.`);
+    } catch (e) { toast(e && e.code && e.code.includes("weak-password") ? "Das Passwort ist zu schwach." : "Konto konnte nicht angelegt werden."); }
+  },
+  async resetPw(f) {
+    const u = f.dataset.id, p = f.pw.value;
+    if (p.length < 6) { toast("Mindestens 6 Zeichen."); return; }
+    if (u === S.me.username) { toast("Dein eigenes Passwort kannst du hier nicht ändern."); return; }
+    try {
+      const acc = await Store.get(C.acc, u); if (!acc) { toast("Konto nicht gefunden."); return; }
+      const email = newEmail(u);
+      const newUid = await createAuthUser(email, p);
+      const ops = [["set", C.roles, newUid, { username: u, role: acc.role || "user" }], ["set", C.logins, u, { email }], ["update", C.acc, u, { uid: newUid }]];
+      if (acc.uid && acc.uid !== newUid) ops.push(["delete", C.roles, acc.uid]);
+      await Store.batch(ops);
+      const a = S.accounts.find(x => x.username === u); if (a) a.uid = newUid;
+      S.confirm = null; render(); toast(`Neues Passwort für „${u}“ gespeichert.`);
+    } catch (e) { toast(e && e.code && e.code.includes("weak-password") ? "Das Passwort ist zu schwach." : "Speichern fehlgeschlagen."); }
+  }
+};
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-act]");
+  if (!t || t.disabled) return;
+  if (t.tagName === "INPUT" && t.type === "checkbox") { A[t.dataset.act] && A[t.dataset.act](t, e); return; }
+  e.preventDefault();
+  const fn = A[t.dataset.act]; if (fn) fn(t, e);
+});
+document.addEventListener("submit", e => {
+  const f = e.target.closest("form[data-form]"); if (!f) return;
+  e.preventDefault();
+  const fn = F[f.dataset.form]; if (fn) fn(f);
+});
+document.addEventListener("input", e => {
+  const el = e.target;
+  if (el.dataset.scan != null && S.scan && S.scan.rows) S.scan.rows[+el.dataset.scan][el.dataset.k] = el.value;
+  if (el.dataset.draft && S.draft) S.draft[el.dataset.draft] = el.value;
+  if (el.id === "scan-text" && S.scan) S.scan.text = el.value;
+});
+document.addEventListener("change", async e => {
+  const el = e.target;
+  if (el.dataset.change === "statsFilter") { S.statsFilter = el.value; render(); }
+  if (el.id === "scan-file" && el.files[0] && S.scan) {
+    if (S.scan.imgUrl) URL.revokeObjectURL(S.scan.imgUrl);
+    S.scan.img = el.files[0]; S.scan.imgUrl = URL.createObjectURL(el.files[0]); S.scan.rows = null; S.scan.err = ""; render();
+  }
+  if (el.id === "imp-file" && el.files[0]) {
+    try { importVocabFile(await el.files[0].text(), el.files[0].name); } catch { toast("Datei konnte nicht gelesen werden."); }
+    el.value = "";
+  }
+  if (el.id === "ar-img" && el.files[0]) {
+    syncDraft();
+    try { const url = await shrinkImage(el.files[0], 720, .62); S.draft.images.push(url); } catch { toast("Bild konnte nicht gelesen werden."); }
+    render();
+  }
+});
+function shrinkImage(file, maxW, q) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const sc = Math.min(1, maxW / img.width);
+      const c = document.createElement("canvas"); c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg", q));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(); };
+    img.src = url;
+  });
+}
+
+/* ---------- animated pets ---------- */
+const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const Pets = {
+  stage: null, el: null, body: null, flipEl: null, id: null, def: null,
+  x: 80, y: 0, dir: -1, tx: 0, ty: 0, mode: "idle", wait: 1, anim: null, busy: false, raf: 0, last: 0, visible: false,
+  props: [], branches: [], bi: 0, actT: 3,
+  setVisible(v) {
+    if (!this.stage) this.stage = $("#petStage");
+    this.visible = v; this.stage.hidden = !v;
+    if (v && this.id && !this.raf) { this.last = performance.now(); this.raf = requestAnimationFrame(t => this.loop(t)); }
+    if (!v && this.raf) { cancelAnimationFrame(this.raf); this.raf = 0; }
+  },
+  unmount() { if (this.raf) cancelAnimationFrame(this.raf); this.raf = 0; this.id = null; if (this.stage) this.stage.innerHTML = ""; },
+  W() { return innerWidth; }, H() { return innerHeight; },
+  ground() { return this.H() - 96; },
+  mount(id) {
+    this.unmount();
+    this.stage = $("#petStage"); this.id = id; this.def = PET_DEFS[id];
+    this.stage.innerHTML = "";
+    this.el = document.createElement("div"); this.el.className = "pet"; this.el.title = this.def.name + " (antippen!)";
+    this.el.innerHTML = `<div class="pet-flip"><div class="pet-body">${this.def.e}</div></div>`;
+    this.flipEl = this.el.firstChild; this.body = this.flipEl.firstChild;
+    this.el.addEventListener("click", () => this.poke());
+    this.buildProps();
+    this.stage.append(this.el);
+    this.x = Math.min(this.W() - 80, 40 + Math.random() * 200); this.y = this.ground(); this.mode = "idle"; this.wait = 1; this.anim = null; this.busy = false; this.actT = 4 + Math.random() * 4;
+    const k = this.def.kind;
+    if (k === "swim") { this.y = this.H() * .5; this.pickSwim(); }
+    if (k === "climb") { this.x = this.trunkX - 22; this.y = this.trunkBottom - 60; this.ty = this.y; }
+    if (k === "branch") { this.bi = 0; const b = this.branches[0]; this.x = b.x + b.w / 2 - 30; this.y = b.y - 54; }
+    this.draw();
+  },
+  buildProps() {
+    this.props.forEach(p => p.remove()); this.props = []; this.branches = [];
+    const W = this.W(), H = this.H(), k = this.def.kind;
+    if (k === "climb") {
+      this.trunkX = W - 70; this.trunkTop = Math.max(140, H * .3); this.trunkBottom = H - 24;
+      const t = document.createElement("div"); t.className = "prop branch-v";
+      Object.assign(t.style, { left: this.trunkX + "px", top: this.trunkTop + "px", height: (this.trunkBottom - this.trunkTop) + "px" });
+      for (let i = 0; i < 4; i++) { const l = document.createElement("span"); l.className = "leaf"; Object.assign(l.style, { left: (i % 2 ? 12 : -20) + "px", top: (20 + i * 50) + "px", transform: `rotate(${i % 2 ? -20 : 200}deg)` }); t.append(l); }
+      this.stage.append(t); this.props.push(t);
+    }
+    if (k === "branch") {
+      const ys = [H * .42, H * .26, H * .5];
+      const xs = [W * .04, W * .4, W * .72];
+      for (let i = 0; i < 3; i++) {
+        const w = Math.min(170, W * .24), b = { x: Math.min(xs[i], W - w - 8), y: Math.max(130, ys[i]), w };
+        const el = document.createElement("div"); el.className = "prop branch-h";
+        Object.assign(el.style, { left: b.x + "px", top: b.y + "px", width: w + "px" });
+        const l = document.createElement("span"); l.className = "leaf"; Object.assign(l.style, { left: (w - 18) + "px", top: "-8px", transform: "rotate(-25deg)" }); el.append(l);
+        this.stage.append(el); this.props.push(el); this.branches.push(b);
+      }
+    }
+  },
+  draw() {
+    this.el.style.transform = `translate(${this.x}px,${this.y}px)`;
+    const flip = !this.def.front && this.dir > 0;
+    this.flipEl.style.transform = flip ? "scaleX(-1)" : "";
+    this.el.classList.toggle("walking", this.mode === "move" && this.def.kind === "walk" && !this.busy);
+  },
+  mouth() { return { x: this.def.front ? this.x + 22 : (this.dir > 0 ? this.x + 50 : this.x - 6), y: this.y + 22 }; },
+  fx(cls, html, x, y, ms, vars) {
+    const el = document.createElement("div"); el.className = "fx " + cls; el.innerHTML = html || "";
+    el.style.left = x + "px"; el.style.top = y + "px";
+    if (vars) for (const k in vars) el.style.setProperty(k, vars[k]);
+    this.stage.append(el); setTimeout(() => el.remove(), ms);
+  },
+  say(text) { this.fx("say", esc(text), this.x - 6, this.y - 34, 1700); },
+  bodyAnim(cls, ms) {
+    this.body.classList.remove("roll", "bounce", "munch", "raise", "sleep"); void this.body.offsetWidth;
+    this.body.classList.add(cls); setTimeout(() => this.body.classList.remove(cls), ms);
+  },
+  doAct(a) {
+    if (!this.id || this.busy) return;
+    const m = this.mouth();
+    const hold = ms => { this.busy = true; this.draw(); setTimeout(() => { this.busy = false; }, ms); };
+    switch (a) {
+      case "bark": this.say("Wuff!"); this.bodyAnim("bounce", 1000); hold(1000); break;
+      case "roll": this.bodyAnim("roll", 900); hold(950); break;
+      case "meow": this.say("Miau!"); hold(900); break;
+      case "yarn": this.fx("yarn", "🧶", m.x + (this.dir > 0 ? 6 : -22), this.y + 30, 1900, { "--dx": (this.dir > 0 ? 110 : -110) + "px" }); setTimeout(() => this.bodyAnim("bounce", 1000), 500); hold(1800); break;
+      case "bubbles": for (let i = 0; i < 5; i++) setTimeout(() => { const mm = this.mouth(); this.fx("bubble", "", mm.x, mm.y - 6, 2300, { "--dx": (Math.random() * 30 - 15) + "px" }); }, i * 260); break;
+      case "wave": this.say("Hallo!"); this.bodyAnim("bounce", 1000); hold(1200); break;
+      case "leaf": this.fx("emo", "🌿", m.x + 18, m.y - 6, 2100); this.bodyAnim("munch", 1800); hold(2000); break;
+      case "sleep": this.fx("zzz", "Zzz", this.x + 40, this.y - 8, 2500); this.bodyAnim("sleep", 2600); hold(2700); break;
+      case "banana": this.fx("emo", "🍌", m.x + (this.dir > 0 ? 0 : -6), m.y - 4, 2100); this.bodyAnim("munch", 1800); hold(2000); break;
+      case "trumpet": this.say("Töröö!"); this.bodyAnim("raise", 900); hold(1100); break;
+      case "spray": {
+        this.bodyAnim("raise", 900);
+        for (let i = 0; i < 10; i++) setTimeout(() => { const mm = this.mouth(); this.fx("drop", "", mm.x, mm.y - 10, 1200, { "--dx": ((this.dir > 0 ? 1 : -1) * (60 + Math.random() * 90)) + "px", "--up": (-40 - Math.random() * 50) + "px" }); }, i * 70);
+        hold(1300); break;
+      }
+      case "bamboo": this.fx("emo", "🎋", m.x + 16, m.y - 2, 2600); this.bodyAnim("munch", 2400); hold(2600); break;
+      case "croak": this.say("Quak!"); hold(900); break;
+    }
+  },
+  poke() {
+    if (this.id === "turtle") {
+      if (this.busy) return;
+      this.busy = true; this.mode = "idle";
+      this.body.innerHTML = '<div class="shell" aria-hidden="true"></div>';
+      this.draw();
+      setTimeout(() => { if (this.id === "turtle") { this.body.textContent = this.def.e; this.busy = false; this.wait = 1.2; } }, 2600);
+      return;
+    }
+    if (this.id === "kangaroo") { this.flip(); return; }
+    const acts = this.def.acts.length ? this.def.acts : ["croak"];
+    this.doAct(acts[Math.floor(Math.random() * acts.length)]);
+  },
+  onCorrect(n) {
+    if (!this.id || !this.visible) return;
+    if (this.id === "kangaroo" && n > 0 && n % 10 === 0) { setTimeout(() => this.flip(), 250); return; }
+    if (!this.busy && this.def.kind !== "swim") this.bodyAnim("bounce", 1000);
+  },
+  flip() {
+    if (this.busy && !this.anim) return;
+    const W = this.W(), x0 = this.x, y0 = this.ground();
+    const goRight = x0 < W / 2;
+    const x1 = goRight ? W - 90 : 30;
+    this.dir = goRight ? 1 : -1; this.busy = true; this.mode = "idle";
+    this.say("Hopp!");
+    const peak = Math.min(this.H() * .5, 340);
+    this.anim = { t: 0, dur: REDUCED ? .01 : 1.5, step: p => {
+      this.x = x0 + (x1 - x0) * p;
+      this.y = y0 - Math.sin(Math.PI * p) * peak;
+      const rot = (goRight ? -360 : 360) * Math.min(1, Math.max(0, (p - .15) / .7));
+      this.body.style.transform = `rotate(${rot}deg)`;
+    }, done: () => { this.body.style.transform = ""; this.busy = false; this.wait = 1; } };
+  },
+  pickSwim() { this.tx = 10 + Math.random() * (this.W() - 80); this.ty = 130 + Math.random() * Math.max(60, this.H() - 300); this.dir = this.tx > this.x ? 1 : -1; },
+  loop(t) {
+    this.raf = requestAnimationFrame(tt => this.loop(tt));
+    const dt = Math.min(.05, (t - this.last) / 1000); this.last = t;
+    if (!this.id || !this.visible) return;
+    if (this.anim) {
+      this.anim.t += dt; const p = Math.min(1, this.anim.t / this.anim.dur);
+      this.anim.step(p); this.draw();
+      if (p >= 1) { const a = this.anim; this.anim = null; a.done && a.done(); }
+      return;
+    }
+    if (this.busy || REDUCED) { this.draw(); return; }
+    const k = this.def.kind, W = this.W();
+    this.actT -= dt;
+    if (k === "walk" || k === "hop") {
+      if (this.mode === "idle") {
+        this.y = this.ground();
+        this.wait -= dt;
+        if (this.actT <= 0 && this.def.acts.length) { this.actT = 5 + Math.random() * 6; this.doAct(this.def.acts[Math.floor(Math.random() * this.def.acts.length)]); }
+        else if (this.wait <= 0) {
+          this.tx = 10 + Math.random() * (W - 90); this.dir = this.tx > this.x ? 1 : -1; this.mode = "move";
+          if (k === "hop") this.hopFrom = this.x, this.hopT = 0;
+        }
+      } else if (k === "walk") {
+        this.x += this.dir * this.def.speed * dt; this.y = this.ground();
+        if ((this.dir > 0 && this.x >= this.tx) || (this.dir < 0 && this.x <= this.tx)) { this.mode = "idle"; this.wait = .8 + Math.random() * 2.5; }
+      } else {
+        const hopLen = Math.min(110, Math.abs(this.tx - this.hopFrom)) || 1;
+        const hopDur = this.id === "frog" ? .55 : .5;
+        this.hopT += dt;
+        if (this.hopT < 0) { this.y = this.ground(); }
+        else {
+          const p = Math.min(1, this.hopT / hopDur);
+          this.x = this.hopFrom + this.dir * hopLen * p;
+          this.y = this.ground() - Math.sin(Math.PI * p) * (this.id === "frog" ? 70 : 55);
+          if (p >= 1) {
+            this.hopFrom = this.x; this.hopT = -(.12 + Math.random() * .25); this.y = this.ground();
+            if ((this.dir > 0 && this.x >= this.tx - 2) || (this.dir < 0 && this.x <= this.tx + 2)) { this.mode = "idle"; this.wait = .8 + Math.random() * 2.5; this.hopT = 0; }
+          }
+        }
+      }
+    } else if (k === "swim") {
+      const dx = this.tx - this.x, dy = this.ty - this.y, dist = Math.hypot(dx, dy);
+      if (dist < 6) this.pickSwim();
+      else { this.x += dx / dist * this.def.speed * dt; this.y += dy / dist * this.def.speed * dt + Math.sin(t / 300) * .4; }
+      if (this.actT <= 0) { this.actT = 3 + Math.random() * 4; this.doAct("bubbles"); }
+    } else if (k === "climb") {
+      this.x = this.trunkX - 22;
+      if (this.mode === "idle") {
+        this.wait -= dt;
+        if (this.actT <= 0) { this.actT = 6 + Math.random() * 6; this.doAct(this.def.acts[Math.floor(Math.random() * this.def.acts.length)]); }
+        else if (this.wait <= 0) { this.ty = this.trunkTop - 10 + Math.random() * (this.trunkBottom - this.trunkTop - 50); this.mode = "move"; }
+      } else {
+        const d = this.ty - this.y; const step = Math.sign(d) * this.def.speed * dt;
+        if (Math.abs(d) <= Math.abs(step)) { this.y = this.ty; this.mode = "idle"; this.wait = 1.5 + Math.random() * 3; }
+        else { this.y += step; this.body.style.transform = `rotate(${Math.sin(t / 160) * 6}deg)`; }
+        if (this.mode === "idle") this.body.style.transform = "";
+      }
+    } else if (k === "branch") {
+      if (this.mode === "idle") {
+        this.wait -= dt;
+        if (this.actT <= 0) { this.actT = 6 + Math.random() * 5; this.doAct("banana"); }
+        else if (this.wait <= 0) {
+          let nb = this.bi; while (nb === this.bi) nb = Math.floor(Math.random() * this.branches.length);
+          const b = this.branches[nb], x0 = this.x, y0 = this.y, x1 = b.x + 10 + Math.random() * (b.w - 70), y1 = b.y - 54;
+          this.dir = x1 > x0 ? 1 : -1; this.bi = nb;
+          this.anim = { t: 0, dur: .9, step: p => { this.x = x0 + (x1 - x0) * p; this.y = y0 + (y1 - y0) * p - Math.sin(Math.PI * p) * 110; },
+            done: () => { this.wait = 1.5 + Math.random() * 3; } };
+        }
+      }
+    }
+    this.draw();
+  }
+};
+addEventListener("resize", () => {
+  if (!Pets.id || !Pets.stage) return;
+  Pets.buildProps();
+  const k = Pets.def.kind;
+  if (k === "walk" || k === "hop") { Pets.x = Math.min(Pets.x, Pets.W() - 80); Pets.y = Pets.ground(); }
+  if (k === "branch") { const b = Pets.branches[Pets.bi]; Pets.x = b.x + 10; Pets.y = b.y - 54; }
+  if (k === "climb") { Pets.y = Math.min(Math.max(Pets.y, Pets.trunkTop - 10), Pets.trunkBottom - 60); }
+  Pets.draw();
+});
+
+boot();
+</script>
+
+</html>
