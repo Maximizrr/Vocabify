@@ -386,7 +386,7 @@ tr.sel td{background:var(--brand-soft)}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-const APP_VERSION = "1.0.5";
+const APP_VERSION = "1.1.0";
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
   authDomain: "vocabify-8abb9.firebaseapp.com",
@@ -398,6 +398,7 @@ const FIREBASE_CONFIG = {
 const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
 const TESSERACT_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
 const CHANGELOG = [
+  { v: "1.1.0", items: ["Scanner liest jetzt ganze Buchseiten (z. B. den Vocabulary-Teil im Englischbuch oder in der Access-App)", "Doppelseiten werden erkannt: Erklärseiten, Lautschrift, Beispielsätze und Bilder werden übersprungen", "Zweite Lesung der deutschen Wörter für richtige Umlaute", "Mehrzeilige Bedeutungen werden zusammengefügt, Erklärungen in Klammern entfernt"] },
   { v: "1.0.5", items: ["Foto-Scan erkennt jetzt Vokabelpaare: Spalten, Sprache und Reihenfolge werden automatisch bestimmt", "Überschriften, Seitenzahlen, Lautschrift und Beispielsätze werden ignoriert", "Persönliche Begrüßung mit eigenem Namen, Lernserie und Tagesziel", "Lateinische Längenstriche und Akzente müssen nicht getippt werden"] },
   { v: "1.0.4", items: ["Cloud-Speicher: Konten und Lernstände auf allen Geräten gleich", "Sichere Anmeldung über Firebase", "Kostenloser Foto-Scan direkt im Browser"] },
   { v: "1.0.3", items: ["Neuer Menüpunkt „Einstellungen“", "Theme wählbar: Hell, Dunkel oder wie das Gerät", "Eigenes Tagesziel festlegen", "App-Version prüfen und aktualisieren"] },
@@ -1504,7 +1505,7 @@ function scanPanel(s) {
         ${sc.img ? `<button class="btn primary" data-act="scanRun" ${sc.busy ? "disabled" : ""}>${sc.busy ? `<span class="spinner"></span> ${esc(sc.progress || "Lese Vokabeln…")}` : "Vokabeln erkennen"}</button>` : ""}
       </div>
       ${sc.imgUrl ? `<img class="scan-thumb" src="${sc.imgUrl}" alt="Gewähltes Vokabelblatt">` : ""}
-      <p class="muted" style="font-size:.85rem">Tipp: Fotografiere die Liste gerade von oben, bei gutem Licht. Gedruckte Listen klappen am besten. Die Erkennung läuft kostenlos in deinem Browser; beim ersten Scan werden einmalig 10 bis 20 MB Sprachdaten geladen.</p>
+      <p class="muted" style="font-size:.85rem">Funktioniert mit Vokabellisten und ganzen Buchseiten (auch Screenshots aus der Buch-App). Tipp: gerade von oben fotografieren, bei gutem Licht. Die Erkennung läuft kostenlos in deinem Browser und dauert bei einer Buchseite etwa 20 bis 40 Sekunden; beim ersten Scan werden einmalig 10 bis 20 MB Sprachdaten geladen.</p>
     ${sc.err ? `<p class="err">${esc(sc.err)}</p>` : ""}
     ${preview}
     <details class="paste"${sc.rows && sc.rows.length ? "" : " open"}><summary>Liste selbst einfügen</summary>
@@ -1913,11 +1914,26 @@ async scanRun() {
       } });
       const { data } = await worker.recognize(canvas);
       sc.raw = String(data && data.text || "").trim();
-      const res = VS.extract(data, s.lang, canvas.width);
+      const res = VS.extract(data, s.lang, canvas.width, canvas.height);
+      try { await worker.terminate(); } catch {}
+      worker = null;
+      /* zweite Lesung nur der deutschen Wörter (rein deutsche Erkennung, für richtige Umlaute) */
+      const withBox = res.pairs.filter(p => p.dBox);
+      if (withBox.length) {
+        sc.progress = "Prüfe deutsche Wörter…"; render();
+        worker = await Tesseract.createWorker("deu", 1);
+        let n = 0;
+        for (const p of withBox) {
+          if (!S.scan || S.scan !== sc) break;
+          const b = p.dBox, pad = Math.round((b.y1 - b.y0) * 0.35);
+          const rect = { left: Math.max(0, b.x0 - pad), top: Math.max(0, b.y0 - pad), width: Math.min(canvas.width, b.x1 + pad) - Math.max(0, b.x0 - pad), height: Math.min(canvas.height, b.y1 + pad) - Math.max(0, b.y0 - pad) };
+          try { const { data: d2 } = await worker.recognize(canvas, { rectangle: rect }); p.d = VS.refine(p.d, d2.text, true); } catch {}
+          n++; if (n % 3 === 0) { sc.progress = `Prüfe deutsche Wörter… ${n}/${withBox.length}`; render(); }
+        }
+      }
       sc.rows = res.pairs.map(p => ({ f: p.f, d: p.d, on: true }));
-      const lines = (data.lines || []).filter(l => l.text && l.text.trim()).length;
-      const skipped = Math.max(0, lines - sc.rows.length);
-      if (sc.rows.length) sc.info = `${sc.rows.length} Vokabel${sc.rows.length === 1 ? "" : "n"} erkannt${skipped ? `, ${skipped} andere Zeile${skipped === 1 ? "" : "n"} ignoriert (Überschriften, Lautschrift, Beispielsätze …)` : ""}. Bitte kurz prüfen.`;
+      const book = /^pages/.test(res.mode);
+      if (sc.rows.length) sc.info = `${sc.rows.length} Vokabel${sc.rows.length === 1 ? "" : "n"} erkannt${book ? " (Doppelseite erkannt, Erklärseite übersprungen)" : ""}. Lautschrift, Beispielsätze und Überschriften wurden ignoriert. Bitte kurz prüfen.`;
       else sc.err = sc.raw ? "Auf dem Foto wurden keine Vokabelpaare gefunden. Fotografiere die Liste möglichst gerade und nah, oder füge die Wörter unten selbst ein." : "Auf dem Foto wurde kein Text erkannt. Versuche ein schärferes Foto mit guter Beleuchtung.";
     } catch (e) {
       sc.err = "Die Texterkennung konnte nicht geladen werden. Prüfe deine Internetverbindung.";
@@ -2057,13 +2073,22 @@ const VS = (() => {
   const HEAD = /^(unit|lektion|lesson|le[cç]on|unit[ée]|chapter|chapitre|kapitel|vocabulary|vocabulaire|vokabeln?|vokabeltest|vokabelliste|wortschatz|wörter|station|seite|page|name|klasse|datum|date|test|tipp|tip|exemple|example|beispiel|übung|exercise|aufgabe|total|summe|viel erfolg|good luck)\b/i;
   const DE_WORDS = /^(der|die|das|den|dem|des|ein|eine|einen|einem|einer|sich|jdn|jdm|etw|und|oder|nicht|mit|von|zu|zum|zur|im|in|auf|für|aus)$/i;
   const LANG = {
-    en: { words: /^(the|to|a|an|of|and|or|be|sb|sth|somebody|something|with|for|on|in|at|up|out|off)$/i, chars: /(th|sh|wh|ck|ea|oo|ow|ay|y\b|w)/i, end: /(ing|tion|ness|ful|less|ly|ed)$/i },
+    en: { words: /^(the|to|a|an|of|and|or|be|sb|sth|somebody|something|with|for|on|in|at|up|out|off)$/i, chars: /(th|sh|wh|ck|ea|oo|ow|ay|y\b|qu|ph)/i, end: /(ing|tion|ness|ful|less|ly|ed)$/i },
     fr: { words: /^(le|la|les|l|un|une|des|du|de|d|et|ou|à|au|aux|en|qn|qc|ne|pas|se|s)$/i, chars: /[éèêëàâçùûôîïœ]|(eau|oi|ou|qu|ai)/i, end: /(er|ir|re|eur|euse|ment|tion|té|ée|eux|elle)$/i },
     la: { words: /^(et|est|in|cum|ad|non|sed|-a|-um|-i|-ī|-ae|-is|n\.|m\.|f\.|adv\.|präp\.)$/i, chars: /[āēīōūȳ]|(ae|qu)/i, end: /(us|um|ae|is|ōris|oris|are|āre|ere|ēre|ire|īre|or|ō|o|ī|i|ās|ēs|em|ēs)$/i }
   };
   const words = s => s.split(/\s+/).filter(Boolean);
   const median = a => { if (!a.length) return 0; const b = a.slice().sort((x, y) => x - y); return b[Math.floor(b.length / 2)]; };
 
+  /* Lautschrift [ˌɪndɪˈpendənt] und Seitenverweise (pp. 12/13) aus einer Zelle entfernen */
+  function stripExtras(t) {
+    let s = String(t || "");
+    s = s.replace(/^\s*p{1,2}[.\-]?\s*\d{1,3}(\s*[\/–-]\s*\d{1,3})?\)?\s*/i, "");
+    s = s.replace(/^\s*\S{0,4}\d{1,3}\s*\/\s*\d{1,3}\)?\s+/, "");
+    s = s.replace(/\[[^\]\[]{0,40}[\]\)!|]/g, " ").replace(/\[[^\]]{0,40}$/, " ");
+    s = s.split(/\s+/).filter(w => !IPA.test(w) && !/^[\[\]]|[\[\]]$/.test(w)).join(" ");
+    return s;
+  }
   function cleanCell(t) {
     return String(t || "")
       .replace(/[|¦]/g, " ")
@@ -2089,7 +2114,8 @@ const VS = (() => {
       const x = w.replace(/[,;.()]/g, "");
       if (DE_WORDS.test(x)) sc += 2;
       if (/[äöüß]/i.test(x)) sc += 2;
-      if (/(ung|keit|heit|lich|isch|chen|schaft|ieren|eln|ern)$/i.test(x)) sc += 1;
+      if (/(ung|keit|heit|lich|isch|chen|schaft|ieren|eln|ern|ig|bar|los|haft|end|en)$/i.test(x)) sc += 1;
+      if (/^\p{Lu}\p{Ll}{2,}/u.test(x)) sc += 0.6;
       if (/sch|tz|ei|ie|eu|pf/i.test(x)) sc += 0.5;
     }
     return sc;
@@ -2103,6 +2129,7 @@ const VS = (() => {
       if (L.end.test(x)) sc += 0.7;
     }
     if (lang === "la" && /,\s*-/.test(t)) sc += 2;
+    if (lang !== "la" && /^\(?to\)?\s/i.test(t) && lang === "en") sc += 2;
     return sc;
   }
 
@@ -2111,9 +2138,11 @@ const VS = (() => {
     const lines = (data && data.lines) || [];
     const cells = [];
     for (const ln of lines) {
-      const ws = (ln.words || []).filter(w => w.text && w.text.trim()).sort((a, b) => a.bbox.x0 - b.bbox.x0);
+      let ws = (ln.words || []).filter(w => w.text && w.text.trim()).sort((a, b) => a.bbox.x0 - b.bbox.x0);
       if (!ws.length) continue;
       const h = median(ws.map(w => w.bbox.y1 - w.bbox.y0)) || 12;
+      ws = ws.filter(w => (w.bbox.x1 - w.bbox.x0) <= h * (w.text.length * 1.2 + 2));
+      if (!ws.length) continue;
       let cur = null;
       for (const w of ws) {
         if (cur && w.bbox.x0 - cur.x1 > Math.max(1.5 * h, 18)) { cells.push(cur); cur = null; }
@@ -2124,12 +2153,14 @@ const VS = (() => {
       if (cur) cells.push(cur);
     }
     for (const c of cells) {
-      c.text = cleanCell(c.parts.join(" "));
-      c.k = kind(c.text);
+      const raw = cleanCell(c.parts.join(" "));
+      c.text = cleanCell(stripExtras(raw));
+      c.k = c.text ? kind(c.text) : (/[\[\]]|p{1,2}\.\s*\d/.test(raw) ? "phon" : "junk");
+      if (/^p{1,2}\.?\s*\d/i.test(raw) && !c.text) c.k = "junk";
       c.conf = c.conf.reduce((a, b) => a + b, 0) / c.conf.length;
       c.h = c.y1 - c.y0; c.yc = (c.y0 + c.y1) / 2;
     }
-    return cells.filter(c => c.text && c.conf >= 35);
+    return cells.filter(c => (c.text || c.k === "phon") && c.conf >= 25);
   }
 
   /* 2) Schräglage ausgleichen und Zellen zu Zeilen zusammenfassen */
@@ -2156,9 +2187,9 @@ const VS = (() => {
 
   /* 3) Spalten über die linke Kante clustern */
   function columns(rows, width) {
-    const tol = Math.max(30, width * 0.06);
+    const tol = Math.max(30, width * 0.05);
     const xs = [];
-    rows.forEach(r => { if (r.cells.length >= 2) r.cells.forEach(c => xs.push(c.x0)); });
+    rows.forEach(r => { const ws = r.cells.filter(c => c.k === "word" || c.k === "sentence"); if (ws.length >= 2) ws.forEach(c => xs.push(c.x0)); });
     xs.sort((a, b) => a - b);
     const cols = [];
     for (const x of xs) {
@@ -2189,62 +2220,76 @@ const VS = (() => {
   }
   /* typische Lesefehler korrigieren */
   function fixGerman(t) {
+    t = t.replace(/\([^)]*\)/g, " ").replace(/\([^)]*$/, " ").replace(/\s+/g, " ").trim();
     return t.replace(/[óò]/g, "ö").replace(/[ÓÒ]/g, "Ö").replace(/[áà]/g, "ä").replace(/[ÁÀ]/g, "Ä").replace(/[úù]/g, "ü").replace(/[ÚÙ]/g, "Ü")
       .replace(/([aeiouäöü])fs\b/g, "$1ß").replace(/\s+([,;])/g, "$1");
   }
   function fixForeign(t, lang) {
-    t = t.replace(/\s+([,;])/g, "$1");
+    t = t.replace(/\s+([,;])/g, "$1").replace(/\(p[\/1I|]\)/g, "(pl)");
     if (lang === "la") t = t.replace(/[áàäâ]/g, "ā").replace(/[éèëê]/g, "ē").replace(/[íìïî]/g, "ī").replace(/[óòöô]/g, "ō").replace(/[úùüû]/g, "ū");
     return t;
   }
   function finish(pairs, lang) {
     const seen = new Set(), out = [];
-    for (let [f, d] of pairs) {
+    for (let [f, d, , fBox, dBox] of pairs) {
       f = fixForeign(cleanCell(f).replace(/[,;:]\s*$/, ""), lang); d = fixGerman(cleanCell(d).replace(/[,;:]\s*$/, ""));
       if (!f || !d || !/\p{L}/u.test(f) || !/\p{L}/u.test(d)) continue;
-      if (f.length > 60 || d.length > 80 || f.toLowerCase() === d.toLowerCase()) continue;
+      if (f.length > 60 || d.length > 90 || (f.toLowerCase() === d.toLowerCase() && f.length < 3)) continue;
+      if (words(bare(f)).length > 6 || words(bare(d)).length > 10) continue;
+      if (!/\p{L}{3,}/u.test(f) || !/\p{L}{3,}/u.test(d)) continue;
       if (kind(f) !== "word" || kind(d) !== "word") continue;
       const key = f.toLowerCase() + "|" + d.toLowerCase();
       if (seen.has(key)) continue;
-      seen.add(key); out.push({ f, d });
+      seen.add(key); out.push({ f, d, fBox: fBox || null, dBox: dBox || null });
     }
     return out;
   }
 
-  function extract(data, lang, width) {
-    const cells = cellsFrom(data);
+  /* Plausibilität eines Paares: links Fremdsprache, rechts Deutsch */
+  function pairQuality(f, d, lang) {
+    return (deScore(d) - fScore(d, lang)) - (deScore(f) - fScore(f, lang));
+  }
+  const bare = t => t.replace(/\([^)]*\)/g, " ").replace(/\s+/g, " ").trim();
+
+  function extractPage(cells, data, lang, width) {
     if (!cells.length) return { pairs: [], mode: "empty" };
-    width = width || Math.max(...cells.map(c => c.x1));
     const { rows, hMed } = rowsFrom(cells, data);
     const multi = rows.filter(r => r.cells.filter(c => c.k === "word").length >= 2);
     if (multi.length >= 3) {
       const cols = columns(rows, width);
-      const stat = cols.map(() => ({ n: 0, word: 0, phon: 0, sent: 0, de: 0, fo: 0 }));
+      const stat = cols.map(() => ({ n: 0, word: 0, phon: 0, sent: 0, de: 0, fo: 0, wsum: 0 }));
       for (const r of rows) for (const c of r.cells) {
         c.col = colOf(cols, c.x0); const st = stat[c.col]; st.n++;
-        if (c.k === "word") { st.word++; st.de += deScore(c.text); st.fo += fScore(c.text, lang); }
+        if (c.k === "word") { st.word++; st.de += deScore(c.text); st.fo += fScore(c.text, lang); st.wsum += words(bare(c.text)).length; }
         else if (c.k === "phon") st.phon++;
         else if (c.k === "sentence") st.sent++;
       }
       const minSupport = Math.max(2, multi.length * 0.3);
-      const good = stat.map((s, i) => ({ i, s })).filter(o => o.s.word >= minSupport && o.s.phon <= o.s.n * 0.4 && o.s.sent <= o.s.n * 0.4);
+      const good = stat.map((s, i) => ({ i, s })).filter(o => o.s.word >= minSupport && o.s.phon <= (o.s.n - o.s.phon) * 0.6 + 1 || (o.s.word >= minSupport && o.s.word >= o.s.phon));
       if (good.length >= 2) {
         const net = o => (o.s.de - o.s.fo) / Math.max(1, o.s.word);
         const deCol = good.slice().sort((a, b) => net(b) - net(a))[0].i;
-        const rest = good.filter(o => o.i !== deCol);
-        const fCol = rest.sort((a, b) => b.s.word - a.s.word || a.i - b.i)[0].i;
+        /* Fremdsprache = direkte Nachbarspalte der deutschen Spalte mit den kürzesten Einträgen (Stichwörter statt Beispielsätze) */
+        const order = good.map(o => o.i).sort((a, b) => cols[a].x - cols[b].x);
+        const k = order.indexOf(deCol);
+        const neigh = [order[k - 1], order[k + 1]].filter(x => x != null).map(i => good.find(o => o.i === i));
+        const avgW = o => o.s.wsum / Math.max(1, o.s.word) + 3 * o.s.sent / Math.max(1, o.s.n);
+        const fCol = neigh.sort((a, b) => avgW(a) - avgW(b) || cols[a.i].x - cols[b.i].x)[0].i;
         const pairs = []; let last = null, pendingF = null;
+        const box = cs => cs.length ? { x0: Math.min(...cs.map(c => c.x0)), y0: Math.min(...cs.map(c => c.y0)), x1: Math.max(...cs.map(c => c.x1)), y1: Math.max(...cs.map(c => c.y1)) } : null;
+        const uni = (a, b) => !a ? b : !b ? a : { x0: Math.min(a.x0, b.x0), y0: Math.min(a.y0, b.y0), x1: Math.max(a.x1, b.x1), y1: Math.max(a.y1, b.y1) };
         for (const r of rows) {
-          const f = r.cells.filter(c => c.col === fCol && c.k === "word").map(c => c.text).join(" ");
-          const d = r.cells.filter(c => c.col === deCol && c.k === "word").map(c => c.text).join(" ");
-          if (f && d) { last = [f, d, r.yr]; pairs.push(last); pendingF = null; }
-          else if (f && !d) { pendingF = [f, r.yr]; last = null; }
+          const fc = r.cells.filter(c => c.col === fCol && c.k === "word"), dc = r.cells.filter(c => c.col === deCol && c.k === "word");
+          const f = fc.map(c => c.text).join(" "), d = dc.map(c => c.text).join(" ");
+          if (f && d) { last = [f, d, r.yr, box(fc), box(dc)]; pairs.push(last); pendingF = null; }
+          else if (f && !d) { if (!/^\(/.test(f)) { pendingF = [f, r.yr, box(fc)]; last = null; } }
           else if (d && !f) {
-            if (pendingF && r.yr - pendingF[1] < 2.2 * hMed) { last = [pendingF[0], d, r.yr]; pairs.push(last); pendingF = null; }
-            else if (last && r.yr - last[2] < 1.6 * hMed && /[,/]\s*$|^(die|der|das)\b/i.test(last[1] + "|" + d) ) { last[1] += " " + d; last[2] = r.yr; }
-          } else { last = null; pendingF = null; }
+            if (pendingF && r.yr - pendingF[1] < 2.2 * hMed) { last = [pendingF[0], d, r.yr, pendingF[2], box(dc)]; pairs.push(last); pendingF = null; }
+            else if (last && r.yr - last[2] < 2.2 * hMed) { last[1] += " " + d; last[2] = r.yr; last[4] = uni(last[4], box(dc)); }
+          } else if (!r.cells.some(c => c.col === deCol || c.col === fCol)) { /* Zeile nur in anderen Spalten: Zusammenhang bleibt */ }
+          else { last = null; pendingF = null; }
         }
-        const res = finish(pairs.map(p => [p[0], p[1]]), lang);
+        const res = finish(pairs, lang);
         if (res.length >= 2) return { pairs: res, mode: "columns" };
       }
     }
@@ -2258,16 +2303,68 @@ const VS = (() => {
     }
     return { pairs: finish(orient(pairs, lang), lang), mode: "lines" };
   }
-  return { extract, kind, cleanCell, splitLine, deScore, fScore };
-})();
+  const quality = (res, lang) => {
+    const qs = res.pairs.map(p => pairQuality(p.f, p.d, lang)), decided = qs.filter(q => q !== 0);
+    return decided.length ? decided.filter(q => q > 0).length / decided.length : 0;
+  };
 
+  /* Doppelseite (Buch, E-Book-Screenshot): an der freien Mitte trennen, jede Seite einzeln auswerten */
+  function findGutter(cells, W, H) {
+    if (W / H < 1.25 || cells.length < 20) return null;
+    const bins = 120, cov = new Array(bins).fill(0);
+    for (const c of cells) for (let b = Math.floor(c.x0 / W * bins); b <= Math.min(bins - 1, Math.floor(c.x1 / W * bins)); b++) cov[b]++;
+    let best = -1;
+    for (let b = Math.floor(bins * 0.3); b <= Math.ceil(bins * 0.7); b++)
+      if (best < 0 || cov[b] < cov[best] || (cov[b] === cov[best] && Math.abs(b - bins / 2) < Math.abs(best - bins / 2))) best = b;
+    const peak = Math.max(...cov);
+    if (cov[best] > Math.max(3, peak * 0.15)) return null;
+    return (best + 0.5) / bins * W;
+  }
+  function extract(data, lang, width, height) {
+    const cells = cellsFrom(data);
+    if (!cells.length) return { pairs: [], mode: "empty" };
+    const W = width || Math.max(...cells.map(c => c.x1)), H = height || Math.max(...cells.map(c => c.y1));
+    const whole = extractPage(cells, data, lang, W);
+    const g = findGutter(cells, W, H);
+    if (g == null) return whole;
+    const pages = [cells.filter(c => (c.x0 + c.x1) / 2 < g), cells.filter(c => (c.x0 + c.x1) / 2 >= g)]
+      .map(cs => extractPage(cs, data, lang, W / 2));
+    const most = Math.max(...pages.map(p => p.pairs.length));
+    const kept = pages.filter(p => p.pairs.length >= 3 && p.pairs.length >= most * 0.5 && quality(p, lang) >= 0.6);
+    const split = { pairs: finish(kept.flatMap(p => p.pairs.map(x => [x.f, x.d, 0, x.fBox, x.dBox])), lang), mode: "pages:" + pages.map(p => p.pairs.length + "/" + quality(p, lang).toFixed(2)).join(",") };
+    return split.pairs.length >= Math.max(2, whole.pairs.length * 0.5) ? split : whole;
+  }
+  /* Randschnipsel (Kritzel, Ausrufezeichen, Nachbarzeilen) vorne und hinten entfernen */
+  const SHORT_DE = /^(zu|im|um|an|in|ab|so|ob|da|du|er|es|wo|am|je)$/i;
+  const SHORT_OK = /^(zu|im|um|an|in|ab|so|ob|da|du|er|es|wo|am|je|to|of|on|at|be|by|do|go|up|le|la|de|un|et|ad|a)$/i;
+  function trimJunk(t, german) {
+    const ok = german ? SHORT_DE : SHORT_OK;
+    const junk = w => { const L = (w.match(/\p{L}/gu) || []).length; return !L || (L <= 2 && !ok.test(w.replace(/[^\p{L}]/gu, "")) && !/-$/.test(w)) || /^\p{Lu}{2,4}[.,;:]?$/u.test(w); };
+    const ws = t.split(/\s+/).filter(Boolean);
+    while (ws.length > 1 && junk(ws[ws.length - 1])) ws.pop();
+    while (ws.length > 1 && junk(ws[0])) ws.shift();
+    return ws.join(" ");
+  }
+  /* zweite Lesung: Text einer Box neu einsetzen, wenn er plausibel ist */
+  function refine(oldT, newT, german) {
+    let n = cleanCell(stripExtras(String(newT || "").replace(/\n+/g, " ")));
+    n = trimJunk(n, german);
+    if (german) n = fixGerman(n);
+    if (!n || kind(n) !== "word" || !/\p{L}{3,}/u.test(n)) return oldT;
+    const L = x => x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/g, "");
+    const a = L(oldT), b = L(n);
+    if (!b || Math.abs(a.length - b.length) > Math.max(3, a.length * 0.3)) return oldT;
+    return n;
+  }
+  return { extract, refine, kind, cleanCell, splitLine, deScore, fScore };
+})();
 /* Foto für die Texterkennung vorbereiten: auf gute Größe bringen, graustufen, Kontrast strecken */
 function prepareImage(file) {
   return new Promise((res, rej) => {
     const url = URL.createObjectURL(file), img = new Image();
     img.onload = () => {
       const long = Math.max(img.width, img.height);
-      const sc = long > 2600 ? 2600 / long : long < 1400 ? 1400 / long : 1;
+      const sc = Math.max(0.5, Math.min(2.5, 3000 / long));
       const c = document.createElement("canvas");
       c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
       const g = c.getContext("2d", { willReadFrequently: true });
