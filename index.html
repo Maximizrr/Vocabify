@@ -411,7 +411,7 @@ tr.sel td{background:var(--brand-soft)}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-const APP_VERSION = "1.2.0";
+const APP_VERSION = "1.2.1";
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
   authDomain: "vocabify-8abb9.firebaseapp.com",
@@ -423,6 +423,7 @@ const FIREBASE_CONFIG = {
 const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
 const TESSERACT_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
 const CHANGELOG = [
+  { v: "1.2.1", items: ["Foto-Scanner deutlich verbessert: gewölbte Seiten, schräge Fotos und ungleichmäßiges Licht", "Tabellenlinien werden vor dem Lesen entfernt, durchscheinende Schrift wird ignoriert", "Kästen mit zwei Vokabelspalten nebeneinander (z. B. Wiederholungsvokabeln) werden erkannt", "Jeder Vokabelblock wird ein zweites Mal als Ganzes gelesen", "Grammatikangaben wie „Adv.“ oder „f Pl.“ muss man beim Lernen nicht mittippen"] },
   { v: "1.2.0", items: ["Neuer Menüpunkt „Feedback“: Ideen, Fehler und Lob direkt an den Admin senden", "Admins können hilfreiches Feedback mit Münzen belohnen", "Scanner kontrolliert jetzt jedes Wort zweimal, auch bei Französisch und Latein", "Unsicher gelesene Wörter werden gelb markiert", "Eigenes App-Symbol für den Home-Bildschirm von iPhone und iPad"] },
   { v: "1.1.0", items: ["Scanner liest jetzt ganze Buchseiten (z. B. den Vocabulary-Teil im Englischbuch oder in der Access-App)", "Doppelseiten werden erkannt: Erklärseiten, Lautschrift, Beispielsätze und Bilder werden übersprungen", "Zweite Lesung der deutschen Wörter für richtige Umlaute", "Mehrzeilige Bedeutungen werden zusammengefügt, Erklärungen in Klammern entfernt"] },
   { v: "1.0.5", items: ["Foto-Scan erkennt jetzt Vokabelpaare: Spalten, Sprache und Reihenfolge werden automatisch bestimmt", "Überschriften, Seitenzahlen, Lautschrift und Beispielsätze werden ignoriert", "Persönliche Begrüßung mit eigenem Namen, Lernserie und Tagesziel", "Lateinische Längenstriche und Akzente müssen nicht getippt werden"] },
@@ -977,9 +978,23 @@ function norm(s) {
 }
 const ARTICLE_RE = /^(the|to|a|an|der|die|das|den|dem|ein|eine|einen|sich|le|la|les|l|un|une|des|se|s)\s+/;
 function stripArt(s) { let p; do { p = s; s = s.replace(ARTICLE_RE, ""); } while (s !== p); return s; }
+/* Grammatikangaben, die man beim Lernen nicht mittippen muss */
+const GRAMMAR_RE = /(^|\s)(adv|adj|präp|konj|subj|subst|pron|interj|part|pl|sg|akk|abl|dat|gen|nom|vok|m|f|n|mask|fem|neutr|indekl|inf|perf|ppp|sb|sth|qc|qn|jdn|jdm|jds|etw|jmd)\.?(?=\s|$|,)/gi;
 function variants(sol) {
-  const base = String(sol || "").replace(/\([^)]*\)/g, " ");
-  return base.split(/[,;\/]|\s+oder\s+|\s+or\s+|\s+ou\s+/i).map(norm).filter(Boolean).concat([norm(sol)]);
+  const raw = String(sol || "");
+  /* (ein)schätzen -> "einschätzen" und "schätzen"; immō (vērō) -> "immo vero" und "immo" */
+  const withParen = raw.replace(/\(([^)]*)\)/g, "$1");
+  const noParen = raw.replace(/\([^)]*\)/g, " ");
+  const out = new Set();
+  for (const base of [noParen, withParen]) {
+    for (const part of base.split(/[,;\/]|\s+oder\s+|\s+or\s+|\s+ou\s+/i).concat([base])) {
+      const v = norm(part); if (!v) continue;
+      out.add(v);
+      const bare = norm(part.replace(GRAMMAR_RE, " "));
+      if (bare && bare.length >= 2) out.add(bare);
+    }
+  }
+  return [...out];
 }
 function lev(a, b) {
   if (Math.abs(a.length - b.length) > 1) return 2;
@@ -1621,7 +1636,7 @@ function scanPanel(s) {
         ${sc.img ? `<button class="btn primary" data-act="scanRun" ${sc.busy ? "disabled" : ""}>${sc.busy ? `<span class="spinner"></span> ${esc(sc.progress || "Lese Vokabeln…")}` : "Vokabeln erkennen"}</button>` : ""}
       </div>
       ${sc.imgUrl ? `<img class="scan-thumb" src="${sc.imgUrl}" alt="Gewähltes Vokabelblatt">` : ""}
-      <p class="muted" style="font-size:.85rem">Funktioniert mit Vokabellisten und ganzen Buchseiten (auch Screenshots aus der Buch-App). Tipp: gerade von oben fotografieren, bei gutem Licht. Die Erkennung läuft kostenlos in deinem Browser und dauert bei einer Buchseite etwa 20 bis 40 Sekunden; beim ersten Scan werden einmalig 10 bis 20 MB Sprachdaten geladen.</p>
+      <p class="muted" style="font-size:.85rem">Funktioniert mit Vokabellisten, ganzen Buchseiten (auch gewölbt oder schräg fotografiert) und Screenshots aus der Buch-App. Tipp: Seite möglichst flach und ganz aufs Bild, gutes Licht ohne Blitz-Spiegelung. Die Erkennung läuft kostenlos in deinem Browser und dauert bei einer Buchseite etwa 20 bis 60 Sekunden; beim ersten Scan werden einmalig 10 bis 20 MB Sprachdaten geladen.</p>
     ${sc.err ? `<p class="err">${esc(sc.err)}</p>` : ""}
     ${preview}
     <details class="paste"${sc.rows && sc.rows.length ? "" : " open"}><summary>Liste selbst einfügen</summary>
@@ -2041,64 +2056,72 @@ async scanRun() {
     const sc = S.scan, s = S.sections.find(x => x.id === S.openSection);
     if (!sc || !sc.img || !s || sc.busy) return;
     sc.busy = true; sc.err = ""; sc.info = ""; sc.rows = null; sc.progress = "Bereite Foto vor…"; render();
-    let worker = null;
+    const workers = [];
+    const step = (txt) => { sc.progress = txt; render(); };
     try {
-      const canvas = await prepareImage(sc.img);
-      sc.progress = "Lade Texterkennung…"; render();
+      await new Promise(r => setTimeout(r, 30));
+      const im = await prepareImage(sc.img);
+      step("Lade Texterkennung…");
       await loadScript(TESSERACT_URL);
-      const langs = [{ en: "eng", la: "lat", fr: "fra" }[s.lang] || "eng", "deu"];
-      sc.progress = "Lade Sprachdaten…"; render();
-      let lastPct = -1;
-      worker = await Tesseract.createWorker(langs, 1, { logger: m => {
-        if (m.status === "recognizing text") { const pct = Math.round(m.progress * 100); if (pct !== lastPct && pct % 10 === 0) { lastPct = pct; sc.progress = "Lese Vokabeln… " + pct + " %"; render(); } }
-      } });
-      const { data } = await worker.recognize(canvas);
-      sc.raw = String(data && data.text || "").trim();
-      if (window.VOCABIFY_EMULATOR) window.__vsLast = { w: canvas.width, h: canvas.height, lines: (data.lines || []).map(l => ({ baseline: l.baseline, words: l.words.map(w => ({ text: w.text, bbox: w.bbox, confidence: w.confidence })) })) };
-      const res = VS.extract(data, s.lang, canvas.width, canvas.height);
-      try { await worker.terminate(); } catch {}
-      worker = null;
-      /* Kontrolllesung: jede Spalte noch einmal nur in ihrer eigenen Sprache lesen */
       const T = { en: "eng", fr: "fra", la: "lat" }[s.lang] || "eng";
-      const jobs = [];
-      for (const p of res.pairs) {
-        if (p.dBox) jobs.push({ p, key: "d", box: p.dBox, german: true });
-        if (p.fBox) jobs.push({ p, key: "f", box: p.fBox, german: false });
+      step("Lade Sprachdaten…");
+      let lastPct = -1, phase = "Finde Aufbau der Seite…";
+      const main = await Tesseract.createWorker([T, "deu"], 1, { logger: m => {
+        if (m.status === "recognizing text") { const pct = Math.round(m.progress * 100); if (pct !== lastPct && pct % 20 === 0) { lastPct = pct; step(phase + " " + pct + " %"); } }
+      } });
+      workers.push(main);
+      /* 1. Aufbau der Seite (Spalten, Kästen, Doppelseiten) aus dem Schwarz-Weiß-Bild */
+      const { data } = await main.recognize(im.bin);
+      sc.raw = String(data && data.text || "").trim();
+      if (window.VOCABIFY_EMULATOR) window.__vsLast = { w: im.W, h: im.H, lines: (data.lines || []).map(l => ({ baseline: l.baseline, words: l.words.map(w => ({ text: w.text, bbox: w.bbox, confidence: w.confidence })) })) };
+      const res = VS.extract(data, s.lang, im.W, im.H);
+      let pairs = res.pairs;
+      /* 2. jeden Vokabelblock (Fremdsprache + Deutsch) als Ganzes neu lesen */
+      const blocks = res.blocks || [];
+      for (let bi = 0; bi < blocks.length; bi++) {
+        if (S.scan !== sc) break;
+        phase = `Lese Vokabelblock ${bi + 1}/${blocks.length}…`; lastPct = -1; step(phase);
+        const rect = VS.blockRect(blocks[bi], im.W, im.H);
+        if (rect.width < 20 || rect.height < 10) continue;
+        try { const { data: bd } = await main.recognize(im.gray, { rectangle: rect }); pairs = VS.mergeBlock(pairs, VS.fromBlock(bd, blocks[bi], s.lang), rect, s.lang); } catch {}
       }
-      if (jobs.length) {
-        sc.progress = "Kontrolliere Wörter…"; render();
-        const workers = { true: await Tesseract.createWorker("deu", 1), false: await Tesseract.createWorker(T, 1) };
-        worker = workers.true; sc.extraWorker = workers.false;
+      /* 3. Kontrolllesung jedes Worts in seiner eigenen Sprache */
+      const jobs = [];
+      for (const p of pairs) {
+        if (p.dBox) jobs.push({ p, key: "d", box: p.dBox, german: true });
+        if (p.fBox && (p.fConf || 0) < 88) jobs.push({ p, key: "f", box: p.fBox, german: false });
+      }
+      if (jobs.length && S.scan === sc) {
+        phase = "Kontrolliere Wörter…"; step(phase);
+        const wd = await Tesseract.createWorker("deu", 1); workers.push(wd);
+        const wf = await Tesseract.createWorker(T, 1); workers.push(wf);
         let n = 0;
+        const L = x => String(x).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z]/g, "");
         for (const j of jobs) {
-          if (!S.scan || S.scan !== sc) break;
-          const b = j.box, pad = Math.round((b.y1 - b.y0) * 0.35);
+          if (S.scan !== sc) break;
+          const b = j.box, pad = Math.round((b.y1 - b.y0) * 0.3);
           const x0 = Math.max(0, b.x0 - pad), y0 = Math.max(0, b.y0 - pad);
-          const rect = { left: x0, top: y0, width: Math.min(canvas.width, b.x1 + pad) - x0, height: Math.min(canvas.height, b.y1 + pad) - y0 };
+          const rect = { left: x0, top: y0, width: Math.min(im.W, b.x1 + pad) - x0, height: Math.min(im.H, b.y1 + pad) - y0 };
           const oldT = j.p[j.key], oldC = j.key === "d" ? j.p.dConf : j.p.fConf;
           try {
-            const { data: d2 } = await workers[j.german].recognize(canvas, { rectangle: rect });
+            const { data: d2 } = await (j.german ? wd : wf).recognize(im.gray, { rectangle: rect });
             const nt = VS.refine(oldT, d2.text, j.german, oldC, d2.confidence, s.lang);
-            const L = x => String(x).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/g, "");
             const confirmed = nt !== oldT || (L(oldT).length >= 2 && L(d2.text).includes(L(oldT)));
             if (nt !== oldT) j.p[j.key] = nt;
-            if (confirmed) { const c = Math.max(oldC, d2.confidence); if (j.key === "d") j.p.dConf = c; else j.p.fConf = c; }
+            if (confirmed) { const c = Math.max(oldC || 0, d2.confidence); if (j.key === "d") j.p.dConf = c; else j.p.fConf = c; }
           } catch {}
-          n++; if (n % 4 === 0) { sc.progress = `Kontrolliere Wörter… ${Math.round(n / jobs.length * 100)} %`; render(); }
+          n++; if (n % 5 === 0) step(`Kontrolliere Wörter… ${Math.round(n / jobs.length * 100)} %`);
         }
-        try { await workers.false.terminate(); } catch {}
-        sc.extraWorker = null;
       }
-      sc.rows = res.pairs.map(p => ({ f: p.f, d: p.d, on: true, uf: p.fConf < 60, ud: p.dConf < 60 }));
+      sc.rows = pairs.map(p => ({ f: p.f, d: p.d, on: true, uf: (p.fConf || 0) < 60, ud: (p.dConf || 0) < 60 }));
       const book = /^pages/.test(res.mode);
       const unsure = sc.rows.filter(r => r.uf || r.ud).length;
-      if (sc.rows.length) sc.info = `${sc.rows.length} Vokabel${sc.rows.length === 1 ? "" : "n"} erkannt und kontrolliert${book ? " (Doppelseite erkannt, Erklärseite übersprungen)" : ""}. Lautschrift, Beispielsätze und Überschriften wurden ignoriert.${unsure ? ` ${unsure} unsichere Stelle${unsure === 1 ? " ist" : "n sind"} gelb markiert.` : ""}`;
+      if (sc.rows.length) sc.info = `${sc.rows.length} Vokabel${sc.rows.length === 1 ? "" : "n"} erkannt und kontrolliert${book ? " (Doppelseite erkannt, Erklärseite übersprungen)" : ""}. Lautschrift, Beispielsätze, Lernhilfen und Überschriften wurden ignoriert.${unsure ? ` ${unsure} unsichere Stelle${unsure === 1 ? " ist" : "n sind"} gelb markiert.` : ""}`;
       else sc.err = sc.raw ? "Auf dem Foto wurden keine Vokabelpaare gefunden. Fotografiere die Liste möglichst gerade und nah, oder füge die Wörter unten selbst ein." : "Auf dem Foto wurde kein Text erkannt. Versuche ein schärferes Foto mit guter Beleuchtung.";
     } catch (e) {
       sc.err = "Die Texterkennung konnte nicht geladen werden. Prüfe deine Internetverbindung.";
     } finally {
-      if (worker) { try { await worker.terminate(); } catch {} }
-      if (sc.extraWorker) { try { await sc.extraWorker.terminate(); } catch {} sc.extraWorker = null; }
+      for (const w of workers) { try { await w.terminate(); } catch {} }
     }
     sc.busy = false; sc.progress = ""; render();
   },
@@ -2260,11 +2283,21 @@ const VS = (() => {
   function stripParenPhon(t) {
     return t.replace(/(\S)\s+\([^\s().,;]{4,}\)(?=\s|$)/g, "$1").replace(/(\S)\s+[(\[][^\s().,;]{2,}(\s?[!|1l\]])?$/, "$1").replace(/\s+/g, " ").trim();
   }
+  const JUNK_TOK = /^([—–_^~·•°"'`´.,:;!?=*]+|-{2,}|\d{1,4}[.,]?|[A-ZÄÖÜ]{1}[.,]?|0+)$/;
+  function dropJunkTokens(t) {
+    const ws = String(t || "").split(/\s+/).filter(Boolean);
+    const hasL = x => /\p{L}/u.test(x || "");
+    const keep = ws.filter((w, i) => !(JUNK_TOK.test(w)
+      && !(/^[?!]$/.test(w) && i === ws.length - 1)
+      && !(/^\d/.test(w) && /^\(/.test(ws[i - 1] || ""))
+      && !(/^[=–—:-]$/.test(w) && hasL(ws[i - 1]) && hasL(ws[i + 1]))));
+    return keep.join(" ");
+  }
   function cleanCell(t) {
-    return String(t || "")
+    return dropJunkTokens(String(t || "")
       .replace(/[|¦]/g, " ")
       .replace(/^\s*(\(?\d{1,3}[.)]|[a-h]\)|[•·▪●○◦*>»-])\s+/, "")
-      .replace(/\s+/g, " ").trim();
+      .replace(/\s+/g, " ").trim()).replace(/\s+([,;])/g, "$1").trim();
   }
   function kind(t) {
     const s = t.trim();
@@ -2310,6 +2343,9 @@ const VS = (() => {
     const cells = [];
     for (const ln of lines) {
       let ws = (ln.words || []).filter(w => w.text && w.text.trim()).sort((a, b) => a.bbox.x0 - b.bbox.x0);
+      const lnAnchor = ws.length ? (() => { const w0 = ws[0], b = ln.baseline; const ax = w0.bbox.x0;
+        if (b && b.x1 > b.x0) return { x: ax, y: b.y0 + (ax - b.x0) * (b.y1 - b.y0) / (b.x1 - b.x0) - 0.35 * (w0.bbox.y1 - w0.bbox.y0) };
+        return { x: ax, y: (w0.bbox.y0 + w0.bbox.y1) / 2 }; })() : null;
       if (!ws.length) continue;
       const h = median(ws.map(w => w.bbox.y1 - w.bbox.y0)) || 12;
       ws = ws.filter(w => (w.bbox.x1 - w.bbox.x0) <= h * (w.text.length * 1.2 + 2));
@@ -2317,7 +2353,7 @@ const VS = (() => {
       let cur = null;
       for (const w of ws) {
         if (cur && w.bbox.x0 - cur.x1 > Math.max(1.5 * h, 18)) { cells.push(cur); cur = null; }
-        if (!cur) cur = { x0: w.bbox.x0, x1: w.bbox.x1, y0: w.bbox.y0, y1: w.bbox.y1, parts: [], conf: [] };
+        if (!cur) cur = { x0: w.bbox.x0, x1: w.bbox.x1, y0: w.bbox.y0, y1: w.bbox.y1, parts: [], conf: [], anchor: lnAnchor };
         cur.parts.push(w.text); cur.conf.push(w.confidence);
         cur.x1 = Math.max(cur.x1, w.bbox.x1); cur.y0 = Math.min(cur.y0, w.bbox.y0); cur.y1 = Math.max(cur.y1, w.bbox.y1);
       }
@@ -2391,24 +2427,31 @@ const VS = (() => {
   }
   /* typische Lesefehler korrigieren */
   function fixGerman(t) {
-    t = t.replace(/\([^)]*\)/g, " ").replace(/\([^)]*$/, " ").replace(/\s+/g, " ").trim();
+    t = t.replace(/\(([^)]*)\)/g, (m, inner) => (/\s/.test(inner.trim()) || inner.length > 12) ? " " : m).replace(/\s\([^)]*$/, " ").replace(/\s+/g, " ").trim();
+    t = trimJunk(t, true).replace(/(\p{L}{4,})\.$/u, "$1").replace(/(^|\s)\d+(?=\p{L})/gu, "$1");
     return t.replace(/[óòô]/g, "ö").replace(/[ÓÒÔ]/g, "Ö").replace(/[áàâ]/g, "ä").replace(/[ûú]/g, "ü").replace(/[ÁÀ]/g, "Ä").replace(/[úù]/g, "ü").replace(/[ÚÙ]/g, "Ü")
       .replace(/([aeiouäöü])fs\b/g, "$1ß").replace(/\s+([,;])/g, "$1");
   }
   function fixForeign(t, lang) {
-    t = stripParenPhon(t.replace(/\s+([,;])/g, "$1").replace(/\(p[\/1I|]\)/g, "(pl)"));
-    if (lang === "la") t = t.replace(/(\p{Ll})([AEIOU])(?=\p{Ll}|\b)/gu, (m, a, v) => a + { A: "ā", E: "ē", I: "ī", O: "ō", U: "ū" }[v]).replace(/[áàäâ]/g, "ā").replace(/[éèëê]/g, "ē").replace(/[íìïî]/g, "ī").replace(/[óòöô]/g, "ō").replace(/[úùüû]/g, "ū");
+    t = t.replace(/\s+([,;])/g, "$1").replace(/\(p[\/1I|]\)/g, "(pl)");
+    if (lang !== "la") t = stripParenPhon(t);
+    t = t.replace(/\bP[I1|]\.(?=\s|$)/g, "Pl.");
+    if (lang === "la") t = t.replace(/(\p{Ll})([AEIOUÁÉÍÓÚÀÈÌÒÙÄËÏÖÜÂÊÎÔÛ])(?=[^\p{Lu}]|$)/gu, (m, a, v) => a + { A: "ā", E: "ē", I: "ī", O: "ō", U: "ū" }[v.normalize("NFD")[0]]).replace(/[áàäâ]/g, "ā").replace(/[éèëê]/g, "ē").replace(/[íìïî]/g, "ī").replace(/[óòöô]/g, "ō").replace(/[úùüû]/g, "ū");
     return t;
   }
   function finish(pairs, lang) {
     const seen = new Set(), out = [];
     for (let [f, d, , fBox, dBox, fConf, dConf] of pairs) {
-      f = fixForeign(cleanCell(f).replace(/[,;:]\s*$/, ""), lang); d = fixGerman(cleanCell(d).replace(/[,;:]\s*$/, ""));
+      f = trimJunk(fixForeign(cleanCell(f).replace(/[,;:]\s*$/, ""), lang), false); d = fixGerman(cleanCell(d).replace(/[,;:]\s*$/, ""));
       if (!f || !d || !/\p{L}/u.test(f) || !/\p{L}/u.test(d)) continue;
       if (f.length > 60 || d.length > 90 || (f.toLowerCase() === d.toLowerCase() && f.length < 3)) continue;
       if (words(bare(f)).length > 6 || words(bare(d)).length > 10) continue;
       if (!(/\p{L}{3,}/u.test(f) || /^\p{Ll}{2}$/u.test(f)) || !/\p{L}{3,}/u.test(d)) continue;
       if (pairQuality(f, d, lang) <= -2) continue;   /* links steht eindeutig Deutsch: Erklärtext, keine Vokabel */
+      if (/^[^\p{Ll}]*$/u.test(f) && /^[^\p{Ll}]*$/u.test(d)) continue;                      /* beides nur Großbuchstaben/Zeichen: Müll */
+      if ((fConf || 99) < 30 && (dConf || 99) < 30) continue;
+      if (f.replace(/[^\p{L}]/gu, "").length <= 3 && d.replace(/[^\p{L}]/gu, "").length <= 3 && ((fConf || 99) < 80 || (dConf || 99) < 80) && !/^\p{Ll}{2,3}$/u.test(f.trim()) ) continue;
+      if (f.replace(/[^\p{L}]/gu, "").length <= 3 && d.replace(/[^\p{L}]/gu, "").length <= 3 && (fConf || 99) < 60 && (dConf || 99) < 60) continue;
       if (kind(f) !== "word" || kind(d) !== "word") continue;
       const key = f.toLowerCase() + "|" + d.toLowerCase();
       if (seen.has(key)) continue;
@@ -2423,11 +2466,11 @@ const VS = (() => {
   }
   const bare = t => t.replace(/\([^)]*\)/g, " ").replace(/\s+/g, " ").trim();
 
-  function extractPage(cells, data, lang, width) {
+  function extractPage(cells, data, lang, width, zone) {
     if (!cells.length) return { pairs: [], mode: "empty" };
     const { rows, hMed } = rowsFrom(cells, data);
     const multi = rows.filter(r => r.cells.filter(c => c.k === "word").length >= 2);
-    if (multi.length >= 3) {
+    if (multi.length >= (zone ? 2 : 3)) {
       const cols = columns(rows, width);
       const stat = cols.map(() => ({ n: 0, word: 0, phon: 0, sent: 0, de: 0, fo: 0, wsum: 0 }));
       for (const r of rows) for (const c of r.cells) {
@@ -2436,7 +2479,7 @@ const VS = (() => {
         else if (c.k === "phon") st.phon++;
         else if (c.k === "sentence") st.sent++;
       }
-      const minSupport = Math.max(2, multi.length * 0.3);
+      const minSupport = zone ? 2 : Math.max(2, multi.length * 0.3);
       const good = stat.map((s, i) => ({ i, s })).filter(o => o.s.word >= minSupport && o.s.phon <= (o.s.n - o.s.phon) * 0.6 + 1 || (o.s.word >= minSupport && o.s.word >= o.s.phon));
       if (good.length >= 2) {
         const net = o => (o.s.de - o.s.fo) / Math.max(1, o.s.word);
@@ -2458,33 +2501,108 @@ const VS = (() => {
         const goodIdx = good.map(o => o.i).sort((a, b) => cols[a].x - cols[b].x);
         const gaps = goodIdx.slice(1).map((gi, k) => cols[gi].x - cols[goodIdx[k]].x);
         const reach = 0.6 * (median(gaps) || width * 0.3);
-        for (const r of rows) for (const c of r.cells) {
-          if (goodIdx.includes(c.col)) continue;
-          let best = -1, bd = Infinity;
-          for (const gi of goodIdx) { const dd = Math.abs(cols[gi].x - c.x0); if (dd < bd) { bd = dd; best = gi; } }
-          c.col = bd <= reach ? best : -1;
+        const alignTol = Math.max(30, 0.2 * (median(gaps) || width * 0.3));
+        for (const r of rows) {
+          r.off = 0;
+          for (const c of r.cells) {
+            let best = -1, bd = Infinity;
+            for (const gi of goodIdx) { const dd = Math.abs(cols[gi].x - c.x0); if (dd < bd) { bd = dd; best = gi; } }
+            if (c.k === "word" && bd > alignTol && c.conf >= 60 && (c.text.match(/\p{L}/gu) || []).length >= 4) r.off++;
+            if (!goodIdx.includes(c.col)) c.col = bd <= reach ? best : -1;
+          }
         }
-        const pairs = []; let last = null, pendingF = null;
+        /* Bereiche mit eigenem Raster (z. B. Wiederholungskasten mit zwei Vokabelspalten) getrennt auswerten */
+        const zonePairs = [], zoneBlocks = [];
+        if (!zone) {
+          const runs = []; let cur = [];
+          for (const r of rows) {
+            const isOff = r.off >= 1 && r.cells.filter(c => c.k === "word").length >= 2;
+            if (isOff) cur.push(r); else if (r.cells.some(c => c.k === "word" && goodIdx.includes(c.col))) { if (cur.length) runs.push(cur); cur = []; }
+          }
+          if (cur.length) runs.push(cur);
+          for (const run of runs) {
+            if (run.length < 3) continue;
+            const zr = extractPage(run.flatMap(r => r.cells), data, lang, width, true);
+            if (zr.pairs.length >= 2) { zonePairs.push(...zr.pairs.map(x => [x.f, x.d, 0, x.fBox, x.dBox, x.fConf, x.dConf])); zoneBlocks.push(...(zr.blocks || [])); run.forEach(r => { r.skip = true; }); }
+          }
+        }
         const box = cs => cs.length ? { x0: Math.min(...cs.map(c => c.x0)), y0: Math.min(...cs.map(c => c.y0)), x1: Math.max(...cs.map(c => c.x1)), y1: Math.max(...cs.map(c => c.y1)) } : null;
         const uni = (a, b) => !a ? b : !b ? a : { x0: Math.min(a.x0, b.x0), y0: Math.min(a.y0, b.y0), x1: Math.max(a.x1, b.x1), y1: Math.max(a.y1, b.y1) };
-        for (const r of rows) {
-          const fc = r.cells.filter(c => c.col === fCol && c.k === "word"), dc = r.cells.filter(c => c.col === deCol && c.k === "word");
-          const f = fc.map(c => c.text).join(" "), d = dc.map(c => c.text).join(" ");
-          const conf = cs => cs.length ? cs.reduce((a, c) => a + c.conf, 0) / cs.length : 0;
-          if (f && d) { last = [f, d, r.yr, box(fc), box(dc), conf(fc), conf(dc)]; pairs.push(last); pendingF = null; }
-          else if (f && !d) {
-            if (/^\(/.test(f)) { /* Zusatz wie (AusE infml: roo) */ }
-            else if (last && r.yr - last[2] < 1.65 * hMed && /[\/,]\s*$/.test(last[0])) { last[0] += " " + f; last[2] = r.yr; last[3] = uni(last[3], box(fc)); }
-            else { pendingF = [f, r.yr, box(fc), conf(fc)]; last = null; }
+        const conf = cs => cs.length ? cs.reduce((a, c) => a + c.conf, 0) / cs.length : 0;
+        function pairRows(fCol, deCol) {
+          const live = rows.filter(r => !r.skip);
+          const fcs = live.flatMap(r => r.cells.filter(c => c.col === fCol && c.k === "word"));
+          const dcs = live.flatMap(r => r.cells.filter(c => c.col === deCol && c.k === "word"));
+          /* gleichmäßigen Höhenversatz zwischen den beiden Spalten messen (gewölbte Seiten, schräge Fotos) */
+          const deltas = [];
+          for (const f of fcs) {
+            let best = null;
+            for (const d of dcs) { const dy = d.yr - f.yr; if (Math.abs(dy) < 1.4 * hMed && (!best || Math.abs(dy) < Math.abs(best))) best = dy; }
+            if (best != null) deltas.push(best);
           }
-          else if (d && !f) {
-            if (pendingF && r.yr - pendingF[1] < 2.2 * hMed) { last = [pendingF[0], d, r.yr, pendingF[2], box(dc), pendingF[3], conf(dc)]; pairs.push(last); pendingF = null; }
-            else if (last && r.yr - last[2] < 1.65 * hMed) { last[1] += " " + d; last[2] = r.yr; last[4] = uni(last[4], box(dc)); }
-          } else if (!r.cells.some(c => c.col === deCol || c.col === fCol)) { /* Zeile nur in anderen Spalten: Zusammenhang bleibt */ }
-          else { last = null; pendingF = null; }
+          const off = deltas.length >= 3 ? median(deltas) : 0;
+          const shift = Math.abs(off) > 0.25 * hMed ? off : 0;
+          const items = [...fcs.map(c => ({ c, y: c.yr, f: true })), ...dcs.map(c => ({ c, y: c.yr - shift, f: false }))].sort((a, b) => a.y - b.y);
+          const out = [];
+          for (const it of items) {
+            const r = out[out.length - 1];
+            if (r && Math.abs(it.y - r.yr) < 0.6 * hMed) { r.cells.push(it.c); r.yr = (r.yr * r.n + it.y) / (r.n + 1); r.n++; }
+            else out.push({ yr: it.y, n: 1, cells: [it.c] });
+          }
+          out.forEach(r => r.cells.sort((a, b) => a.x0 - b.x0));
+          return out;
         }
+        function pairCols(fCol, deCol) {
+          const pairs = []; let last = null, pendingF = null;
+          const bc = rows.filter(r => !r.skip).flatMap(r => r.cells.filter(c => (c.col === fCol || c.col === deCol) && c.k === "word"));
+          /* rechter Rand: robust (90-%-Wert) und nie über die nächste Spalte hinaus */
+          const q90 = a => { const s2 = a.slice().sort((x, y) => x - y); return s2.length ? s2[Math.min(s2.length - 1, Math.floor(s2.length * 0.9))] : 0; };
+          const rightCol = cols[fCol].x > cols[deCol].x ? fCol : deCol;
+          /* jede belegte Spalte rechts davon (auch Beispielsätze) begrenzt den Block */
+          const rightX = cols.filter((c, i) => c.x > cols[rightCol].x + 0.5 * hMed && stat[i].n >= 2).map(c => c.x);
+          const limit = rightX.length ? Math.min(...rightX) - 0.4 * hMed : Infinity;
+          if (bc.length) blocks.push({ fx: cols[fCol].x, dx: cols[deCol].x,
+            fRight: Math.min(limit, Math.max(0, ...bc.filter(c => c.col === fCol).map(c => c.x1)) + 3 * hMed), dRight: Math.min(limit, Math.max(0, ...bc.filter(c => c.col === deCol).map(c => c.x1)) + 3 * hMed),
+            x0: Math.min(...bc.map(c => c.x0)), y0: Math.min(...bc.map(c => c.y0)), y1: Math.max(...bc.map(c => c.y1)), hMed });
+          for (const r of pairRows(fCol, deCol)) {
+            const fc = r.cells.filter(c => c.col === fCol && c.k === "word"), dc = r.cells.filter(c => c.col === deCol && c.k === "word");
+            const f = fc.map(c => c.text).join(" "), d = dc.map(c => c.text).join(" ");
+            if (f && d) { last = [f, d, r.yr, box(fc), box(dc), conf(fc), conf(dc)]; pairs.push(last); pendingF = null; }
+            else if (f && !d) {
+              if (/^\(/.test(f)) { /* Zusatz wie (AusE infml: roo) */ }
+              else if (last && r.yr - last[2] < 1.65 * hMed && /[\/,]\s*$/.test(last[0])) { last[0] += " " + f; last[2] = r.yr; last[3] = uni(last[3], box(fc)); }
+              else { pendingF = [f, r.yr, box(fc), conf(fc)]; last = null; }
+            }
+            else if (d && !f) {
+              const gap = last ? r.yr - last[2] : Infinity;
+              if (pendingF && r.yr - pendingF[1] < 2.2 * hMed) { last = [pendingF[0], d, r.yr, pendingF[2], box(dc), pendingF[3], conf(dc)]; pairs.push(last); pendingF = null; }
+              /* zweite Zeile einer Bedeutung: direkt darunter, oder die erste Zeile endet mit Komma/Semikolon */
+              else if (last && (gap < 1.65 * hMed || (gap < 2.9 * hMed && /[,;]\s*$/.test(last[1])))) { last[1] += " " + d; last[2] = r.yr; last[4] = uni(last[4], box(dc)); }
+            } else if (!r.cells.some(c => c.col === deCol || c.col === fCol)) { /* Zeile nur in anderen Spalten: Zusammenhang bleibt */ }
+            else { last = null; pendingF = null; }
+          }
+          if (pairs.length && blocks.length) {
+            const bx = blocks[blocks.length - 1], bs = pairs.flatMap(p => [p[3], p[4]]).filter(Boolean);
+            bx.y0 = Math.min(...bs.map(b => b.y0)); bx.y1 = Math.max(...bs.map(b => b.y1));
+          }
+          return pairs;
+        }
+        const blocks = [];
+        const pairs = pairCols(fCol, deCol);
+        /* weitere Vokabelspalten-Paare nebeneinander (Deutsch-Spalte mit Fremdsprache direkt links daneben) */
+        const bestNet = net(good.find(o => o.i === deCol));
+        const isDe = o => o.i === deCol || (net(o) >= Math.max(0.8, bestNet * 0.6));
+        for (const o of good) {
+          if (o.i === deCol || o.i === fCol || !isDe(o)) continue;
+          const k2 = goodIdx.indexOf(o.i), left = goodIdx[k2 - 1];
+          if (left == null || left === deCol || left === fCol) continue;
+          const lo = good.find(x => x.i === left); if (!lo || isDe(lo)) continue;
+          const more = pairCols(left, o.i);
+          if (more.length >= 2) pairs.push(...more);
+        }
+        pairs.push(...zonePairs);
         const res = finish(pairs, lang);
-        if (res.length >= 2) return { pairs: res, mode: "columns" };
+        if (res.length >= 2) return { pairs: res, mode: "columns", blocks: blocks.concat(zoneBlocks) };
       }
     }
     /* einspaltig: jede Zeile mit Trennzeichen */
@@ -2531,19 +2649,30 @@ const VS = (() => {
     const kept = order.filter(p => p === best
       ? p.pairs.length >= 2 && quality(p, lang) >= 0.6
       : p.pairs.length >= 3 && p.pairs.length >= best.pairs.length * 0.5 && quality(p, lang) >= 0.75 && foreignness(p) >= -0.2);
-    const split = { pairs: finish(kept.flatMap(p => p.pairs.map(x => [x.f, x.d, 0, x.fBox, x.dBox, x.fConf, x.dConf])), lang), mode: "pages:" + pages.map(p => p.pairs.length + "/" + quality(p, lang).toFixed(2)).join(",") };
+    const split = { blocks: kept.flatMap(p => p.blocks || []), pairs: finish(kept.flatMap(p => p.pairs.map(x => [x.f, x.d, 0, x.fBox, x.dBox, x.fConf, x.dConf])), lang), mode: "pages:" + pages.map(p => p.pairs.length + "/" + quality(p, lang).toFixed(2)).join(",") };
     return split.pairs.length >= Math.max(2, whole.pairs.length * 0.5) ? split : whole;
   }
   /* Randschnipsel (Kritzel, Ausrufezeichen, Nachbarzeilen) vorne und hinten entfernen */
-  const SHORT_DE = /^(zu|im|um|an|in|ab|so|ob|da|du|er|es|wo|am|je)$/i;
+  const SHORT_DE = /^(zu|im|um|an|in|ab|so|ob|da|du|er|es|wo|am|ja|oh|ex|wie)$/i;
   const SHORT_OK = /^(zu|im|um|an|in|ab|so|ob|da|du|er|es|wo|am|je|to|of|on|at|be|by|do|go|up|le|la|de|un|et|ad|a|m|f|n|qc|qn|sb|pl|il|tu|y|à|ā|ō|ī)$/i;
   function trimJunk(t, german) {
     const ok = german ? SHORT_DE : SHORT_OK;
-    const junk = w => { if (/^[?!]$/.test(w)) return false; const L = (w.match(/\p{L}/gu) || []).length; return !L || (L <= 2 && !ok.test(w.replace(/[^\p{L}]/gu, "")) && !/-$/.test(w)) || /^\p{Lu}{2,4}[.,;:]?$/u.test(w); };
+    const junk = w => { if (/^[?!]$/.test(w)) return false; const L = (w.match(/\p{L}/gu) || []).length; return !L || (L <= 2 && !ok.test(w.replace(/[^\p{L}]/gu, "")) && !/-$/.test(w)) || /^\p{Lu}{2,4}[.,;:)]?$/u.test(w) || /^[^\p{L}(]*\p{L}{1,3}\)$/u.test(w); };
     const ws = t.split(/\s+/).filter(Boolean);
     while (ws.length > 1 && junk(ws[ws.length - 1])) ws.pop();
     while (ws.length > 1 && junk(ws[0])) ws.shift();
     return ws.join(" ");
+  }
+  function levRatio(a, b) {
+    a = a.slice(0, 80); b = b.slice(0, 80);
+    if (!a.length || !b.length) return 1;
+    let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+    for (let i = 1; i <= a.length; i++) {
+      const cur = [i];
+      for (let j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      prev = cur;
+    }
+    return prev[b.length] / Math.max(a.length, b.length);
   }
   /* zweite Lesung: Text einer Box neu einsetzen, wenn er plausibel ist */
   function refine(oldT, newT, german, oldConf, newConf, lang) {
@@ -2553,39 +2682,181 @@ const VS = (() => {
     if (!n || (kind(n) !== "word") || !/\p{L}{3,}/u.test(n) && !/\p{L}{2}/u.test(n) && n.length < 2) return oldT;
     const L = x => x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/g, "");
     const a = L(oldT), b = L(n);
+    /* sauberere Teil-Lesung (alte Lesung enthielt doppelten Text oder Müll) */
+    const junky = /(^|\s)\p{Lu}{3,}(\s|$)|[^\p{L}\s,;.()\/'’?!-]/u.test(oldT) || /(\b\p{L}{3,}\b).*\b\1\b/iu.test(oldT);
+    if (junky && b && b.length >= 3 && a.includes(b) && b.length >= a.length * 0.4 && (newConf || 0) >= 75) return n;
     if (!b || Math.abs(a.length - b.length) > Math.max(3, a.length * 0.3)) return oldT;
-    if (german) return /\p{L}{3,}/u.test(n) ? n : oldT;
+    if (german) {
+      if (!/\p{L}{3,}/u.test(n)) return oldT;
+      const oc = oldConf || 0, nc = newConf || 0;
+      if (a === b) return nc >= oc - 12 || /[äöüß]/i.test(n) && !/[äöüß]/i.test(oldT) ? n : oldT;   /* nur Umlaute/ß verschieden */
+      const dist = levRatio(a, b);
+      return nc >= oc + 10 && dist <= 0.4 ? n : oldT;
+    }
+    return foreignPick();
+    function foreignPick() {
     /* Fremdsprache: nur übernehmen, wenn es sicherer gelesen wurde oder sich nur Akzente/Längen unterscheiden */
     const oc = oldConf || 0, nc = newConf || 0;
     if (a === b) return nc >= oc - 15 ? n : oldT;
     return nc >= oc + 8 ? n : oldT;
+    }
   }
-  return { extract, refine, kind, cleanCell, splitLine, deScore, fScore };
+  /* Blocklesung: Tesseract hat den Block (Fremdsprache + Deutsch) im Modus "gleichmäßiger Textblock" neu gelesen */
+  function blockRect(b, W, H) {
+    const pad = Math.round(b.hMed * 0.8);
+    const right = b.fx < b.dx ? b.dRight : b.fRight;
+    const x0 = Math.max(0, Math.round(b.x0 - pad)), y0 = Math.max(0, Math.round(b.y0 - pad));
+    return { left: x0, top: y0, width: Math.min(W, Math.round(right + pad)) - x0, height: Math.min(H, Math.round(b.y1 + pad)) - y0 };
+  }
+  function fromBlock(data, b, lang) {
+    const leftIsF = b.fx < b.dx, gap = Math.abs(b.dx - b.fx);
+    const splitX = (leftIsF ? b.dx : b.fx) - 0.15 * gap;
+    const lines = (data.lines || []).map(l => (l.words || []).filter(w => w.text && w.text.trim()).sort((a, c) => a.bbox.x0 - c.bbox.x0)).filter(ws => ws.length);
+    const pitchs = lines.slice(1).map((ws, i) => ws[0].bbox.y0 - lines[i][0].bbox.y0).filter(x => x > 0);
+    const pitch = median(pitchs) || b.hMed * 2;
+    const part = ws => ws.length ? { t: ws.map(w => w.text).join(" "), box: { x0: Math.min(...ws.map(w => w.bbox.x0)), y0: Math.min(...ws.map(w => w.bbox.y0)), x1: Math.max(...ws.map(w => w.bbox.x1)), y1: Math.max(...ws.map(w => w.bbox.y1)) }, conf: ws.reduce((a, w) => a + w.confidence, 0) / ws.length } : null;
+    const uni = (a, c) => ({ x0: Math.min(a.x0, c.x0), y0: Math.min(a.y0, c.y0), x1: Math.max(a.x1, c.x1), y1: Math.max(a.y1, c.y1) });
+    const out = []; let last = null, pend = null;
+    for (const ws of lines) {
+      const L = part(ws.filter(w => w.bbox.x0 < splitX)), R = part(ws.filter(w => w.bbox.x0 >= splitX));
+      let f = leftIsF ? L : R, d = leftIsF ? R : L;
+      const y = ws[0].bbox.y0;
+      if (f) { f.t = cleanCell(stripExtras(f.t)); if (!f.t || kind(f.t) === "phon" || kind(f.t) === "junk") f = null; }
+      if (d) { d.t = cleanCell(stripExtras(d.t)); if (!d.t || kind(d.t) === "junk" || kind(d.t) === "phon") d = null; }
+      if (f && d) { last = { f: f.t, d: d.t, fBox: f.box, dBox: d.box, fConf: f.conf, dConf: d.conf, y }; out.push(last); pend = null; }
+      else if (d && !f) {
+        if (pend && y - pend.y < 1.6 * pitch) { last = { f: pend.f.t, d: d.t, fBox: pend.f.box, dBox: d.box, fConf: pend.f.conf, dConf: d.conf, y }; out.push(last); pend = null; }
+        else if (last && y - last.y < 1.6 * pitch && (/[,;]\s*$/.test(last.d) || /^\(/.test(last.d.split(" ").pop() || "") || /\([^)]*$/.test(last.d) || y - last.y < 0.8 * pitch)) {
+          last.d += " " + d.t; last.dBox = uni(last.dBox, d.box); last.y = y;
+        }
+      } else if (f && !d) {
+        if (/^\(/.test(f.t)) continue;
+        if (last && y - last.y < 1.6 * pitch && /[,/]\s*$/.test(last.f)) { last.f += " " + f.t; last.fBox = uni(last.fBox, f.box); last.y = y; }
+        else { pend = { f, y }; last = null; }
+      }
+    }
+    return finish(out.map(p => [p.f, p.d, 0, p.fBox, p.dBox, p.fConf, p.dConf]), lang);
+  }
+  /* Blockergebnis übernehmen, wenn es mindestens so vollständig ist; Paare aus dem ersten Durchlauf, die der Block nicht abdeckt, bleiben */
+  function goodness(p, lang) {
+    const odd = (t, re) => (t.match(re) || []).length;
+    const deOdd = odd(p.d, /[^A-Za-zÄÖÜäöüß0-9\s,;.\-()\/'’?!:]/g);
+    const foOdd = odd(p.f, lang === "fr" ? /[^A-Za-zÀ-ÿœŒ0-9\s,;.\-()\/'’?!:]/g : lang === "la" ? /[^A-Za-zāēīōūȳĀĒĪŌŪ0-9\s,;.\-()\/'’?!:]/g : /[^A-Za-z0-9\s,;.\-()\/'’?!:~]/g);
+    const caps = odd(p.d + " " + p.f, /\b\p{Lu}{3,}\b/gu);
+    const shortJunk = (p.d.split(/\s+/).filter(w => w.replace(/[^\p{L}]/gu, "").length > 0 && w.replace(/[^\p{L}]/gu, "").length <= 2 && !SHORT_DE.test(w.replace(/[^\p{L}]/gu, ""))).length)
+      + (p.f.split(/\s+/).filter(w => w.replace(/[^\p{L}]/gu, "").length === 1 && !/^[afmn]\.?$/i.test(w) && !/^[àaày]$/i.test(w)).length);
+    return ((p.fConf || 50) + (p.dConf || 50)) / 2 - 12 * (deOdd + foOdd) - 15 * caps - 12 * shortJunk;
+  }
+  /* Blockergebnis und erster Durchlauf: pro Zeile die bessere Lesung nehmen; nichts geht verloren */
+  function mergeBlock(pairs, blockPairs, rect, lang) {
+    const inRect = p => { const b = p.fBox || p.dBox; if (!b) return false; const cy = (b.y0 + b.y1) / 2, cx = (b.x0 + b.x1) / 2; return cy >= rect.top && cy <= rect.top + rect.height && cx >= rect.left && cx <= rect.left + rect.width; };
+    const old = pairs.filter(inRect);
+    if (blockPairs.length < Math.max(2, old.length * 0.6)) return pairs;
+    const over = (p, q) => { const a = p.fBox || p.dBox, b = q.fBox || q.dBox; return a && b && Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0) > 0.3 * Math.min(a.y1 - a.y0, b.y1 - b.y0); };
+    const out = pairs.filter(p => !inRect(p) || !blockPairs.some(q => over(p, q)));
+    const L = x => String(x).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/g, "");
+    const fieldGood = (t, c, german) => goodness(german ? { f: "", d: t, fConf: c, dConf: c } : { f: t, d: "", fConf: c, dConf: c }, lang);
+    for (const q of blockPairs) {
+      const p = old.find(x => over(x, q));
+      if (!p) { out.push(q); continue; }
+      const r = Object.assign({}, q);
+      for (const [k, box, cf, german] of [["f", "fBox", "fConf", false], ["d", "dBox", "dConf", true]]) {
+        const lp = L(p[k]), lq = L(q[k]);
+        const same = levRatio(lp, lq) <= 0.4 || (lp.length > lq.length && lp.startsWith(lq.slice(0, -2))) || (lq.length > lp.length && lq.startsWith(lp.slice(0, -2)));
+        let takeOld;
+        const cleanLonger = (lo, sh, loT, loC, shT, shC) => lo.length >= sh.length + 3 && lo.length - sh.length <= 12 && lo.startsWith(sh.slice(0, Math.max(3, sh.length - 3)))
+          && fieldGood(loT, loC, german) >= fieldGood(shT, shC, german) - 15 && !/\p{Lu}{3,}|[0-9€$%&#@]/u.test(loT);
+        const muchLonger = (lo, sh) => lo.length > sh.length + 12 && lo.startsWith(sh.slice(0, Math.max(3, sh.length - 2)));
+        if (same && cleanLonger(lp, lq, p[k], p[cf], q[k], q[cf])) takeOld = true;       /* Block hat das Ende abgeschnitten */
+        else if (same && cleanLonger(lq, lp, q[k], q[cf], p[k], p[cf])) takeOld = false;
+        else if (muchLonger(lp, lq)) {                                                    /* erster Durchlauf hat Nachbarspalte angeklebt */
+          takeOld = false;
+          /* abgeschnittenes letztes Wort aus dem ersten Durchlauf vervollständigen */
+          const qw = q[k].split(/\s+/), pw = p[k].split(/\s+/), i = qw.length - 1;
+          const stem = L(qw[i] || "");
+          if (stem.length >= 4 && pw[i] && L(pw[i]).startsWith(stem.slice(0, -1)) && L(pw[i]).length > stem.length && L(qw.slice(0, i).join(" ")) === L(pw.slice(0, i).join(" "))) r[k] = pw.slice(0, i + 1).join(" ").replace(/[,;]$/, "");
+        }
+        else if (muchLonger(lq, lp)) takeOld = true;
+        else takeOld = same ? (p[cf] || 0) > (q[cf] || 0) + 5 : fieldGood(p[k], p[cf], german) > fieldGood(q[k], q[cf], german) + 8;
+        if (takeOld) { r[k] = p[k]; r[box] = p[box] || r[box]; r[cf] = p[cf]; }
+      }
+      out.push(r);
+    }
+    const y = p => (p.fBox || p.dBox).y0, x = p => (p.fBox || p.dBox).x0;
+    return out.sort((a, b) => (y(a) - y(b)) || (x(a) - x(b)));
+  }
+  return { fixGerman, fixForeign, extract, refine, fromBlock, mergeBlock, blockRect, kind, cleanCell, splitLine, deScore, fScore };
 })();
-/* Foto für die Texterkennung vorbereiten: auf gute Größe bringen, graustufen, Kontrast strecken */
+/* Foto für die Texterkennung vorbereiten:
+   1. auf ~3000 px bringen und in Graustufen umwandeln (Kontrast gestreckt)
+   2. adaptive Schwarz-Weiß-Umwandlung (Bradley): gleicht Schatten und gewölbte Seiten aus, graue Schrift bleibt erhalten
+   3. dünne, lange Tabellenlinien erkennen und entfernen (sie zerschneiden sonst die Wörter)
+   Ergebnis: { gray, bin } – "bin" für den Aufbau, "gray" für die genauen Lesungen */
 function prepareImage(file) {
   return new Promise((res, rej) => {
     const url = URL.createObjectURL(file), img = new Image();
     img.onload = () => {
-      const long = Math.max(img.width, img.height);
-      const sc = Math.max(0.5, Math.min(2.5, 3000 / long));
-      const c = document.createElement("canvas");
-      c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
-      const g = c.getContext("2d", { willReadFrequently: true });
-      g.imageSmoothingQuality = "high";
-      g.drawImage(img, 0, 0, c.width, c.height);
-      URL.revokeObjectURL(url);
       try {
-        const id = g.getImageData(0, 0, c.width, c.height), d = id.data, hist = new Uint32Array(256);
-        for (let i = 0; i < d.length; i += 4) { const y = (d[i] * 299 + d[i + 1] * 587 + d[i + 2] * 114) / 1000 | 0; d[i] = y; hist[y]++; }
-        const n = c.width * c.height; let lo = 0, hi = 255, acc = 0;
+        const long = Math.max(img.width, img.height);
+        const sc = Math.max(0.5, Math.min(2.5, 3000 / long));
+        const W = Math.round(img.width * sc), H = Math.round(img.height * sc);
+        const mk = () => { const c = document.createElement("canvas"); c.width = W; c.height = H; return c; };
+        const gray = mk(), g = gray.getContext("2d", { willReadFrequently: true });
+        g.imageSmoothingQuality = "high";
+        g.drawImage(img, 0, 0, W, H);
+        URL.revokeObjectURL(url);
+        const id = g.getImageData(0, 0, W, H), d = id.data, n = W * H;
+        const Y = new Float32Array(n), hist = new Uint32Array(256);
+        for (let i = 0, p = 0; p < n; i += 4, p++) { const y = (d[i] * 299 + d[i + 1] * 587 + d[i + 2] * 114) / 1000; Y[p] = y; hist[y | 0]++; }
+        /* Bradley-Schwelle mit Integralbild */
+        const win = Math.max(31, Math.floor(W / 16)), r = win >> 1, ii = new Float64Array((W + 1) * (H + 1));
+        for (let y = 0; y < H; y++) { let row = 0; for (let x = 0; x < W; x++) { row += Y[y * W + x]; ii[(y + 1) * (W + 1) + x + 1] = ii[y * (W + 1) + x + 1] + row; } }
+        const B = new Uint8Array(n);
+        for (let y = 0; y < H; y++) {
+          const y0 = Math.max(0, y - r), y1 = Math.min(H, y + r + 1);
+          for (let x = 0; x < W; x++) {
+            const x0 = Math.max(0, x - r), x1 = Math.min(W, x + r + 1);
+            const sum = ii[y1 * (W + 1) + x1] - ii[y0 * (W + 1) + x1] - ii[y1 * (W + 1) + x0] + ii[y0 * (W + 1) + x0];
+            B[y * W + x] = Y[y * W + x] < sum / ((y1 - y0) * (x1 - x0)) * 0.75 ? 1 : 0;
+          }
+        }
+        /* dünne waagrechte Linien: schwarze Pixel mit Dicke <= 5, die zu langen waagrechten Läufen gehören */
+        const thin = new Uint8Array(n);
+        for (let x = 0; x < W; x++) {
+          let y = 0;
+          while (y < H) {
+            if (!B[y * W + x]) { y++; continue; }
+            let e = y; while (e < H && B[e * W + x]) e++;
+            if (e - y <= 5) for (let k = y; k < e; k++) thin[k * W + x] = 1;
+            y = e;
+          }
+        }
+        const L = Math.max(30, Math.floor(W / 70)), line = new Uint8Array(n);
+        for (let y = 0; y < H; y++) {
+          let x = 0;
+          const on = xx => thin[y * W + xx] || (y > 0 && thin[(y - 1) * W + xx]) || (y < H - 1 && thin[(y + 1) * W + xx]);
+          while (x < W) {
+            if (!on(x)) { x++; continue; }
+            let e = x; while (e < W && on(e)) e++;
+            if (e - x >= L) for (let k = x; k < e; k++) if (thin[y * W + k]) line[y * W + k] = 1;
+            x = e;
+          }
+        }
+        /* Graubild: Kontrast strecken, Linien weiß */
+        let lo = 0, hi = 255, acc = 0;
         while (lo < 255 && (acc += hist[lo]) < n * 0.01) lo++;
         acc = 0; while (hi > 0 && (acc += hist[hi]) < n * 0.01) hi--;
         const span = Math.max(40, hi - lo);
-        for (let i = 0; i < d.length; i += 4) { const v = Math.max(0, Math.min(255, (d[i] - lo) * 255 / span)); d[i] = d[i + 1] = d[i + 2] = v; }
-        g.putImageData(id, 0, 0);
-      } catch {}
-      res(c);
+        const bin = mk(), bg = bin.getContext("2d", { willReadFrequently: true }), bd = bg.createImageData(W, H);
+        for (let p = 0, i = 0; p < n; p++, i += 4) {
+          const v = line[p] ? 255 : Math.max(0, Math.min(255, (Y[p] - lo) * 255 / span));
+          d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 255;
+          const b = B[p] && !line[p] ? 0 : 255;
+          bd.data[i] = bd.data[i + 1] = bd.data[i + 2] = b; bd.data[i + 3] = 255;
+        }
+        g.putImageData(id, 0, 0); bg.putImageData(bd, 0, 0);
+        res({ gray, bin, W, H });
+      } catch (e) { rej(e); }
     };
     img.onerror = () => { URL.revokeObjectURL(url); rej(new Error("img")); };
     img.src = url;
