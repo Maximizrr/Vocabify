@@ -29,6 +29,7 @@
   --card-shadow:0 1px 2px rgba(0,0,0,.03),0 4px 18px -6px rgba(0,0,0,.06);
   --lift-shadow:0 2px 4px rgba(0,0,0,.04),0 18px 40px -16px rgba(0,0,0,.2);
   --ease:cubic-bezier(.2,.8,.2,1);
+  --c-blue:#007aff; --c-green:#34c759; --c-orange:#ff9500; --c-yellow:#ffbf00; --c-purple:#af52de; --c-pink:#ff2d55; --c-indigo:#5856d6; --c-teal:#30b0c7; --c-gray:#8e8e93; --c-red:#ff3b30;
   --f-display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter",system-ui,"Segoe UI",sans-serif;
   --f-body:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui,"Segoe UI",sans-serif;
   --r-lg:24px; --r-md:12px;
@@ -45,6 +46,7 @@
   --card-shadow:0 0 0 1px rgba(255,255,255,.04);
   --lift-shadow:0 0 0 1px rgba(255,255,255,.08),0 18px 40px -16px rgba(0,0,0,.9);
   --on-acc:#ffffff;
+  --c-blue:#0a84ff; --c-green:#30d158; --c-orange:#ff9f0a; --c-yellow:#ffd60a; --c-purple:#bf5af2; --c-pink:#ff375f; --c-indigo:#5e5ce6; --c-teal:#40c8e0; --c-gray:#98989d; --c-red:#ff453a;
   color-scheme:dark;
 }}
 :root[data-theme="dark"]{
@@ -58,6 +60,7 @@
   --card-shadow:0 0 0 1px rgba(255,255,255,.04);
   --lift-shadow:0 0 0 1px rgba(255,255,255,.08),0 18px 40px -16px rgba(0,0,0,.9);
   --on-acc:#ffffff;
+  --c-blue:#0a84ff; --c-green:#30d158; --c-orange:#ff9f0a; --c-yellow:#ffd60a; --c-purple:#bf5af2; --c-pink:#ff375f; --c-indigo:#5e5ce6; --c-teal:#40c8e0; --c-gray:#98989d; --c-red:#ff453a;
   color-scheme:dark;
 }
 body[data-lang="en"]{--acc:var(--en);--acc-soft:var(--en-soft)}
@@ -674,6 +677,72 @@ tbody tr:hover td{background:color-mix(in srgb,var(--surface-2) 60%,transparent)
 }
 
 
+/* ---------- Design 1.2.5: mehr Farbe, größere Leiste ---------- */
+body{font-size:16.5px;background:
+  radial-gradient(700px 420px at 12% -140px,color-mix(in srgb,var(--c-blue) 13%,transparent),transparent 70%) no-repeat,
+  radial-gradient(640px 400px at 52% -180px,color-mix(in srgb,var(--c-purple) 11%,transparent),transparent 70%) no-repeat,
+  radial-gradient(640px 420px at 92% -120px,color-mix(in srgb,var(--c-pink) 10%,transparent),transparent 70%) no-repeat,var(--bg)}
+h1{font-size:clamp(2.2rem,5.4vw,3.2rem)}
+h2{font-size:1.5rem;letter-spacing:-.03em}
+.card-head h2.hchip,h2.hchip{display:flex;align-items:center;gap:.65rem}
+.hello h1{font-size:clamp(2.6rem,7.5vw,4.1rem);letter-spacing:-.045em;
+  background:linear-gradient(100deg,var(--c-blue) 0%,var(--c-indigo) 30%,var(--c-purple) 58%,var(--c-pink) 85%,var(--c-orange) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hello .sub{font-size:1.18rem}
+.logo-big .word{background:linear-gradient(100deg,var(--c-blue),var(--c-indigo) 30%,var(--c-purple) 58%,var(--c-pink) 85%,var(--c-orange));-webkit-background-clip:text;background-clip:text;color:transparent;font-size:3rem;letter-spacing:-.045em;padding-bottom:.06em}
+.eyebrow{font-size:.9rem}
+/* colour chips (like iOS settings icons) */
+.ico{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic-chip{width:32px;height:32px;border-radius:9px;display:inline-grid;place-items:center;flex:none;color:#fff;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 72%,#fff),var(--tc));box-shadow:0 3px 8px -3px color-mix(in srgb,var(--tc) 70%,transparent),inset 0 1px 0 rgba(255,255,255,.25)}
+.ic-chip .ico{width:19px;height:19px;stroke-width:2.2}
+h2 .ic-chip{width:34px;height:34px;border-radius:10px}
+
+/* bigger menu bar: floating, colour-coded tab bar */
+.topbar-in{max-width:1128px;padding:.85rem 24px;gap:.9rem 1.2rem}
+.brand{font-size:1.45rem}
+.brand svg{width:42px;height:35px}
+.nav{order:3;width:100%;justify-content:center;gap:.25rem}
+.nav{background:color-mix(in srgb,var(--surface) 70%,transparent);border-radius:980px;padding:5px;box-shadow:0 0 0 1px color-mix(in srgb,var(--line) 70%,transparent),0 6px 20px -12px rgba(0,0,0,.18);width:fit-content;max-width:100%;margin-inline:auto}
+.nav button{display:inline-flex;align-items:center;gap:.5rem;font-size:1.02rem;font-weight:550;padding:.6em 1.1em;color:var(--ink);border-radius:980px}
+.nav button .ico{color:var(--tc);transition:transform .35s var(--ease)}
+.nav button:hover{background:color-mix(in srgb,var(--tc) 9%,transparent)}
+.nav button:hover .ico{transform:scale(1.12)}
+.nav button[aria-current="page"]{background:color-mix(in srgb,var(--tc) 15%,var(--surface));color:color-mix(in srgb,var(--tc) 72%,var(--ink));font-weight:650;box-shadow:none}
+.coin-pill{font-size:1.05rem;padding:.42em 1em .42em .5em}
+.user-chip{font-size:1rem}
+.top-right .btn.small{font-size:.95rem}
+@media (max-width:820px){.nav button{font-size:.95rem;padding:.55em .9em}.nav{justify-content:flex-start;margin-inline:0;width:100%}}
+
+/* tiles with a soft colour wash */
+.stat{--tc:var(--c-blue)}
+.stats .stat:nth-child(4n+2){--tc:var(--c-green)}.stats .stat:nth-child(4n+3){--tc:var(--c-orange)}.stats .stat:nth-child(4n+4){--tc:var(--c-purple)}
+.stat{background:linear-gradient(165deg,color-mix(in srgb,var(--tc) 11%,var(--surface)) 0%,var(--surface) 62%);padding:1.35rem 1.4rem}
+.stat .v{font-size:2.5rem;letter-spacing:-.045em}
+.stat .l{font-size:.9rem}
+.stat .l.hd{display:flex;align-items:center;gap:.6rem;color:var(--ink);font-weight:600;font-size:.98rem;margin-bottom:.4rem}
+.streak-stat.lit{background:linear-gradient(165deg,color-mix(in srgb,var(--c-orange) 16%,var(--surface)) 0%,var(--surface) 65%)}
+.bar{height:8px}
+.bar i,.track-fill{background:linear-gradient(90deg,var(--c-teal),var(--c-green))}
+.learn-progress .bar i{background:linear-gradient(90deg,color-mix(in srgb,var(--acc) 60%,#fff),var(--acc))}
+.mode{gap:.35rem;padding:1.15rem 1.15rem}
+.mode .ic-chip{margin-bottom:.35rem}
+.mode b{font-size:1.08rem}
+.mode[aria-pressed="true"]{box-shadow:0 0 0 2px var(--tc),0 10px 26px -12px color-mix(in srgb,var(--tc) 70%,transparent)}
+.chip[aria-pressed="true"]{background:linear-gradient(135deg,var(--c-blue),var(--c-indigo));color:#fff}
+body[data-lang] .chip[aria-pressed="true"]{background:var(--acc)}
+.btn.primary,.btn.primary:hover{background:linear-gradient(135deg,var(--c-blue),var(--c-indigo));box-shadow:0 1px 1px rgba(0,0,0,.06),0 8px 20px -8px color-mix(in srgb,var(--c-indigo) 70%,transparent)}
+body[data-lang] .btn.primary,body[data-lang] .btn.primary:hover{background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 78%,#fff),var(--acc));box-shadow:0 1px 1px rgba(0,0,0,.06),0 8px 20px -8px color-mix(in srgb,var(--acc) 70%,transparent)}
+.btn.big{font-size:1.1rem;padding:.9em 1.8em}
+.quiz-word{font-size:clamp(2.4rem,7vw,3.8rem)}
+.card-head{align-items:center}
+.shop-head .coin-pill{font-size:1.25rem}
+@media (max-width:560px){
+  .hello h1{font-size:clamp(2.3rem,10vw,2.9rem)}
+  .stat .v{font-size:2.1rem}
+  .stat{padding:1.1rem 1.1rem}
+  h2{font-size:1.3rem}
+}
+
 /* flame */
 .flame{overflow:visible;--f1:#ff5e1a;--f2:#ff9f0a;--f3:#ffe08a}
 .flame .fl-o{fill:var(--f1)}.flame .fl-m{fill:var(--f2)}.flame .fl-c{fill:var(--f3)}.flame .fl-e{fill:var(--f2);opacity:0}
@@ -705,7 +774,7 @@ tbody tr:hover td{background:color-mix(in srgb,var(--surface-2) 60%,transparent)
 #intro{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:var(--bg);transition:opacity .55s var(--ease),transform .55s var(--ease),filter .55s var(--ease)}
 #intro.out{opacity:0;transform:scale(1.06);filter:blur(10px);pointer-events:none}
 .intro-in{position:relative;display:flex;flex-direction:column;align-items:center;gap:1.1rem}
-.intro-glow{position:absolute;left:50%;top:62px;width:240px;height:240px;margin:-120px 0 0 -120px;border-radius:50%;
+.intro-glow{position:absolute;left:50%;top:calc(2.6rem + 55px);width:240px;height:240px;margin:-120px 0 0 -120px;border-radius:50%;
   background:conic-gradient(from 0deg,var(--brand),var(--la),var(--fr),var(--en),var(--brand));filter:blur(46px);opacity:0;animation:glowIn 1.4s .3s var(--ease) forwards,spin 7s linear infinite}
 @keyframes glowIn{to{opacity:.32}}
 .intro-logo{position:relative;width:132px;height:110px;animation:logoIn 1.1s var(--ease) both}
@@ -723,15 +792,41 @@ tbody tr:hover td{background:color-mix(in srgb,var(--surface-2) 60%,transparent)
 @keyframes lineRun{from{transform:translateX(-110%)}to{transform:translateX(280%)}}
 @keyframes fadeIn{to{opacity:1}}
 
+/* intro 1.2.5: farbige Lichtflächen, Verlaufsschrift */
+#intro{overflow:hidden}
+.intro-blobs{position:absolute;inset:0;filter:blur(70px) saturate(1.2);opacity:0;animation:blobsIn 1.6s .1s var(--ease) forwards}
+@keyframes blobsIn{to{opacity:.62}}
+.intro-blobs i{position:absolute;width:46vmax;height:46vmax;border-radius:50%;mix-blend-mode:normal;animation:blob 9s ease-in-out infinite alternate}
+.intro-blobs i:nth-child(1){background:var(--c-blue);left:-14vmax;top:-16vmax}
+.intro-blobs i:nth-child(2){background:var(--c-purple);right:-16vmax;top:-12vmax;animation-delay:-2s;animation-duration:11s}
+.intro-blobs i:nth-child(3){background:var(--c-pink);right:-10vmax;bottom:-20vmax;animation-delay:-4s}
+.intro-blobs i:nth-child(4){background:var(--c-orange);left:-12vmax;bottom:-22vmax;animation-delay:-6s;animation-duration:12s}
+.intro-blobs i:nth-child(5){background:var(--c-teal);left:30%;top:-30vmax;width:34vmax;height:34vmax;animation-delay:-3s}
+.intro-blobs i:nth-child(6){background:var(--c-green);left:38%;bottom:-32vmax;width:32vmax;height:32vmax;animation-delay:-5s;animation-duration:10s}
+@keyframes blob{0%{transform:translate(0,0) scale(1)}50%{transform:translate(6vmax,4vmax) scale(1.12)}100%{transform:translate(-4vmax,7vmax) scale(.92)}}
+.intro-in{z-index:1;padding:2.6rem 3.2rem 2.2rem;border-radius:36px;background:color-mix(in srgb,var(--surface) 55%,transparent);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);box-shadow:0 0 0 1px color-mix(in srgb,#fff 35%,transparent),0 30px 80px -30px rgba(0,0,0,.35);animation:cardIn 1s var(--ease) both}
+@keyframes cardIn{from{transform:translateY(16px) scale(.96);opacity:0}}
+.intro-word{font-size:3.1rem}
+.intro-word span{background:linear-gradient(90deg,var(--c-blue),var(--c-indigo),var(--c-purple),var(--c-pink),var(--c-orange),var(--c-yellow),var(--c-green),var(--c-teal),var(--c-blue));background-size:16em 100%;background-position:calc(var(--i) * -1.05em) 0;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:letterIn .7s calc(1.05s + var(--i)*.06s) var(--ease) forwards,hueRun 5s 1.8s linear infinite}
+@keyframes hueRun{to{background-position:calc(var(--i) * -1.05em - 8em) 0}}
+.intro-tag{font-size:1.05rem;color:var(--muted);font-weight:500;opacity:0;transform:translateY(6px);animation:letterIn .8s 1.75s var(--ease) forwards}
+.intro-line{width:160px;height:4px;background:color-mix(in srgb,var(--ink) 8%,transparent);animation:fadeIn .5s 2s forwards}
+.intro-line i{width:100%;transform:none;background:linear-gradient(90deg,var(--c-blue),var(--c-purple),var(--c-pink),var(--c-orange),var(--c-green));transform-origin:left;animation:lineFill 1.5s 2s var(--ease) both}
+@keyframes lineFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.intro-glow{opacity:0;animation:glowIn 1.4s .3s var(--ease) forwards,spin 7s linear infinite}
+@keyframes glowIn{to{opacity:.45}}
+@media (max-width:560px){.intro-in{padding:2rem 1.6rem 1.8rem;margin:0 16px}.intro-word{font-size:2.5rem}}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .logo-check{stroke-dashoffset:0}
 }
 </style>
 
-<div id="intro" aria-hidden="true"><div class="intro-in"><div class="intro-glow"></div>
+<div id="intro" aria-hidden="true"><div class="intro-blobs"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="intro-in"><div class="intro-glow"></div>
   <svg class="intro-logo" viewBox="0 0 120 100"><path class="ib" d="M8 30 Q34 20 60 32 L60 90 Q34 78 8 88 Z"/><path class="ib" d="M112 30 Q86 20 60 32 L60 90 Q86 78 112 88 Z"/><path class="il" d="M18 44 Q34 39 48 44 M18 56 Q30 52 42 55 M74 64 Q88 60 102 64 M78 76 Q90 72 102 76"/><path class="ic" d="M32 46 L57 74 L96 10"/></svg>
-  <div class="intro-word"><span style="--i:0">V</span><span style="--i:1">o</span><span style="--i:2">c</span><span style="--i:3">a</span><span style="--i:4">b</span><span style="--i:5">i</span><span style="--i:6">f</span><span style="--i:7">y</span></div><div class="intro-line"><i></i></div></div></div>
+  <div class="intro-word"><span style="--i:0">V</span><span style="--i:1">o</span><span style="--i:2">c</span><span style="--i:3">a</span><span style="--i:4">b</span><span style="--i:5">i</span><span style="--i:6">f</span><span style="--i:7">y</span></div><div class="intro-tag">Vokabeln lernen, Münzen sammeln</div><div class="intro-line"><i></i></div></div></div>
 <div id="app"><div class="splash"><div class="logo-big" id="splashLogo"></div></div></div>
 <div id="petStage" hidden></div>
 <div class="toasts" id="toasts" aria-live="polite"></div>
@@ -742,7 +837,7 @@ tbody tr:hover td{background:color-mix(in srgb,var(--surface-2) 60%,transparent)
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-const APP_VERSION = "1.2.4";
+const APP_VERSION = "1.2.5";
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
   authDomain: "vocabify-8abb9.firebaseapp.com",
@@ -754,6 +849,7 @@ const FIREBASE_CONFIG = {
 const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
 const TESSERACT_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
 const CHANGELOG = [
+  { v: "1.2.5", items: ["Farbigerer Startbildschirm mit fließenden Lichtflächen, bleibt etwas länger", "Größere Menüleiste mit farbigen Symbolen für jeden Bereich", "Farbige Kacheln und Symbole auf der Startseite", "Größere Überschriften und Zahlen", "Begrüßung im Farbverlauf"] },
   { v: "1.2.4", items: ["Neues Design im minimalistischen Apple-Stil: viel Freiraum, runde Ecken, Glas-Leiste oben", "Systemschrift von iPhone, iPad und Mac (SF Pro)", "Neue Startanimation beim Öffnen der App", "Lebendige Flamme für die Lernserie", "Münzen fliegen beim Verdienen in deinen Münzzähler", "Sanfte Hover-Effekte und Umschalter wie in iOS"] },
   { v: "1.2.3", items: ["Neues, schlichteres Design mit ruhigeren Farben", "Neue Schrift (Figtree) für bessere Lesbarkeit", "Flachere Flächen, feinere Linien und ein überarbeiteter dunkler Modus"] },
   { v: "1.2.2", items: ["Neue Lernserie: Jeder Tag mit mindestens einer richtigen Vokabel zählt", "Besondere Animationen am 1. Tag, alle 7 Tage und bei 100, 200, … Tagen", "100 Münzen Belohnung für jede 100er-Lernserie", "Shop mit Kategorien-Leiste an der Seite", "Neue Preise: erstes Tier 50 Münzen, jedes weitere 25 Münzen mehr", "Legendäres Haustier: Aurelius, der Goldene Phönix-Drache mit Goldrausch (doppelte Münzen)"] },
@@ -1004,7 +1100,7 @@ const Intro = {
   done() {
     if (this.gone) return; this.gone = true;
     const el = document.getElementById("intro"); if (!el) return;
-    const min = matchMedia("(prefers-reduced-motion: reduce)").matches ? 250 : 2050;
+    const min = matchMedia("(prefers-reduced-motion: reduce)").matches ? 400 : 3600;
     setTimeout(() => { el.classList.add("out"); setTimeout(() => el.remove(), 750); }, Math.max(0, min - (performance.now() - this.t0)));
   }
 };
@@ -1758,10 +1854,32 @@ function summaryView() {
       </div>
     </section>`;
 }
+const ICO = {
+  home: '<path d="M3.5 10.5 12 4l8.5 6.5V19a1 1 0 0 1-1 1H15v-5.5H9V20H4.5a1 1 0 0 1-1-1z"/>',
+  vocab: '<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5zM5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/><path d="M9 7.5h6"/>',
+  shop: '<path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 10V7a3 3 0 0 1 6 0v3"/>',
+  wiki: '<path d="M9.5 18h5M10.5 21h3"/><path d="M12 3a6 6 0 0 0-3.8 10.6c.8.7 1.3 1.5 1.3 2.4h5c0-.9.5-1.7 1.3-2.4A6 6 0 0 0 12 3z"/>',
+  feedback: '<path d="M4.5 5.5h15v10.5H10l-5.5 4z"/><path d="M8.5 9.5h7M8.5 12.5h4"/>',
+  settings: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
+  admin: '<path d="M12 3 19.5 6v5.5c0 4.6-3.2 8-7.5 9.5-4.3-1.5-7.5-4.9-7.5-9.5V6z"/><path d="m9 12 2.2 2.2L15.5 10"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".6" fill="currentColor"/>',
+  flame: '<path d="M12 3c1 3.5-2 5-2 8 0 1.3 1 2.3 2.2 2.3 1.6 0 2.4-1.3 2-3.3 2.4 1.7 3.8 4 3.8 6.5a6 6 0 0 1-12 0c0-5 4.6-7.7 6-13.5z"/>',
+  coin: '<circle cx="12" cy="12" r="8"/><path d="m8.8 12.2 2.2 2.2 4.2-4.6"/>',
+  flag: '<path d="M5.5 21V4M5.5 4.5h11l-2.2 4 2.2 4h-11"/>',
+  play: '<path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/>',
+  shuffle: '<path d="M4 7h3.5l9 10H20M4 17h3.5l2.6-2.9M13.9 9.9 16.5 7H20M17.5 4 20.5 7l-3 3M17.5 14l3 3-3 3"/>',
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  alert: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.8v5M12 16.2v.3"/>',
+  spark: '<path d="M12 3.5 13.9 9 19.5 11 13.9 13 12 18.5 10.1 13 4.5 11 10.1 9z"/>'
+};
+const icon = k => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${ICO[k] || ""}</svg>`;
+const chip = (k, c) => `<i class="ic-chip" style="--tc:var(--c-${c})">${icon(k)}</i>`;
 function headerView() {
   const pend = S.invites.length;
   const pendArt = isAdmin() ? S.articles.filter(a => a.status === "pending").length : 0;
-  const tab = (v, label, badge) => `<button data-act="nav" data-v="${v}" ${S.view === v ? 'aria-current="page"' : ""}>${label}${badge ? `<span class="badge">${badge}</span>` : ""}</button>`;
+  const NAVC = { home: "blue", vocab: "green", shop: "orange", wiki: "purple", feedback: "pink", settings: "gray", admin: "indigo" };
+  const tab = (v, label, badge) => `<button data-act="nav" data-v="${v}" style="--tc:var(--c-${NAVC[v]})" ${S.view === v ? 'aria-current="page"' : ""}>${icon(v)}<span>${label}</span>${badge ? `<span class="badge">${badge}</span>` : ""}</button>`;
   return `<header class="topbar"><div class="topbar-in">
     <button class="brand" data-act="nav" data-v="home" aria-label="Vocabify Startseite">${LOGO_SVG(false)}Vocabify${TEST_MODE ? ' <span class="status pending" style="font-family:var(--f-body)">Test</span>' : ""}</button>
     <nav class="nav" aria-label="Hauptmenü">
@@ -1830,8 +1948,8 @@ function streakStat() {
   const s = streakInfo(), goal = nextStreakGoal(s.count);
   const state = s.today ? "lit" : s.risk ? "risk" : "out";
   const note = s.today ? "Heute geschafft ✓" : s.risk ? "Heute noch lernen!" : "Starte heute eine neue Serie";
-  return `<div class="stat streak-stat ${state}" title="Tage in Folge mit mindestens einer richtigen Vokabel${s.best ? ` · Rekord: ${s.best} Tage` : ""}">
-      <span class="l">Lernserie</span>
+  return `<div class="stat streak-stat ${state}" style="--tc:var(--c-orange)" title="Tage in Folge mit mindestens einer richtigen Vokabel${s.best ? ` · Rekord: ${s.best} Tage` : ""}">
+      <span class="l hd">${chip("flame", "orange")}Lernserie</span>
       <span class="v">${flameSVG(state === "lit" ? "live" : "")}${s.count}<span class="muted" style="font-size:1rem"> ${s.count === 1 ? "Tag" : "Tage"}</span></span>
       <span class="l">${note}${s.count ? ` · nächstes Ziel: ${goal}` : ""}</span></div>`;
 }
@@ -1845,13 +1963,13 @@ function homeView() {
       ${rushBadge()}
     </section>
     <section class="stats four">
-      <div class="stat"><span class="l">Heute gelernt</span><span class="v">${c}</span><span class="l">richtige Vokabeln</span></div>
-      <div class="stat"><span class="l">Tagesziel</span><span class="v">${Math.min(c, goal)}<span class="muted" style="font-size:1rem"> / ${goal}</span></span><div class="bar"><i style="width:${Math.min(100, c / goal * 100)}%"></i></div></div>
+      <div class="stat" style="--tc:var(--c-blue)"><span class="l hd">${chip("check", "blue")}Heute gelernt</span><span class="v">${c}</span><span class="l">richtige Vokabeln</span></div>
+      <div class="stat" style="--tc:var(--c-green)"><span class="l hd">${chip("target", "green")}Tagesziel</span><span class="v">${Math.min(c, goal)}<span class="muted" style="font-size:1rem"> / ${goal}</span></span><div class="bar"><i style="width:${Math.min(100, c / goal * 100)}%"></i></div></div>
       ${streakStat()}
-      <div class="stat"><span class="l">Münzen</span><span class="v" style="display:flex;align-items:center;gap:.3em">${COIN}${coinsTotal()}</span><span class="l">max. 1 Münze pro Vokabel und Tag</span></div>
+      <div class="stat" style="--tc:var(--c-yellow)"><span class="l hd">${chip("coin", "yellow")}Münzen</span><span class="v" style="display:flex;align-items:center;gap:.3em">${COIN}${coinsTotal()}</span><span class="l">max. 1 Münze pro Vokabel und Tag</span></div>
     </section>
     <section class="card">
-      <div class="card-head"><h2>Dein Lernpfad</h2><span class="muted" style="font-size:.88rem">Setzt sich um 00:00 Uhr zurück</span></div>
+      <div class="card-head"><h2 class="hchip">${chip("flag", "teal")}Dein Lernpfad</h2><span class="muted" style="font-size:.88rem">Setzt sich um 00:00 Uhr zurück</span></div>
       ${pathView(c)}
     </section>
     <section class="card">${S.learn ? quizView() : configView()}</section>`;
@@ -1890,18 +2008,19 @@ function configView() {
     .map(([k, l]) => `<button data-act="cfgDir" data-k="${k}" aria-pressed="${S.cfg.dir === k}">${l}</button>`).join("");
   const modes = Object.entries(MODES).map(([k, m]) => {
     const n = poolFor(k, scope).length;
-    return `<button class="mode" data-act="cfgMode" data-k="${k}" aria-pressed="${S.cfg.mode === k}"><b>${m.name}</b><span>${m.desc}</span><em>${n} Vokabel${n === 1 ? "" : "n"}</em></button>`;
+    const mc = { general: ["shuffle", "blue"], older: ["clock", "purple"], errors: ["alert", "pink"], newest: ["spark", "green"] }[k] || ["spark", "blue"];
+    return `<button class="mode" data-act="cfgMode" data-k="${k}" style="--tc:var(--c-${mc[1]})" aria-pressed="${S.cfg.mode === k}">${chip(mc[0], mc[1])}<b>${m.name}</b><span>${m.desc}</span><em>${n} Vokabel${n === 1 ? "" : "n"}</em></button>`;
   }).join("");
   const n = poolFor(S.cfg.mode, scope).length;
   return `<div class="cfg">
-    <div class="card-head" style="margin:0"><h2>Lernen</h2></div>
+    <div class="card-head" style="margin:0"><h2 class="hchip">${chip("play", "indigo")}Lernen</h2></div>
     ${lp ? `<div class="cfg-group"><span class="eyebrow">Sprache</span>${lp}</div>` : ""}
     <div class="cfg-group"><span class="eyebrow">Abschnitte</span><div class="chips">${chips}</div></div>
     <div class="cfg-group"><span class="eyebrow">Richtung</span><div class="seg">${dirs}</div></div>
     <div class="cfg-group"><span class="eyebrow">Lernmodus</span><div class="modes">${modes}</div></div>
     <div class="cfg-group"><span class="eyebrow">Rundenlänge</span><div class="seg">${[[10, "10 Fragen"], [20, "20 Fragen"], [30, "30 Fragen"], [0, "Endlos"]]
       .map(([k, l]) => `<button data-act="cfgSize" data-k="${k}" aria-pressed="${S.cfg.size === k}">${l}</button>`).join("")}</div></div>
-    <div class="row"><button class="btn primary big" data-act="start" ${n ? "" : "disabled"}>Lernen starten →</button>
+    <div class="row"><button class="btn primary big" data-act="start" ${n ? "" : "disabled"}>Lernen starten</button>
       <span class="muted">${n ? n + " Vokabeln im Pool" : "Keine passenden Vokabeln für diesen Modus"}</span></div>
   </div>`;
 }
