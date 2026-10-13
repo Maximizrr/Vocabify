@@ -209,7 +209,7 @@ th.n{text-align:right}
 .add-row.four{grid-template-columns:1fr 1fr auto auto}
 @media (max-width:600px){.add-row,.add-row.four{grid-template-columns:1fr}}
 .panel{border:1.5px dashed var(--line);border-radius:16px;padding:1rem;display:flex;flex-direction:column;gap:.8rem;background:color-mix(in srgb,var(--surface-2) 45%,var(--surface))}
-.scan-thumb{max-height:180px;border-radius:10px;border:1px solid var(--line)}
+.scan-thumb{max-height:220px;max-width:100%;width:auto;height:auto;align-self:flex-start;object-fit:contain;border-radius:10px;border:1px solid var(--line)}
 .invite{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;border:1.5px solid var(--line);border-radius:14px;padding:.9rem 1rem}
 .invite .who{flex:1;min-width:200px}
 .inline-confirm{display:inline-flex;gap:.4rem;align-items:center;flex-wrap:wrap;font-weight:700;font-size:.9rem}
@@ -310,6 +310,18 @@ th.n{text-align:right}
 .spinner{width:18px;height:18px;border:3px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite;display:inline-block}
 @keyframes spin{to{transform:rotate(360deg)}}
 .splash{min-height:100vh;display:grid;place-items:center}
+/* scanner */
+.scan-table td{padding:.35rem .4rem}
+.scan-table .input{padding:.4em .6em;border-radius:9px}
+.scan-table tr.off .input{opacity:.45;text-decoration:line-through}
+details.paste summary{cursor:pointer;font-weight:700;color:var(--muted)}
+details.paste summary:hover{color:var(--ink)}
+pre.raw{white-space:pre-wrap;font-size:.82rem;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.7rem;max-height:220px;overflow:auto;margin:.6rem 0 0}
+/* greeting */
+.hello h1{font-size:clamp(1.8rem,5vw,2.5rem)}
+.hello .sub{color:var(--muted);font-size:1.05rem;margin-top:.35rem;max-width:60ch}
+.streak{display:inline-flex;align-items:center;gap:.4em;font-weight:800;padding:.35em .85em;border-radius:99px;background:var(--fr-soft);color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.streak svg{width:1.05em;height:1.05em}
 /* settings */
 .theme-pick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem;max-width:520px}
 .theme-opt{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:.6rem;display:flex;flex-direction:column;gap:.5rem;align-items:center;cursor:pointer}
@@ -374,7 +386,7 @@ tr.sel td{background:var(--brand-soft)}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-const APP_VERSION = "1.0.4";
+const APP_VERSION = "1.0.5";
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
   authDomain: "vocabify-8abb9.firebaseapp.com",
@@ -386,6 +398,7 @@ const FIREBASE_CONFIG = {
 const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
 const TESSERACT_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
 const CHANGELOG = [
+  { v: "1.0.5", items: ["Foto-Scan erkennt jetzt Vokabelpaare: Spalten, Sprache und Reihenfolge werden automatisch bestimmt", "Überschriften, Seitenzahlen, Lautschrift und Beispielsätze werden ignoriert", "Persönliche Begrüßung mit eigenem Namen, Lernserie und Tagesziel", "Lateinische Längenstriche und Akzente müssen nicht getippt werden"] },
   { v: "1.0.4", items: ["Cloud-Speicher: Konten und Lernstände auf allen Geräten gleich", "Sichere Anmeldung über Firebase", "Kostenloser Foto-Scan direkt im Browser"] },
   { v: "1.0.3", items: ["Neuer Menüpunkt „Einstellungen“", "Theme wählbar: Hell, Dunkel oder wie das Gerät", "Eigenes Tagesziel festlegen", "App-Version prüfen und aktualisieren"] },
   { v: "1.0.2", items: ["Sprache wählen beim Lernen, bei Erfolge und bei den Abschnitten", "Am Rundenende nur die falschen Vokabeln wiederholen"] },
@@ -704,6 +717,7 @@ async function enterApp(acc) {
   if (!S.me.pets) S.me.pets = [];
   if (S.me.coins == null) S.me.coins = 0;
   ensureDay();
+  S.prevSeen = +acc.lastSeen || 0;
   touchOnline();
   if (!S.me.settings) S.me.settings = {};
   applyTheme(S.me.settings.theme || lsGet("vocabify11:theme") || "system");
@@ -901,8 +915,9 @@ function poolFor(mode, secIds) {
   if (mode === "newest") items = items.sort((a, b) => (b.v.added || 0) - (a.v.added || 0)).slice(0, 20);
   return items;
 }
+const MACRON = { "ā": "a", "ē": "e", "ī": "i", "ō": "o", "ū": "u", "ȳ": "y" };
 function norm(s) {
-  return String(s || "").toLowerCase().normalize("NFC")
+  return String(s || "").toLowerCase().normalize("NFC").replace(/[āēīōūȳ]/g, m => MACRON[m])
     .replace(/\([^)]*\)|\[[^\]]*\]/g, " ")
     .replace(/[.!?¿¡"„“”'’`´…]/g, " ").replace(/\s+/g, " ").trim();
 }
@@ -925,6 +940,8 @@ function checkAnswer(given, sol) {
   if (!g) return { ok: false };
   const vs = variants(sol);
   for (const v of vs) if (g === v || stripArt(g) === stripArt(v)) return { ok: true };
+  const plain = x => x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ß/g, "ss");
+  for (const v of vs) if (plain(stripArt(g)) === plain(stripArt(v))) return { ok: true, typo: true };
   for (const v of vs) { const sv = stripArt(v); if (sv.length >= 6 && lev(stripArt(g), sv) <= 1) return { ok: true, typo: true }; }
   return { ok: false };
 }
@@ -1129,6 +1146,13 @@ function settingsView() {
   const lastCheck = lsGet("vocabify11:lastCheck");
   return `<h1>Einstellungen</h1>
   <section class="card">
+    <div class="card-head"><h2>Dein Name</h2><span class="muted" style="font-size:.88rem">So begrüßt dich Vocabify. Dein Benutzername zum Anmelden bleibt „${esc(S.me.username)}“.</span></div>
+    <form data-form="dname" class="row">
+      <div class="field" style="flex:0 1 260px"><label for="dn-in">Anzeigename</label><input class="input" id="dn-in" name="dn" maxlength="24" value="${esc(displayName())}" autocomplete="nickname"></div>
+      <button class="btn" type="submit" style="align-self:flex-end">Speichern</button>
+    </form>
+  </section>
+  <section class="card">
     <div class="card-head"><h2>Darstellung</h2><span class="muted" style="font-size:.88rem">Gilt für dein Konto auf allen Geräten</span></div>
     <div class="theme-pick">${themes.map(([k, l, bg, fg]) => `<button class="theme-opt" data-act="setTheme" data-k="${k}" aria-pressed="${theme === k}">
       <span class="swatch" style="background:${bg}"><i style="background:${fg}"></i><i style="background:${fg};width:40%"></i></span><b>${l}</b></button>`).join("")}</div>
@@ -1225,12 +1249,53 @@ function viewHtml() {
 }
 
 /* home */
+function displayName() {
+  const n = S.me.settings && String(S.me.settings.displayName || "").trim();
+  return n || S.me.username.charAt(0).toUpperCase() + S.me.username.slice(1);
+}
+function streakDays() {
+  const days = histDays(S.me, 60);
+  let i = days.length - 1;
+  if (!days[i].c) i--;
+  let n = 0;
+  while (i >= 0 && days[i].c > 0) { n++; i--; }
+  return n;
+}
+function greeting() {
+  const name = displayName(), h = new Date().getHours();
+  const c = S.me.daily.count, goal = getGoal(), streak = streakDays();
+  const yest = histDays(S.me, 2)[0].c;
+  const fresh = !(S.me.totalAnswered > 0) && !S.sections.length;
+  const away = S.prevSeen && Date.now() - S.prevSeen > 3 * 86400000;
+  let title;
+  if (fresh) title = `Willkommen bei Vocabify, ${name}!`;
+  else if (away) title = `Schön, dass du wieder da bist, ${name}!`;
+  else if (h < 5) title = `Noch wach, ${name}?`;
+  else if (h < 11) title = `Guten Morgen, ${name}!`;
+  else if (h < 14) title = `Hallo ${name}!`;
+  else if (h < 18) title = `Guten Tag, ${name}!`;
+  else title = `Guten Abend, ${name}!`;
+  let sub;
+  const pet = S.me.activePet && PET_DEFS[S.me.activePet];
+  if (fresh) sub = "Leg unter „Vokabeln“ deinen ersten Abschnitt an, tippe Wörter ein oder scanne ein Vokabelblatt. Dann kann es losgehen.";
+  else if (c >= goal) sub = `Tagesziel geschafft: ${c} Vokabeln heute. Alles, was jetzt noch kommt, ist Bonus.`;
+  else if (c > 0) sub = `Schon ${c} Vokabeln geschafft. Noch ${goal - c} bis zu deinem Tagesziel${goal - c <= 10 ? ", das schaffst du!" : "."}`;
+  else if (streak >= 2) sub = `Du lernst seit ${streak} Tagen am Stück. Mit ein paar Vokabeln heute hältst du deine Serie am Leben.`;
+  else if (yest > 0) sub = `Gestern hast du ${yest} Vokabeln geschafft. Heute warten ${goal} neue auf dich.`;
+  else if (away) sub = `Deine Vokabeln haben auf dich gewartet${pet ? `, und ${pet.name === "Katze" || pet.name === "Schildkröte" ? "deine" : "dein"} ${pet.name} auch` : ""}. Starte mit einer kurzen Runde.`;
+  else if (pet) sub = `${pet.name === "Katze" || pet.name === "Schildkröte" ? "Deine" : "Dein"} ${pet.name} ist bereit. Dein Ziel für heute: ${goal} Vokabeln.`;
+  else sub = `Dein Ziel für heute: ${goal} Vokabeln. Eine kurze Runde reicht für den Anfang.`;
+  return { title, sub, streak };
+}
+const FLAME = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 3.5-1.5 5-1.5 7.5 0 1.4 1 2.5 2.3 2.5 1.6 0 2.4-1.4 2-3.4 2.4 1.7 4.2 4.4 4.2 7.4A7 7 0 0 1 12 23a7 7 0 0 1-7-7c0-5 4-7.5 7-14z" fill="var(--fr)"/></svg>';
 function homeView() {
   const d = S.me.daily, c = d.count;
   const goal = getGoal();
   const dateStr = new Date().toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" });
+  const gr = greeting();
   return `<section class="hello">
-      <div><p class="eyebrow">${esc(dateStr)}</p><h1>Hallo ${esc(S.me.username)}!</h1></div>
+      <div style="min-width:0"><p class="eyebrow">${esc(dateStr)}</p><h1>${esc(gr.title)}</h1><p class="sub">${esc(gr.sub)}</p></div>
+      ${gr.streak >= 2 ? `<span class="streak" title="Tage in Folge gelernt">${FLAME}${gr.streak} Tage Serie</span>` : ""}
     </section>
     <section class="stats">
       <div class="stat"><span class="l">Heute gelernt</span><span class="v">${c}</span><span class="l">richtige Vokabeln</span></div>
@@ -1302,7 +1367,7 @@ function quizView() {
   const target = f2d ? "Deutsche" : LANGS[s.lang].name.replace(/isch$/, "ische");
   let fb = "";
   if (L.state === "right") {
-    fb = `<div class="fb right" role="status">Richtig!${L.typo ? ` <span>Kleiner Tippfehler, gemeint war: <span class="sol">${esc(sol)}</span></span>` : ""}
+    fb = `<div class="fb right" role="status">Richtig!${L.typo ? ` <span>Fast perfekt, achte auf die Schreibweise: <span class="sol">${esc(sol)}</span></span>` : ""}
       ${L.coin ? `<span class="coin-pop">${COIN}+1</span>` : `<span class="muted" style="font-weight:600">Heute schon belohnt</span>`}
       ${L.typo ? `<span class="spacer"></span><button class="btn small" id="nextBtn" data-act="next">Weiter</button>` : ""}</div>`;
   } else if (L.state === "wrong") {
@@ -1420,27 +1485,34 @@ function sectionDetail() {
 function scanPanel(s) {
   const sc = S.scan;
   const L = LANGS[s.lang];
+  const on = sc.rows ? sc.rows.filter(r => r.on && r.f.trim() && r.d.trim()).length : 0;
   const preview = sc.rows && sc.rows.length ? `
-    <div class="table-wrap"><table><thead><tr><th></th><th>${L.name}</th><th>Deutsch</th></tr></thead><tbody>
-      ${sc.rows.map((r, i) => `<tr><td><input type="checkbox" id="sr-c-${i}" data-act="scanToggle" data-i="${i}" ${r.on ? "checked" : ""} aria-label="Zeile übernehmen"></td>
+    ${sc.info ? `<p class="fb right" style="font-weight:700">${esc(sc.info)}</p>` : ""}
+    <div class="table-wrap"><table class="scan-table"><thead><tr><th></th><th>${L.name}</th><th>Deutsch</th><th></th></tr></thead><tbody>
+      ${sc.rows.map((r, i) => `<tr class="${r.on ? "" : "off"}"><td><input type="checkbox" id="sr-c-${i}" data-act="scanToggle" data-i="${i}" ${r.on ? "checked" : ""} aria-label="Zeile übernehmen"></td>
         <td><input class="input" id="sr-f-${i}" data-scan="${i}" data-k="f" value="${esc(r.f)}"></td>
-        <td><input class="input" id="sr-d-${i}" data-scan="${i}" data-k="d" value="${esc(r.d)}"></td></tr>`).join("")}
+        <td><input class="input" id="sr-d-${i}" data-scan="${i}" data-k="d" value="${esc(r.d)}"></td>
+        <td><button class="btn small ghost" data-act="scanRemove" data-i="${i}" aria-label="Zeile entfernen">✕</button></td></tr>`).join("")}
     </tbody></table></div>
-    <div class="row"><button class="btn small" data-act="scanSwap">Spalten tauschen</button><span class="spacer"></span>
-      <button class="btn primary" data-act="scanSave">${sc.rows.filter(r => r.on).length} Vokabeln übernehmen</button></div>` : "";
+    <div class="row"><button class="btn small" data-act="scanAddRow">+ Zeile</button><button class="btn small" data-act="scanSwap">Spalten tauschen</button><span class="spacer"></span>
+      <button class="btn primary" data-act="scanSave" ${on ? "" : "disabled"}>${on} Vokabel${on === 1 ? "" : "n"} übernehmen</button></div>` : "";
   return `<div class="panel" style="margin-top:.8rem">
     <h3>Vokabelblatt scannen</h3>
     <div class="row">
-        <label class="btn" for="scan-file">Foto aufnehmen oder wählen</label>
+        <label class="btn" for="scan-file">${sc.img ? "Anderes Foto" : "Foto aufnehmen oder wählen"}</label>
         <input type="file" id="scan-file" accept="image/*" hidden>
-        ${sc.img ? `<button class="btn primary" data-act="scanRun" ${sc.busy ? "disabled" : ""}>${sc.busy ? `<span class="spinner"></span> ${esc(sc.progress || "Erkenne Text…")}` : "Text erkennen"}</button>` : ""}
+        ${sc.img ? `<button class="btn primary" data-act="scanRun" ${sc.busy ? "disabled" : ""}>${sc.busy ? `<span class="spinner"></span> ${esc(sc.progress || "Lese Vokabeln…")}` : "Vokabeln erkennen"}</button>` : ""}
       </div>
       ${sc.imgUrl ? `<img class="scan-thumb" src="${sc.imgUrl}" alt="Gewähltes Vokabelblatt">` : ""}
-      <p class="muted" style="font-size:.85rem">Die Texterkennung läuft kostenlos direkt in deinem Browser. Beim ersten Scan werden einmalig etwa 10 bis 20 MB Sprachdaten geladen. Prüfe die erkannten Wörter danach kurz.</p>
-    <div class="field"><label for="scan-text">Erkannter Text (oder selbst einfügen)</label>
-      <textarea class="input" id="scan-text" placeholder="house – Haus&#10;school = Schule&#10;teacher	Lehrer">${esc(sc.text || "")}</textarea></div>
-    <div class="row"><button class="btn" data-act="scanParse">In Spalten aufteilen</button>${sc.err ? `<span class="err">${esc(sc.err)}</span>` : ""}</div>
+      <p class="muted" style="font-size:.85rem">Tipp: Fotografiere die Liste gerade von oben, bei gutem Licht. Gedruckte Listen klappen am besten. Die Erkennung läuft kostenlos in deinem Browser; beim ersten Scan werden einmalig 10 bis 20 MB Sprachdaten geladen.</p>
+    ${sc.err ? `<p class="err">${esc(sc.err)}</p>` : ""}
     ${preview}
+    <details class="paste"${sc.rows && sc.rows.length ? "" : " open"}><summary>Liste selbst einfügen</summary>
+      <div class="field" style="margin-top:.6rem"><label for="scan-text">Ein Paar pro Zeile</label>
+        <textarea class="input" id="scan-text" placeholder="house – Haus&#10;school = Schule&#10;teacher	Lehrer">${esc(sc.text || "")}</textarea></div>
+      <div class="row" style="margin-top:.6rem"><button class="btn" data-act="scanParse">Vokabeln erkennen</button></div>
+    </details>
+    ${sc.raw ? `<details class="paste"><summary>Gelesenen Rohtext anzeigen</summary><pre class="raw">${esc(sc.raw)}</pre></details>` : ""}
   </div>`;
 }
 function statsView() {
@@ -1806,10 +1878,14 @@ const A = {
   toggleScan() { S.scan = S.scan ? null : { text: "", rows: null, img: null, imgUrl: "" }; render(); },
   scanParse() {
     const ta = $("#scan-text"); S.scan.text = ta ? ta.value : "";
-    const rows = parseVocabText(S.scan.text);
-    S.scan.err = rows.length ? "" : "Keine Wortpaare erkannt. Trenne die Spalten z. B. mit „–“, „=“ oder einem Tab.";
+    const sec = S.sections.find(x => x.id === S.openSection);
+    const rows = smartParseText(S.scan.text, sec ? sec.lang : "en");
+    S.scan.err = rows.length ? "" : "Keine Wortpaare erkannt. Schreibe pro Zeile ein Paar und trenne es z. B. mit „–“, „=“ oder einem Tab.";
+    S.scan.info = rows.length ? rows.length + " Vokabeln erkannt. Bitte kurz prüfen." : "";
     S.scan.rows = rows; render();
   },
+  scanRemove(t) { S.scan.rows.splice(+t.dataset.i, 1); render(); },
+  scanAddRow() { (S.scan.rows || (S.scan.rows = [])).push({ f: "", d: "", on: true }); render(); const i = $("#sr-f-" + (S.scan.rows.length - 1)); if (i) i.focus(); },
   scanToggle(t) { const r = S.scan.rows[+t.dataset.i]; r.on = t.checked; render(); },
   scanSwap() { S.scan.rows.forEach(r => { const f = r.f; r.f = r.d; r.d = f; }); render(); },
   scanSave() {
@@ -1823,21 +1899,26 @@ const A = {
 async scanRun() {
     const sc = S.scan, s = S.sections.find(x => x.id === S.openSection);
     if (!sc || !sc.img || !s || sc.busy) return;
-    sc.busy = true; sc.err = ""; sc.progress = "Lade Texterkennung…"; render();
+    sc.busy = true; sc.err = ""; sc.info = ""; sc.rows = null; sc.progress = "Bereite Foto vor…"; render();
     let worker = null;
     try {
+      const canvas = await prepareImage(sc.img);
+      sc.progress = "Lade Texterkennung…"; render();
       await loadScript(TESSERACT_URL);
       const langs = [{ en: "eng", la: "lat", fr: "fra" }[s.lang] || "eng", "deu"];
       sc.progress = "Lade Sprachdaten…"; render();
       let lastPct = -1;
       worker = await Tesseract.createWorker(langs, 1, { logger: m => {
-        if (m.status === "recognizing text") { const pct = Math.round(m.progress * 100); if (pct !== lastPct && pct % 10 === 0) { lastPct = pct; sc.progress = "Erkenne Text… " + pct + " %"; render(); } }
+        if (m.status === "recognizing text") { const pct = Math.round(m.progress * 100); if (pct !== lastPct && pct % 10 === 0) { lastPct = pct; sc.progress = "Lese Vokabeln… " + pct + " %"; render(); } }
       } });
-      const { data } = await worker.recognize(sc.img);
-      const text = String(data && data.text || "").replace(/[|]/g, " ").replace(/\n{2,}/g, "\n").trim();
-      sc.text = text;
-      sc.rows = parseVocabText(text);
-      sc.err = sc.rows.length ? "" : (text ? "Text erkannt, aber keine Wortpaare gefunden. Trenne die Spalten im Textfeld z. B. mit „–“ und tippe auf „In Spalten aufteilen“." : "Auf dem Foto wurde kein Text erkannt. Versuche ein schärferes Foto mit guter Beleuchtung.");
+      const { data } = await worker.recognize(canvas);
+      sc.raw = String(data && data.text || "").trim();
+      const res = VS.extract(data, s.lang, canvas.width);
+      sc.rows = res.pairs.map(p => ({ f: p.f, d: p.d, on: true }));
+      const lines = (data.lines || []).filter(l => l.text && l.text.trim()).length;
+      const skipped = Math.max(0, lines - sc.rows.length);
+      if (sc.rows.length) sc.info = `${sc.rows.length} Vokabel${sc.rows.length === 1 ? "" : "n"} erkannt${skipped ? `, ${skipped} andere Zeile${skipped === 1 ? "" : "n"} ignoriert (Überschriften, Lautschrift, Beispielsätze …)` : ""}. Bitte kurz prüfen.`;
+      else sc.err = sc.raw ? "Auf dem Foto wurden keine Vokabelpaare gefunden. Fotografiere die Liste möglichst gerade und nah, oder füge die Wörter unten selbst ein." : "Auf dem Foto wurde kein Text erkannt. Versuche ein schärferes Foto mit guter Beleuchtung.";
     } catch (e) {
       sc.err = "Die Texterkennung konnte nicht geladen werden. Prüfe deine Internetverbindung.";
     } finally {
@@ -1968,6 +2049,262 @@ async function importVocabFile(text, filename) {
   S.sections.push(sec); S.openSection = sec.id; S.vocabTab = "sections"; render();
   try { await Store.set(C.sec, sec.id, sec); toast(`„${sec.name}“ mit ${rows.length} Vokabeln importiert.`); } catch { toast("Speichern fehlgeschlagen."); }
 }
+/* ---------- Vokabel-Erkennung aus Tesseract-Daten ---------- */
+/* Findet Zeilen und Spalten über die Wortpositionen, bestimmt welche Spalte Deutsch ist,
+   und ignoriert Überschriften, Seitenzahlen, Lautschrift und Beispielsätze. */
+const VS = (() => {
+  const IPA = /[ˈˌːəɪʊɜɑɒɔæʌθðŋʃʒɛɐʔ]/;
+  const HEAD = /^(unit|lektion|lesson|le[cç]on|unit[ée]|chapter|chapitre|kapitel|vocabulary|vocabulaire|vokabeln?|vokabeltest|vokabelliste|wortschatz|wörter|station|seite|page|name|klasse|datum|date|test|tipp|tip|exemple|example|beispiel|übung|exercise|aufgabe|total|summe|viel erfolg|good luck)\b/i;
+  const DE_WORDS = /^(der|die|das|den|dem|des|ein|eine|einen|einem|einer|sich|jdn|jdm|etw|und|oder|nicht|mit|von|zu|zum|zur|im|in|auf|für|aus)$/i;
+  const LANG = {
+    en: { words: /^(the|to|a|an|of|and|or|be|sb|sth|somebody|something|with|for|on|in|at|up|out|off)$/i, chars: /(th|sh|wh|ck|ea|oo|ow|ay|y\b|w)/i, end: /(ing|tion|ness|ful|less|ly|ed)$/i },
+    fr: { words: /^(le|la|les|l|un|une|des|du|de|d|et|ou|à|au|aux|en|qn|qc|ne|pas|se|s)$/i, chars: /[éèêëàâçùûôîïœ]|(eau|oi|ou|qu|ai)/i, end: /(er|ir|re|eur|euse|ment|tion|té|ée|eux|elle)$/i },
+    la: { words: /^(et|est|in|cum|ad|non|sed|-a|-um|-i|-ī|-ae|-is|n\.|m\.|f\.|adv\.|präp\.)$/i, chars: /[āēīōūȳ]|(ae|qu)/i, end: /(us|um|ae|is|ōris|oris|are|āre|ere|ēre|ire|īre|or|ō|o|ī|i|ās|ēs|em|ēs)$/i }
+  };
+  const words = s => s.split(/\s+/).filter(Boolean);
+  const median = a => { if (!a.length) return 0; const b = a.slice().sort((x, y) => x - y); return b[Math.floor(b.length / 2)]; };
+
+  function cleanCell(t) {
+    return String(t || "")
+      .replace(/[|¦]/g, " ")
+      .replace(/^\s*(\(?\d{1,3}[.)]|[a-h]\)|[•·▪●○◦*>»-])\s+/, "")
+      .replace(/\s+/g, " ").trim();
+  }
+  function kind(t) {
+    const s = t.trim();
+    if (!s || !/\p{L}/u.test(s)) return "junk";
+    if (/_{2,}|\.{4,}/.test(s)) return "junk";
+    if (/^[\[\/(|].*[\]\/)|]$/.test(s) || (IPA.test(s) && s.length < 30 && !/\s\p{L}{4,}\s/u.test(s))) return "phon";
+    if (HEAD.test(s)) return "head";
+    const w = words(s), last = w[w.length - 1] || "";
+    if (w.length >= 9) return "sentence";
+    if (/[!?]$/.test(s) && w.length >= 2) return "sentence";
+    if (/\.$/.test(s) && w.length >= 3 && (last.length > 4 || w.length >= 5)) return "sentence";
+    if (/^\p{Lu}/u.test(s) && w.length >= 5 && /[.!?:]$/.test(s)) return "sentence";
+    return "word";
+  }
+  function deScore(t) {
+    let sc = 0;
+    for (const w of words(t)) {
+      const x = w.replace(/[,;.()]/g, "");
+      if (DE_WORDS.test(x)) sc += 2;
+      if (/[äöüß]/i.test(x)) sc += 2;
+      if (/(ung|keit|heit|lich|isch|chen|schaft|ieren|eln|ern)$/i.test(x)) sc += 1;
+      if (/sch|tz|ei|ie|eu|pf/i.test(x)) sc += 0.5;
+    }
+    return sc;
+  }
+  function fScore(t, lang) {
+    const L = LANG[lang] || LANG.en; let sc = 0;
+    for (const w of words(t)) {
+      const x = w.replace(/[,;.()]/g, "");
+      if (L.words.test(x)) sc += 2;
+      if (L.chars.test(x)) sc += 1;
+      if (L.end.test(x)) sc += 0.7;
+    }
+    if (lang === "la" && /,\s*-/.test(t)) sc += 2;
+    return sc;
+  }
+
+  /* 1) Zellen aus Tesseract-Zeilen (große Lücke = neue Spalte) */
+  function cellsFrom(data) {
+    const lines = (data && data.lines) || [];
+    const cells = [];
+    for (const ln of lines) {
+      const ws = (ln.words || []).filter(w => w.text && w.text.trim()).sort((a, b) => a.bbox.x0 - b.bbox.x0);
+      if (!ws.length) continue;
+      const h = median(ws.map(w => w.bbox.y1 - w.bbox.y0)) || 12;
+      let cur = null;
+      for (const w of ws) {
+        if (cur && w.bbox.x0 - cur.x1 > Math.max(1.5 * h, 18)) { cells.push(cur); cur = null; }
+        if (!cur) cur = { x0: w.bbox.x0, x1: w.bbox.x1, y0: w.bbox.y0, y1: w.bbox.y1, parts: [], conf: [] };
+        cur.parts.push(w.text); cur.conf.push(w.confidence);
+        cur.x1 = Math.max(cur.x1, w.bbox.x1); cur.y0 = Math.min(cur.y0, w.bbox.y0); cur.y1 = Math.max(cur.y1, w.bbox.y1);
+      }
+      if (cur) cells.push(cur);
+    }
+    for (const c of cells) {
+      c.text = cleanCell(c.parts.join(" "));
+      c.k = kind(c.text);
+      c.conf = c.conf.reduce((a, b) => a + b, 0) / c.conf.length;
+      c.h = c.y1 - c.y0; c.yc = (c.y0 + c.y1) / 2;
+    }
+    return cells.filter(c => c.text && c.conf >= 35);
+  }
+
+  /* 2) Schräglage ausgleichen und Zellen zu Zeilen zusammenfassen */
+  function rowsFrom(cells, data) {
+    const slopes = [];
+    for (const ln of (data.lines || [])) {
+      const b = ln.baseline;
+      if (b && b.x1 - b.x0 > 80) slopes.push((b.y1 - b.y0) / (b.x1 - b.x0));
+    }
+    const slope = Math.max(-0.12, Math.min(0.12, median(slopes) || 0));
+    for (const c of cells) c.yr = c.yc - slope * ((c.x0 + c.x1) / 2);
+    const hMed = median(cells.map(c => c.h)) || 14;
+    const sorted = cells.slice().sort((a, b) => a.yr - b.yr);
+    const rows = [];
+    for (const c of sorted) {
+      const r = rows[rows.length - 1];
+      if (r && Math.abs(c.yr - r.yr) < 0.6 * hMed && !r.cells.some(o => o.x0 < c.x1 && c.x0 < o.x1)) {
+        r.cells.push(c); r.yr = (r.yr * (r.cells.length - 1) + c.yr) / r.cells.length;
+      } else rows.push({ yr: c.yr, cells: [c] });
+    }
+    rows.forEach(r => r.cells.sort((a, b) => a.x0 - b.x0));
+    return { rows, slope, hMed };
+  }
+
+  /* 3) Spalten über die linke Kante clustern */
+  function columns(rows, width) {
+    const tol = Math.max(30, width * 0.06);
+    const xs = [];
+    rows.forEach(r => { if (r.cells.length >= 2) r.cells.forEach(c => xs.push(c.x0)); });
+    xs.sort((a, b) => a - b);
+    const cols = [];
+    for (const x of xs) {
+      const c = cols[cols.length - 1];
+      if (c && x - c.max <= tol) { c.max = x; c.xs.push(x); } else cols.push({ min: x, max: x, xs: [x] });
+    }
+    cols.forEach(c => { c.x = median(c.xs); });
+    return cols;
+  }
+  const colOf = (cols, x) => { let best = -1, d = Infinity; cols.forEach((c, i) => { const dd = Math.abs(c.x - x); if (dd < d) { d = dd; best = i; } }); return best; };
+
+  /* Rückfall: einspaltige Listen mit Trennzeichen ("house – Haus", "1. dog = Hund") */
+  function splitLine(t) {
+    let parts = t.split(/\s+[–—-]\s+|\s*=\s*|\t+|\s*;\s*|\s+:\s+|\s{3,}|\s*\|\s*/).map(x => x.trim()).filter(Boolean);
+    if (parts.length < 2) {
+      const toks = words(t);
+      const art = toks.findIndex((w, i) => i > 0 && /^(der|die|das)$/i.test(w));
+      if (art > 0) parts = [toks.slice(0, art).join(" "), toks.slice(art).join(" ")];
+    }
+    if (parts.length < 2) return null;
+    return [parts[0], parts.slice(1).join(", ")];
+  }
+
+  function orient(pairs, lang) {
+    let votes = 0;
+    for (const p of pairs) votes += (deScore(p[1]) - fScore(p[1], lang)) - (deScore(p[0]) - fScore(p[0], lang));
+    return votes < 0 ? pairs.map(p => [p[1], p[0]]) : pairs;
+  }
+  /* typische Lesefehler korrigieren */
+  function fixGerman(t) {
+    return t.replace(/[óò]/g, "ö").replace(/[ÓÒ]/g, "Ö").replace(/[áà]/g, "ä").replace(/[ÁÀ]/g, "Ä").replace(/[úù]/g, "ü").replace(/[ÚÙ]/g, "Ü")
+      .replace(/([aeiouäöü])fs\b/g, "$1ß").replace(/\s+([,;])/g, "$1");
+  }
+  function fixForeign(t, lang) {
+    t = t.replace(/\s+([,;])/g, "$1");
+    if (lang === "la") t = t.replace(/[áàäâ]/g, "ā").replace(/[éèëê]/g, "ē").replace(/[íìïî]/g, "ī").replace(/[óòöô]/g, "ō").replace(/[úùüû]/g, "ū");
+    return t;
+  }
+  function finish(pairs, lang) {
+    const seen = new Set(), out = [];
+    for (let [f, d] of pairs) {
+      f = fixForeign(cleanCell(f).replace(/[,;:]\s*$/, ""), lang); d = fixGerman(cleanCell(d).replace(/[,;:]\s*$/, ""));
+      if (!f || !d || !/\p{L}/u.test(f) || !/\p{L}/u.test(d)) continue;
+      if (f.length > 60 || d.length > 80 || f.toLowerCase() === d.toLowerCase()) continue;
+      if (kind(f) !== "word" || kind(d) !== "word") continue;
+      const key = f.toLowerCase() + "|" + d.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key); out.push({ f, d });
+    }
+    return out;
+  }
+
+  function extract(data, lang, width) {
+    const cells = cellsFrom(data);
+    if (!cells.length) return { pairs: [], mode: "empty" };
+    width = width || Math.max(...cells.map(c => c.x1));
+    const { rows, hMed } = rowsFrom(cells, data);
+    const multi = rows.filter(r => r.cells.filter(c => c.k === "word").length >= 2);
+    if (multi.length >= 3) {
+      const cols = columns(rows, width);
+      const stat = cols.map(() => ({ n: 0, word: 0, phon: 0, sent: 0, de: 0, fo: 0 }));
+      for (const r of rows) for (const c of r.cells) {
+        c.col = colOf(cols, c.x0); const st = stat[c.col]; st.n++;
+        if (c.k === "word") { st.word++; st.de += deScore(c.text); st.fo += fScore(c.text, lang); }
+        else if (c.k === "phon") st.phon++;
+        else if (c.k === "sentence") st.sent++;
+      }
+      const minSupport = Math.max(2, multi.length * 0.3);
+      const good = stat.map((s, i) => ({ i, s })).filter(o => o.s.word >= minSupport && o.s.phon <= o.s.n * 0.4 && o.s.sent <= o.s.n * 0.4);
+      if (good.length >= 2) {
+        const net = o => (o.s.de - o.s.fo) / Math.max(1, o.s.word);
+        const deCol = good.slice().sort((a, b) => net(b) - net(a))[0].i;
+        const rest = good.filter(o => o.i !== deCol);
+        const fCol = rest.sort((a, b) => b.s.word - a.s.word || a.i - b.i)[0].i;
+        const pairs = []; let last = null, pendingF = null;
+        for (const r of rows) {
+          const f = r.cells.filter(c => c.col === fCol && c.k === "word").map(c => c.text).join(" ");
+          const d = r.cells.filter(c => c.col === deCol && c.k === "word").map(c => c.text).join(" ");
+          if (f && d) { last = [f, d, r.yr]; pairs.push(last); pendingF = null; }
+          else if (f && !d) { pendingF = [f, r.yr]; last = null; }
+          else if (d && !f) {
+            if (pendingF && r.yr - pendingF[1] < 2.2 * hMed) { last = [pendingF[0], d, r.yr]; pairs.push(last); pendingF = null; }
+            else if (last && r.yr - last[2] < 1.6 * hMed && /[,/]\s*$|^(die|der|das)\b/i.test(last[1] + "|" + d) ) { last[1] += " " + d; last[2] = r.yr; }
+          } else { last = null; pendingF = null; }
+        }
+        const res = finish(pairs.map(p => [p[0], p[1]]), lang);
+        if (res.length >= 2) return { pairs: res, mode: "columns" };
+      }
+    }
+    /* einspaltig: jede Zeile mit Trennzeichen */
+    const pairs = [];
+    for (const r of rows) {
+      const t = r.cells.map(c => c.text).join("   ");
+      if (kind(t) !== "word" && !/[–—=:-]/.test(t)) continue;
+      const sp = splitLine(t);
+      if (sp && kind(sp[0]) === "word" && kind(sp[1]) === "word" && words(sp[0]).length <= 6 && words(sp[1]).length <= 8) pairs.push(sp);
+    }
+    return { pairs: finish(orient(pairs, lang), lang), mode: "lines" };
+  }
+  return { extract, kind, cleanCell, splitLine, deScore, fScore };
+})();
+
+/* Foto für die Texterkennung vorbereiten: auf gute Größe bringen, graustufen, Kontrast strecken */
+function prepareImage(file) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const long = Math.max(img.width, img.height);
+      const sc = long > 2600 ? 2600 / long : long < 1400 ? 1400 / long : 1;
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
+      const g = c.getContext("2d", { willReadFrequently: true });
+      g.imageSmoothingQuality = "high";
+      g.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      try {
+        const id = g.getImageData(0, 0, c.width, c.height), d = id.data, hist = new Uint32Array(256);
+        for (let i = 0; i < d.length; i += 4) { const y = (d[i] * 299 + d[i + 1] * 587 + d[i + 2] * 114) / 1000 | 0; d[i] = y; hist[y]++; }
+        const n = c.width * c.height; let lo = 0, hi = 255, acc = 0;
+        while (lo < 255 && (acc += hist[lo]) < n * 0.01) lo++;
+        acc = 0; while (hi > 0 && (acc += hist[hi]) < n * 0.01) hi--;
+        const span = Math.max(40, hi - lo);
+        for (let i = 0; i < d.length; i += 4) { const v = Math.max(0, Math.min(255, (d[i] - lo) * 255 / span)); d[i] = d[i + 1] = d[i + 2] = v; }
+        g.putImageData(id, 0, 0);
+      } catch {}
+      res(c);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error("img")); };
+    img.src = url;
+  });
+}
+/* eingefügter Text: Zeilen mit Trennzeichen, Überschriften und Sätze werden übersprungen */
+function smartParseText(text, lang) {
+  const pairs = [];
+  for (let line of String(text || "").split(/\n/)) {
+    line = VS.cleanCell(line);
+    if (!line) continue;
+    const sp = VS.splitLine(line);
+    if (!sp) continue;
+    if (VS.kind(sp[0]) !== "word" || VS.kind(sp[1]) !== "word") continue;
+    pairs.push(sp);
+  }
+  let votes = 0;
+  for (const p of pairs) votes += (VS.deScore(p[1]) - VS.fScore(p[1], lang)) - (VS.deScore(p[0]) - VS.fScore(p[0], lang));
+  return (votes < 0 ? pairs.map(p => [p[1], p[0]]) : pairs).map(p => ({ f: p[0], d: p[1], on: true }));
+}
 const loadedScripts = {};
 function loadScript(src) {
   if (!loadedScripts[src]) loadedScripts[src] = new Promise((res, rej) => {
@@ -1997,6 +2334,10 @@ function parseVocabText(text) {
 const F = {
   login: f => doLogin(f),
   setup: f => doSetup(f),
+  dname(f) {
+    const n = f.dn.value.replace(/\s+/g, " ").trim().slice(0, 24);
+    setSetting("displayName", n); render(); toast(n ? `Hallo ${n}! Dein Name ist gespeichert.` : "Anzeigename zurückgesetzt.");
+  },
   goal(f) {
     const g = Math.round(+f.goal.value);
     if (!(g >= 5 && g <= 1000)) { toast("Bitte ein Ziel zwischen 5 und 1000 eingeben."); return; }
@@ -2100,6 +2441,7 @@ document.addEventListener("change", async e => {
   const el = e.target;
   if (el.dataset.change === "statsFilter") { S.statsFilter = el.value; render(); }
   if (el.id === "scan-file" && el.files[0] && S.scan) {
+    S.scan.raw = ""; S.scan.info = "";
     if (S.scan.imgUrl) URL.revokeObjectURL(S.scan.imgUrl);
     S.scan.img = el.files[0]; S.scan.imgUrl = URL.createObjectURL(el.files[0]); S.scan.rows = null; S.scan.err = ""; render();
   }
