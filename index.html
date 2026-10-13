@@ -395,6 +395,148 @@ tr.sel td{background:var(--brand-soft)}
 .chart-wrap .grid{stroke:var(--line);stroke-width:1}
 .chart-wrap .b-ok{fill:var(--check)}
 .chart-wrap .b-all{fill:var(--surface-2)}
+/* shop layout */
+.shop-layout{display:grid;grid-template-columns:200px minmax(0,1fr);gap:1.2rem;align-items:start}
+.shop-main{display:flex;flex-direction:column;gap:1.2rem;min-width:0}
+.shop-side{position:sticky;top:84px;display:flex;flex-direction:column;gap:.4rem;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:.9rem .7rem}
+.shop-side .eyebrow{padding:0 .5rem .2rem}
+.shop-cat{display:flex;align-items:center;gap:.6rem;width:100%;border:0;background:transparent;color:var(--ink);font:inherit;font-weight:700;padding:.6rem .6rem;border-radius:12px;cursor:pointer;text-align:left}
+.shop-cat:hover{background:var(--surface-2)}
+.shop-cat[aria-current="true"]{background:var(--coin-soft);box-shadow:inset 3px 0 0 var(--coin)}
+.shop-cat .ic{font-size:1.2rem;width:1.6rem;text-align:center}
+.shop-cat .t{flex:1}
+.shop-cat .n{font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.side-note{font-size:.78rem;color:var(--muted);padding:.4rem .5rem 0}
+@media (max-width:720px){
+  .shop-layout{grid-template-columns:1fr}
+  .shop-side{position:static;flex-direction:row;flex-wrap:wrap;padding:.4rem;border-radius:14px}
+  .shop-side .eyebrow,.side-note{display:none}
+  .shop-cat{width:auto;flex:1;justify-content:center}
+  .shop-cat[aria-current="true"]{box-shadow:inset 0 -3px 0 var(--coin)}
+}
+.legend-card{position:relative;overflow:hidden;display:grid;grid-template-columns:220px minmax(0,1fr);gap:1.2rem;align-items:center;padding:1.3rem;border-radius:22px;color:#fff8e1;
+  background:radial-gradient(circle at 18% 40%,rgba(255,214,90,.35),transparent 55%),linear-gradient(135deg,#3a2600,#6b4500 55%,#2b1c00);border:2px solid #e6b422;box-shadow:0 10px 30px rgba(160,110,0,.35)}
+.legend-card::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,240,180,.18) 50%,transparent 65%);transform:translateX(-100%);animation:legShine 4.5s ease-in-out infinite;pointer-events:none}
+@keyframes legShine{60%,100%{transform:translateX(100%)}}
+.legend-card.owned{border-color:var(--check)}
+.legend-ava{display:grid;place-items:center;height:170px;border-radius:18px;background:radial-gradient(circle at 50% 60%,rgba(255,215,80,.4),transparent 70%)}
+.legend-ava .dragon{width:200px;height:auto;filter:drop-shadow(0 0 10px rgba(255,200,40,.6))}
+.legend-info{display:flex;flex-direction:column;gap:.5rem;min-width:0}
+.legend-info h3{font-size:1.35rem;color:#ffe27a;margin:0}
+.legend-info p{font-size:.92rem;opacity:.9;margin:0}
+.legend-info ul{margin:0;padding-left:1.1rem;font-size:.88rem;display:flex;flex-direction:column;gap:.2rem}
+.legend-info .price{display:flex;align-items:center;gap:.35em;font-weight:800;font-size:1.25rem;color:#ffe27a}
+.legend-info .ok{color:#8ff0b1}
+.legend-tag{align-self:flex-start;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:.25em .7em;border-radius:99px;color:#3a2600;background:linear-gradient(90deg,#fff1a8,#ffcf3a,#fff1a8);background-size:200% 100%;animation:tagShine 2.5s linear infinite}
+@keyframes tagShine{to{background-position:-200% 0}}
+.btn.gold{background:linear-gradient(180deg,#ffe27a,#e6a512);border-color:#b07800;color:#3a2600}
+.legend-card .btn:not(.primary):not(.gold){background:rgba(255,255,255,.12);border-color:rgba(255,230,150,.5);color:#fff8e1}
+@media (max-width:640px){.legend-card{grid-template-columns:1fr}.legend-ava{height:130px}.legend-ava .dragon{width:160px}}
+.own .e .dragon{width:38px;height:auto}
+.own.legend{border-color:#e6b422}
+
+/* Aurelius */
+.pet.dragon-pet{width:126px;height:100px}
+.dragon-pet .pet-body{position:relative;font-size:0;line-height:0;filter:drop-shadow(0 0 var(--glow,4px) rgba(255,196,30,var(--glowA,.4))) drop-shadow(0 4px 3px rgba(0,0,0,.18));transition:filter .6s}
+.dragon-pet .dragon{width:126px;height:100px;overflow:visible;position:relative}
+.dragon-pet .aura{position:absolute;left:50%;top:55%;width:190px;height:150px;margin:-75px 0 0 -95px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,215,70,.42),rgba(255,190,30,.12) 60%,transparent);opacity:0;pointer-events:none}
+.dragon-pet.aura-on .aura{opacity:1;animation:aura 2.4s ease-in-out infinite}
+@keyframes aura{50%{transform:scale(1.12);opacity:.7}}
+.dragon-pet.flash .pet-body{filter:brightness(1.18) drop-shadow(0 0 16px rgba(255,215,60,.95))}
+.dragon-pet.rush .pet-body{animation:rushGlow 1s ease-in-out infinite}
+@keyframes rushGlow{50%{filter:brightness(1.3) drop-shadow(0 0 16px rgba(255,210,50,.95))}}
+.dragon .dg-wing{transform-box:view-box;transform-origin:60px 48px;transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+.dragon .dg-wb{transform:rotate(-10deg)}
+.dragon .dg-wf{animation:wingIdle 2.6s ease-in-out infinite}
+@keyframes wingIdle{50%{transform:rotate(-9deg)}}
+.dragon.spread .dg-wf{animation:none;transform:rotate(14deg) scale(1.22)}
+.dragon.spread .dg-wb{transform:rotate(-28deg) scale(1.18)}
+.dragon .dg-leg{transform-box:fill-box;transform-origin:50% 0}
+.striding .dg-l1,.striding .dg-l4{animation:stride .55s ease-in-out infinite}
+.striding .dg-l2,.striding .dg-l3{animation:stride .55s ease-in-out infinite reverse}
+@keyframes stride{0%,100%{transform:rotate(14deg)}50%{transform:rotate(-14deg)}}
+.striding .dragon{animation:dstep .55s ease-in-out infinite}
+@keyframes dstep{50%{transform:translateY(-2px)}}
+.dragon .dg-flame{transform-box:fill-box;transform-origin:50% 100%;animation:flick .35s ease-in-out infinite alternate}
+@keyframes flick{from{transform:scale(.9,1) rotate(-4deg)}to{transform:scale(1.08,1.15) rotate(5deg)}}
+.dragon .dg-shine{animation:dshine 3.2s ease-in-out infinite}
+@keyframes dshine{0%{transform:translateX(-20px) skewX(-20deg)}55%,100%{transform:translateX(140px) skewX(-20deg)}}
+.dragon .dg-glint{animation:glint 2.4s ease-in-out infinite}
+@keyframes glint{50%{opacity:.5}}
+.dragon .dg-head{transform-box:view-box;transform-origin:86px 38px}
+.dragon.roar .dg-head{animation:roarHead .85s ease-in-out}
+@keyframes roarHead{20%{transform:rotate(-14deg) scale(1.08)}40%{transform:rotate(-10deg) translateX(1px)}55%{transform:rotate(-15deg)}100%{transform:none}}
+.pet-body.land{animation:land .45s ease-out}
+@keyframes land{30%{transform:scaleY(.86) translateY(5px)}}
+.gtrail{color:#ffd84f;font-size:12px;text-shadow:0 0 6px #ffcc33;animation:gtrail 1.2s ease-out forwards}
+@keyframes gtrail{0%{opacity:0;transform:scale(.3)}20%{opacity:1;transform:scale(1)}100%{opacity:0;transform:translateY(-10px) scale(.4) rotate(90deg)}}
+.gdust{width:4px;height:4px;border-radius:50%;background:#ffe27a;box-shadow:0 0 6px #ffc400;animation:gdust 1.3s ease-in forwards}
+@keyframes gdust{0%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(var(--dx),40px) scale(.4)}}
+.gspark{width:5px;height:5px;border-radius:50%;background:#fff6c2;box-shadow:0 0 8px 2px #ffcc33;animation:gspark 1.4s ease-in forwards}
+@keyframes gspark{0%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(var(--dx),70px) scale(.3)}}
+.gcoin{font-size:16px;animation:gcoin 1.3s cubic-bezier(.3,.7,.6,1) forwards}
+@keyframes gcoin{0%{transform:translate(0,0) scale(.6)}40%{transform:translate(calc(var(--dx)*.6),var(--up)) scale(1) rotateY(360deg)}100%{transform:translate(var(--dx),30px) rotateY(720deg);opacity:0}}
+.gconf{position:fixed;top:-20px;border-radius:2px;pointer-events:none;z-index:96;animation:gconf 2.6s cubic-bezier(.25,.4,.6,1) forwards;box-shadow:0 0 4px rgba(255,200,40,.6)}
+@keyframes gconf{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(var(--dx),var(--fall)) rotate(var(--r))}}
+#petStage .gconf{position:absolute}
+
+/* Goldrausch */
+.rush-badge{display:inline-flex;align-items:center;gap:.35em;font-weight:800;font-size:.82rem;padding:.3em .8em;border-radius:99px;background:var(--coin-soft);color:var(--ink);white-space:nowrap;font-variant-numeric:tabular-nums}
+.rush-badge::before{content:"🐉"}
+.rush-badge.on{background:linear-gradient(90deg,#ffe27a,#f3b81f,#ffe27a);background-size:200% 100%;color:#3a2600;animation:tagShine 1.2s linear infinite;box-shadow:0 0 12px rgba(255,200,40,.7)}
+.coin-pop.rush{font-weight:800;text-shadow:0 0 8px rgba(255,200,40,.6)}
+@media (max-width:560px){.learnbar .rush-badge:not(.on){display:none}}
+
+/* Lernserie */
+.stats.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:820px){.stats.four{grid-template-columns:1fr 1fr}.stats.four .stat:last-child{grid-column:auto}}
+.streak-stat .v{display:flex;align-items:center;gap:.25em}
+.streak-stat .v svg{width:.95em;height:.95em}
+.streak-stat.lit{background:linear-gradient(160deg,var(--fr-soft),var(--surface) 70%)}
+.streak-stat.lit .v svg{animation:flameLive 1.2s ease-in-out infinite;transform-origin:50% 90%}
+@keyframes flameLive{50%{transform:scale(1.12) rotate(-4deg)}}
+.streak-stat.risk .v svg{filter:grayscale(.6);opacity:.7}
+.streak-stat.risk .l:last-child{color:var(--warn)}
+.streak-stat.out .v svg{filter:grayscale(1);opacity:.4}
+.streak-pop{position:fixed;left:50%;top:84px;z-index:95;display:flex;align-items:center;gap:.4em;padding:.55em 1.1em;border-radius:99px;background:var(--surface);border:2px solid var(--fr);font-weight:800;box-shadow:var(--shadow);transform:translateX(-50%);animation:spop 2.6s cubic-bezier(.3,1.5,.5,1) forwards;pointer-events:none}
+.streak-pop svg{width:1.4em;height:1.4em;animation:flameLive .6s ease-in-out infinite}
+.streak-pop b{font-family:var(--f-display);font-size:1.3rem}
+@keyframes spop{0%{transform:translate(-50%,-30px) scale(.5);opacity:0}12%{transform:translate(-50%,0) scale(1);opacity:1}85%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-16px)}}
+.celebrate{position:fixed;inset:0;z-index:95;display:grid;place-items:center;padding:16px;background:radial-gradient(circle at 50% 45%,rgba(90,50,0,.45),rgba(8,10,18,.78) 75%);animation:celIn .3s ease-out;overflow:hidden;cursor:pointer}
+.celebrate.big{background:radial-gradient(circle at 50% 40%,rgba(120,80,0,.55),rgba(10,8,0,.85))}
+@keyframes celIn{from{opacity:0}}
+.cel-card{position:relative;background:var(--surface);border-radius:26px;padding:1.6rem 1.6rem 1.3rem;max-width:380px;width:100%;text-align:center;display:flex;flex-direction:column;gap:.55rem;align-items:center;box-shadow:0 20px 60px rgba(0,0,0,.35);animation:celCard .55s cubic-bezier(.3,1.5,.5,1);cursor:default}
+.celebrate.big .cel-card{border:3px solid #e6b422;box-shadow:0 0 50px rgba(255,200,40,.55)}
+@keyframes celCard{from{transform:scale(.6) translateY(30px);opacity:0}}
+.cel-card h2{margin:0;font-size:1.5rem}
+.cel-card .muted{margin:0}
+.cel-burst{position:relative;width:150px;height:150px;display:grid;place-items:center;margin-top:-.4rem}
+.cel-burst .ring{position:absolute;inset:20px;border-radius:50%;border:4px solid var(--fr);opacity:0;animation:ring 1.3s .2s ease-out}
+.cel-burst .ring.r2{animation-delay:.55s}
+.celebrate.big .cel-burst .ring{border-color:#ffd84f;animation-iteration-count:infinite;animation-duration:1.8s}
+@keyframes ring{0%{transform:scale(.4);opacity:.9}100%{transform:scale(1.5);opacity:0}}
+.cel-burst .rays{position:absolute;inset:0;animation:rays 8s linear infinite}
+.cel-burst .rays i{position:absolute;left:50%;top:50%;width:4px;height:22px;margin:-11px 0 0 -2px;border-radius:4px;background:var(--fr);transform:rotate(var(--a)) translateY(-64px) scaleY(0);animation:ray .7s .25s cubic-bezier(.3,1.6,.5,1) forwards}
+.celebrate.big .cel-burst .rays i{background:#ffd84f;box-shadow:0 0 8px #ffcc33}
+@keyframes ray{to{transform:rotate(var(--a)) translateY(-64px) scaleY(1)}}
+@keyframes rays{to{transform:rotate(360deg)}}
+.cel-flame{width:84px;height:105px;position:relative;z-index:1;transform-origin:50% 100%;animation:ignite .9s cubic-bezier(.3,1.5,.5,1) both,flameLive 1.1s .9s ease-in-out infinite;filter:drop-shadow(0 0 14px rgba(255,140,0,.6))}
+.celebrate.first .cel-flame{animation:igniteSlow 1.6s cubic-bezier(.3,1.4,.5,1) both,flameLive 1.1s 1.6s ease-in-out infinite}
+@keyframes ignite{from{transform:scale(0)}}
+@keyframes igniteSlow{0%{transform:scale(0)}35%{transform:scale(.18)}50%{transform:scale(.15)}100%{transform:scale(1)}}
+.cel-flame .f1{fill:#ff7a1a}.cel-flame .f2{fill:#ffb020}.cel-flame .f3{fill:#fff1b8}
+.cel-flame.gold .f1{fill:#e6a512}.cel-flame.gold .f2{fill:#ffd84f}.cel-flame.gold .f3{fill:#fffbe6}
+.cel-flame.gold{filter:drop-shadow(0 0 18px rgba(255,210,60,.9))}
+.cel-num{position:absolute;z-index:2;bottom:22px;font-family:var(--f-display);font-weight:800;font-size:1.9rem;color:#fff;text-shadow:0 2px 0 rgba(120,50,0,.6),0 0 10px rgba(255,120,0,.7);font-variant-numeric:tabular-nums;animation:pop .5s .6s both}
+.celebrate.big .cel-num{font-size:2.2rem}
+.week-dots{display:flex;gap:.4rem;margin:.2rem 0}
+.week-dots span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--fr);color:#fff;font-weight:800;font-size:.9rem;transform:scale(0);animation:dot .4s calc(.5s + var(--i)*.12s) cubic-bezier(.3,1.8,.5,1) forwards}
+@keyframes dot{to{transform:scale(1)}}
+.cel-reward{display:flex;align-items:center;gap:.3em;font-family:var(--f-display);font-weight:800;font-size:2.2rem;color:var(--coin);animation:pop .6s 1.4s both}
+.cel-hint{font-size:.78rem;color:var(--muted);margin:0}
+.fw{position:absolute;width:7px;height:7px;border-radius:50%;pointer-events:none;box-shadow:0 0 8px currentColor;animation:fw 1.4s cubic-bezier(.2,.7,.4,1) forwards}
+@keyframes fw{0%{transform:translate(0,0) scale(1);opacity:1}70%{opacity:1}100%{transform:translate(var(--dx),calc(var(--dy) + 40px)) scale(.3);opacity:0}}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .logo-check{stroke-dashoffset:0}
@@ -411,7 +553,7 @@ tr.sel td{background:var(--brand-soft)}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-const APP_VERSION = "1.2.1";
+const APP_VERSION = "1.2.2";
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
   authDomain: "vocabify-8abb9.firebaseapp.com",
@@ -423,6 +565,7 @@ const FIREBASE_CONFIG = {
 const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
 const TESSERACT_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
 const CHANGELOG = [
+  { v: "1.2.2", items: ["Neue Lernserie: Jeder Tag mit mindestens einer richtigen Vokabel zählt", "Besondere Animationen am 1. Tag, alle 7 Tage und bei 100, 200, … Tagen", "100 Münzen Belohnung für jede 100er-Lernserie", "Shop mit Kategorien-Leiste an der Seite", "Neue Preise: erstes Tier 50 Münzen, jedes weitere 25 Münzen mehr", "Legendäres Haustier: Aurelius, der Goldene Phönix-Drache mit Goldrausch (doppelte Münzen)"] },
   { v: "1.2.1", items: ["Foto-Scanner deutlich verbessert: gewölbte Seiten, schräge Fotos und ungleichmäßiges Licht", "Tabellenlinien werden vor dem Lesen entfernt, durchscheinende Schrift wird ignoriert", "Kästen mit zwei Vokabelspalten nebeneinander (z. B. Wiederholungsvokabeln) werden erkannt", "Jeder Vokabelblock wird ein zweites Mal als Ganzes gelesen", "Grammatikangaben wie „Adv.“ oder „f Pl.“ muss man beim Lernen nicht mittippen"] },
   { v: "1.2.0", items: ["Neuer Menüpunkt „Feedback“: Ideen, Fehler und Lob direkt an den Admin senden", "Admins können hilfreiches Feedback mit Münzen belohnen", "Scanner kontrolliert jetzt jedes Wort zweimal, auch bei Französisch und Latein", "Unsicher gelesene Wörter werden gelb markiert", "Eigenes App-Symbol für den Home-Bildschirm von iPhone und iPad"] },
   { v: "1.1.0", items: ["Scanner liest jetzt ganze Buchseiten (z. B. den Vocabulary-Teil im Englischbuch oder in der Access-App)", "Doppelseiten werden erkannt: Erklärseiten, Lautschrift, Beispielsätze und Bilder werden übersprungen", "Zweite Lesung der deutschen Wörter für richtige Umlaute", "Mehrzeilige Bedeutungen werden zusammengefügt, Erklärungen in Klammern entfernt"] },
@@ -440,7 +583,9 @@ const LANGS = {
   fr: { name: "Französisch", short: "FR", sample: "la maison" }
 };
 const MILESTONES = [30, 50, 100];
-const PET_PRICE = 250;
+const PET_BASE = 50, PET_STEP = 25; /* 1. Tier 50, dann 75, 100, … */
+const STREAK_REWARD = 100;           /* Münzen pro 100er-Lernserie */
+const RUSH_CYCLE = 120000, RUSH_LEN = 30000; /* Aurelius: alle 2 Minuten 30 s Goldrausch */
 const C = { acc: "vf_accounts", sec: "vf_sections", inv: "vf_invites", art: "vf_articles", roles: "vf_roles", logins: "vf_logins", meta: "vf_meta", fb: "vf_feedback" };
 
 const PET_DEFS = {
@@ -453,8 +598,19 @@ const PET_DEFS = {
   monkey:   { name: "Affe",        e: "🐒", kind: "branch",             desc: "Springt von Ast zu Ast und isst eine Banane.", acts: ["banana"] },
   elephant: { name: "Elefant",     e: "🐘", kind: "walk",   speed: 34,  desc: "Trompetet laut und spritzt Wasser aus dem Rüssel.", acts: ["trumpet", "spray"] },
   panda:    { name: "Panda",       e: "🐼", kind: "walk",   speed: 26,  desc: "Tapst gemütlich herum und mampft Bambus.", acts: ["bamboo"], front: true },
-  frog:     { name: "Frosch",      e: "🐸", kind: "hop",    speed: 150, desc: "Hüpft in großen Sprüngen über den Bildschirm.", acts: ["croak"], front: true }
+  frog:     { name: "Frosch",      e: "🐸", kind: "hop",    speed: 150, desc: "Hüpft in großen Sprüngen über den Bildschirm.", acts: ["croak"], front: true },
+  aurelius: { name: "Aurelius",    e: "🐉", kind: "dragon", speed: 42, legendary: true, price: 1000, w: 126, h: 96,
+              title: "der Goldene Phönix-Drache",
+              desc: "Ein majestätischer Drache aus 24-karätigem Gold. Er schreitet stolz über den Bildschirm, breitet glitzernde Flügel aus und landet nach seinem Looping mit einem „Kling!“.",
+              perks: ["Brüllt bei jeder richtigen Antwort und lässt goldenes Konfetti regnen", "Leuchtet heller, je länger deine Lernserie ist, ab 7 Tagen mit goldener Aura", "Goldrausch: alle 2 Minuten 30 Sekunden lang doppelte Münzen"], acts: [] }
 };
+function petPrice(id) {
+  const p = PET_DEFS[id];
+  if (p && p.legendary) return p.price;
+  const owned = (S.me && Array.isArray(S.me.pets) ? S.me.pets : []).filter(x => PET_DEFS[x] && !PET_DEFS[x].legendary).length;
+  return PET_BASE + PET_STEP * owned;
+}
+function petArticle(id, cap) { const f = id === "cat" || id === "turtle"; return cap ? (f ? "Deine" : "Dein") : (f ? "deine" : "dein"); }
 
 const MODES = {
   general: { name: "Generelles Lernen", desc: "Gemischter Pool aller Vokabeln" },
@@ -830,6 +986,7 @@ async function loadData() {
   announceRewards();
   await loadSent();
   if (isAdmin()) await loadAdmin();
+  migrateStreak();
 }
 setInterval(async () => {
   if (!S.me || document.hidden) return;
@@ -1084,7 +1241,12 @@ function registerCorrect(s, v) {
   d.count++; S.me.totalCorrect = (S.me.totalCorrect || 0) + 1;
   const key = s.id + ":" + v.id;
   L.coin = false;
-  if (!d.coined.includes(key)) { d.coined.push(key); S.me.coins = (S.me.coins || 0) + 1; L.coin = true; L.coinsEarned++; }
+  L.coinAmt = 0;
+  if (!d.coined.includes(key)) {
+    const amt = rushActive() ? 2 : 1;
+    d.coined.push(key); S.me.coins = (S.me.coins || 0) + amt; L.coin = true; L.coinAmt = amt; L.coinsEarned += amt;
+  }
+  bumpStreak();
   L.right++;
   L.wrongs = L.wrongs.filter(x => x.vid !== v.id || x.counted);
   Pets.onCorrect(L.right);
@@ -1319,6 +1481,7 @@ function learnHeader() {
     <span class="brand" aria-label="Vocabify">${LOGO_SVG(false)}<span class="word">Vocabify</span></span>
     <span class="mode-tag">Lernmodus</span>
     <div class="learn-progress"><span>${label}</span>${L.size || done ? `<div class="bar"><i style="width:${pct}%"></i></div>` : ""}</div>
+    ${rushBadge()}
     <span class="coin-pill" title="Deine Münzen">${COIN}<span class="num">${coinsTotal()}</span></span>
     ${done ? "" : `<button class="btn small" data-act="stop">Beenden</button>`}
   </div></header>`;
@@ -1385,14 +1548,6 @@ function displayName() {
   const n = S.me.settings && String(S.me.settings.displayName || "").trim();
   return n || S.me.username.charAt(0).toUpperCase() + S.me.username.slice(1);
 }
-function streakDays() {
-  const days = histDays(S.me, 60);
-  let i = days.length - 1;
-  if (!days[i].c) i--;
-  let n = 0;
-  while (i >= 0 && days[i].c > 0) { n++; i--; }
-  return n;
-}
 function greeting() {
   const name = displayName(), h = new Date().getHours();
   const c = S.me.daily.count, goal = getGoal(), streak = streakDays();
@@ -1412,14 +1567,23 @@ function greeting() {
   if (fresh) sub = "Leg unter „Vokabeln“ deinen ersten Abschnitt an, tippe Wörter ein oder scanne ein Vokabelblatt. Dann kann es losgehen.";
   else if (c >= goal) sub = `Tagesziel geschafft: ${c} Vokabeln heute. Alles, was jetzt noch kommt, ist Bonus.`;
   else if (c > 0) sub = `Schon ${c} Vokabeln geschafft. Noch ${goal - c} bis zu deinem Tagesziel${goal - c <= 10 ? ", das schaffst du!" : "."}`;
-  else if (streak >= 2) sub = `Du lernst seit ${streak} Tagen am Stück. Mit ein paar Vokabeln heute hältst du deine Serie am Leben.`;
+  else if (streak >= 2) sub = `Du lernst seit ${streak} Tagen am Stück. Mit einer richtigen Vokabel heute hältst du deine Lernserie am Leben.`;
   else if (yest > 0) sub = `Gestern hast du ${yest} Vokabeln geschafft. Heute warten ${goal} neue auf dich.`;
-  else if (away) sub = `Deine Vokabeln haben auf dich gewartet${pet ? `, und ${pet.name === "Katze" || pet.name === "Schildkröte" ? "deine" : "dein"} ${pet.name} auch` : ""}. Starte mit einer kurzen Runde.`;
-  else if (pet) sub = `${pet.name === "Katze" || pet.name === "Schildkröte" ? "Deine" : "Dein"} ${pet.name} ist bereit. Dein Ziel für heute: ${goal} Vokabeln.`;
+  else if (away) sub = `Deine Vokabeln haben auf dich gewartet${pet ? `, und ${petArticle(S.me.activePet)} ${pet.name} auch` : ""}. Starte mit einer kurzen Runde.`;
+  else if (pet) sub = `${petArticle(S.me.activePet, true)} ${pet.name} ist bereit. Dein Ziel für heute: ${goal} Vokabeln.`;
   else sub = `Dein Ziel für heute: ${goal} Vokabeln. Eine kurze Runde reicht für den Anfang.`;
   return { title, sub, streak };
 }
 const FLAME = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 3.5-1.5 5-1.5 7.5 0 1.4 1 2.5 2.3 2.5 1.6 0 2.4-1.4 2-3.4 2.4 1.7 4.2 4.4 4.2 7.4A7 7 0 0 1 12 23a7 7 0 0 1-7-7c0-5 4-7.5 7-14z" fill="var(--fr)"/></svg>';
+function streakStat() {
+  const s = streakInfo(), goal = nextStreakGoal(s.count);
+  const state = s.today ? "lit" : s.risk ? "risk" : "out";
+  const note = s.today ? "Heute geschafft ✓" : s.risk ? "Heute noch lernen!" : "Starte heute eine neue Serie";
+  return `<div class="stat streak-stat ${state}" title="Tage in Folge mit mindestens einer richtigen Vokabel${s.best ? ` · Rekord: ${s.best} Tage` : ""}">
+      <span class="l">Lernserie</span>
+      <span class="v">${FLAME}${s.count}<span class="muted" style="font-size:1rem"> ${s.count === 1 ? "Tag" : "Tage"}</span></span>
+      <span class="l">${note}${s.count ? ` · nächstes Ziel: ${goal}` : ""}</span></div>`;
+}
 function homeView() {
   const d = S.me.daily, c = d.count;
   const goal = getGoal();
@@ -1427,11 +1591,12 @@ function homeView() {
   const gr = greeting();
   return `<section class="hello">
       <div style="min-width:0"><p class="eyebrow">${esc(dateStr)}</p><h1>${esc(gr.title)}</h1><p class="sub">${esc(gr.sub)}</p></div>
-      ${gr.streak >= 2 ? `<span class="streak" title="Tage in Folge gelernt">${FLAME}${gr.streak} Tage Serie</span>` : ""}
+      ${rushBadge()}
     </section>
-    <section class="stats">
+    <section class="stats four">
       <div class="stat"><span class="l">Heute gelernt</span><span class="v">${c}</span><span class="l">richtige Vokabeln</span></div>
       <div class="stat"><span class="l">Tagesziel</span><span class="v">${Math.min(c, goal)}<span class="muted" style="font-size:1rem"> / ${goal}</span></span><div class="bar"><i style="width:${Math.min(100, c / goal * 100)}%"></i></div></div>
+      ${streakStat()}
       <div class="stat"><span class="l">Münzen</span><span class="v" style="display:flex;align-items:center;gap:.3em">${COIN}${coinsTotal()}</span><span class="l">max. 1 Münze pro Vokabel und Tag</span></div>
     </section>
     <section class="card">
@@ -1500,7 +1665,7 @@ function quizView() {
   let fb = "";
   if (L.state === "right") {
     fb = `<div class="fb right" role="status">Richtig!${L.typo ? ` <span>Fast perfekt, achte auf die Schreibweise: <span class="sol">${esc(sol)}</span></span>` : ""}
-      ${L.coin ? `<span class="coin-pop">${COIN}+1</span>` : `<span class="muted" style="font-weight:600">Heute schon belohnt</span>`}
+      ${L.coin ? `<span class="coin-pop${L.coinAmt > 1 ? " rush" : ""}">${COIN}+${L.coinAmt || 1}${L.coinAmt > 1 ? " Goldrausch!" : ""}</span>` : `<span class="muted" style="font-weight:600">Heute schon belohnt</span>`}
       ${L.typo ? `<span class="spacer"></span><button class="btn small" id="nextBtn" data-act="next">Weiter</button>` : ""}</div>`;
   } else if (L.state === "wrong") {
     fb = `<div class="fb wrong" role="status"><span>Leider falsch. Richtig ist: <span class="sol">${esc(sol)}</span></span><span class="spacer"></span>
@@ -1694,31 +1859,55 @@ function invitesView() {
 }
 
 /* shop */
+function petAva(id, p) { return id === "aurelius" ? dragonSVG("sv" + Math.random().toString(36).slice(2, 7)) : p.e; }
+function buyControls(id, price, total) {
+  const has = S.me.pets.includes(id), conf = S.confirm === "buy:" + id;
+  if (has) return `<span class="ok">Gekauft</span>`;
+  if (conf) return `<button class="btn small" data-act="cancelConfirm">Nein</button><button class="btn small primary" data-act="buy" data-id="${id}">Kaufen!</button>`;
+  return `<button class="btn small${id === "aurelius" && total >= price ? " gold" : ""}" data-act="askConfirm" data-k="buy:${id}" ${total < price ? "disabled" : ""}>${total < price ? `Noch ${price - total}` : "Kaufen"}</button>`;
+}
 function shopView() {
   const owned = S.me.pets;
   const total = coinsTotal();
-  const own = owned.length ? `<section class="card">
-      <div class="card-head"><h2>Mein Besitz</h2><span class="muted" style="font-size:.88rem">Wähle, welches Tier auf der Startseite herumläuft.</span></div>
+  const cat = S.shopCat === "owned" ? "owned" : "pets";
+  const regular = Object.entries(PET_DEFS).filter(([, p]) => !p.legendary);
+  const regOwned = owned.filter(id => PET_DEFS[id] && !PET_DEFS[id].legendary).length;
+  const price = petPrice("dog");
+  const side = `<nav class="shop-side" aria-label="Shop-Kategorien">
+      <p class="eyebrow">Kategorien</p>
+      <button class="shop-cat" data-act="shopCat" data-k="pets" aria-current="${cat === "pets"}"><span class="ic" aria-hidden="true">🐾</span><span class="t">Haustiere</span><span class="n">${regOwned + (owned.includes("aurelius") ? 1 : 0)}/${Object.keys(PET_DEFS).length}</span></button>
+      <button class="shop-cat" data-act="shopCat" data-k="owned" aria-current="${cat === "owned"}"><span class="ic" aria-hidden="true">🎒</span><span class="t">Mein Besitz</span><span class="n">${owned.length}</span></button>
+      <p class="side-note">Weitere Kategorien folgen.</p>
+    </nav>`;
+  let body;
+  if (cat === "owned") {
+    body = owned.length ? `<section class="card">
+      <div class="card-head"><h2>Mein Besitz</h2><span class="muted" style="font-size:.88rem">Wähle, welches Tier dich beim Lernen begleitet.</span></div>
       <div class="owned-list">
         <button class="own" data-act="setPet" data-id="" aria-pressed="${!S.me.activePet}"><span class="e" style="font-size:16px">–</span>Keins</button>
-        ${owned.map(id => `<button class="own" data-act="setPet" data-id="${id}" aria-pressed="${S.me.activePet === id}"><span class="e">${PET_DEFS[id].e}</span>${PET_DEFS[id].name}</button>`).join("")}
-      </div></section>` : `<p class="note">Du besitzt noch kein Haustier. Sammle ${PET_PRICE} Münzen und hol dir deinen ersten Lernbegleiter.</p>`;
-  const cards = Object.entries(PET_DEFS).map(([id, p]) => {
-    const has = owned.includes(id);
-    const conf = S.confirm === "buy:" + id;
-    return `<article class="pet-card ${has ? "owned" : ""}">
+        ${owned.filter(id => PET_DEFS[id]).map(id => `<button class="own${PET_DEFS[id].legendary ? " legend" : ""}" data-act="setPet" data-id="${id}" aria-pressed="${S.me.activePet === id}"><span class="e">${petAva(id, PET_DEFS[id])}</span>${PET_DEFS[id].name}</button>`).join("")}
+      </div></section>` : `<div class="empty"><strong>Du besitzt noch nichts.</strong><span class="muted">Dein erstes Haustier kostet nur ${PET_BASE} Münzen.</span><button class="btn primary" data-act="shopCat" data-k="pets">Zu den Haustieren</button></div>`;
+  } else {
+    const a = PET_DEFS.aurelius;
+    const legend = `<article class="legend-card${owned.includes("aurelius") ? " owned" : ""}">
+        <div class="legend-ava" aria-hidden="true">${petAva("aurelius", a)}</div>
+        <div class="legend-info">
+          <span class="legend-tag">Legendär</span>
+          <h3>${a.name}, ${a.title}</h3>
+          <p>${a.desc}</p>
+          <ul>${a.perks.map(x => `<li>${x}</li>`).join("")}</ul>
+          <div class="row"><span class="price">${COIN}${a.price}</span><span class="spacer"></span>${buyControls("aurelius", a.price, total)}</div>
+        </div></article>`;
+    const cards = regular.map(([id, p]) => `<article class="pet-card ${owned.includes(id) ? "owned" : ""}">
       <div class="ava" aria-hidden="true">${p.e}</div>
       <h3>${p.name}</h3><p>${p.desc}</p>
-      <div class="row"><span class="price">${COIN}${PET_PRICE}</span><span class="spacer"></span>
-        ${has ? `<span class="ok">Gekauft</span>`
-          : conf ? `<button class="btn small" data-act="cancelConfirm">Nein</button><button class="btn small primary" data-act="buy" data-id="${id}">Kaufen!</button>`
-          : `<button class="btn small" data-act="askConfirm" data-k="buy:${id}" ${total < PET_PRICE ? "disabled" : ""}>${total < PET_PRICE ? `Noch ${PET_PRICE - total}` : "Kaufen"}</button>`}
-      </div></article>`;
-  }).join("");
+      <div class="row">${owned.includes(id) ? "" : `<span class="price">${COIN}${price}</span>`}<span class="spacer"></span>${buyControls(id, price, total)}</div></article>`).join("");
+    body = `${legend}
+      <section><div class="card-head"><h2>Haustiere</h2><span class="muted" style="font-size:.88rem">${regOwned === regular.length ? "Du hast alle Tiere!" : `Nächstes Tier: ${price} Münzen · jedes weitere kostet ${PET_STEP} mehr`}</span></div>
+      <div class="pets">${cards}</div></section>`;
+  }
   return `<div class="shop-head"><h1>Shop</h1><span class="coin-pill">${COIN}<span class="num">${total}</span></span></div>
-    ${own}
-    <section><div class="card-head"><h2>Haustiere</h2><span class="muted" style="font-size:.88rem">Jedes Tier kostet ${PET_PRICE} Münzen</span></div>
-    <div class="pets">${cards}</div></section>`;
+    <div class="shop-layout">${side}<div class="shop-main">${body}</div></div>`;
 }
 
 /* wiki */
@@ -2146,12 +2335,16 @@ async scanRun() {
   },
   async buy(t) {
     const id = t.dataset.id;
-    if (S.me.pets.includes(id) || coinsTotal() < PET_PRICE) return;
-    S.me.coins -= PET_PRICE; S.me.pets.push(id);
-    if (!S.me.activePet) S.me.activePet = id;
+    if (!PET_DEFS[id]) return;
+    const price = petPrice(id);
+    if (S.me.pets.includes(id) || coinsTotal() < price) return;
+    S.me.coins = (S.me.coins || 0) - price; S.me.pets.push(id);
+    if (!S.me.activePet || PET_DEFS[id].legendary) S.me.activePet = id;
     S.confirm = null; markDirty("me"); await flush();
-    render(); toast(`${PET_DEFS[id].name} gekauft! Schau auf der Startseite vorbei.`);
+    render();
+    toast(PET_DEFS[id].legendary ? "Aurelius gehört jetzt dir! Er begleitet dich ab sofort beim Lernen." : `${PET_DEFS[id].name} gekauft! Schau auf der Startseite vorbei.`);
   },
+  shopCat(t) { S.shopCat = t.dataset.k; S.confirm = null; render(); },
   setPet(t) { S.me.activePet = t.dataset.id || null; markDirty("me"); render(); toast(S.me.activePet ? PET_DEFS[S.me.activePet].name + " läuft jetzt auf der Startseite." : "Kein Haustier aktiv."); },
   wtab(t) { S.wikiTab = t.dataset.k; render(); },
   openArt(t) { S.openArticle = t.dataset.id; if (S.view === "admin") S.view = "wiki"; render(); window.scrollTo({ top: 0 }); },
@@ -3061,6 +3254,195 @@ function shrinkImage(file, maxW, q) {
   });
 }
 
+/* ---------- Aurelius: Zeichnung ---------- */
+const DG = {
+  body: "M26 60C30 50 44 46 58 47C70 48 78 50 82 56C85 62 82 70 74 73C62 77 44 77 34 73C28 70 25 66 26 60Z",
+  neck: "M70 52C74 44 78 37 84 32L95 37C90 42 87 50 84 63Z",
+  head: "M82 30C84 23 92 20 99 23C103 25 107 27 112 28C116 29 117 33 114 35L104 37C100 40 92 42 86 40C82 38 81 34 82 30Z",
+  tail: "M30 57C20 60 12 57 8 50C5 44 6 37 3 31C9 35 12 41 14 46C17 52 22 57 31 66Z",
+  wing: "M62 48C66 38 66 26 62 12C58 7 53 4 48 2Q46 10 36 10Q40 18 30 24Q44 32 44 47Z",
+  ribs: "M62 12L48 2M62 12L36 10M62 12L30 24M62 48C65 38 65 26 62 12",
+  spikes: "M33 52l2-6 3 4zM40 48.5l2.5-6.5 3 5.5zM48 47l2.5-6.5 3 6zM56 47l2.5-6 3 6zM73 45l3.5-4.5 1.5 5.5zM77 39l3.5-4 1 5zM10 46l-4-2 3.5-2.5zM7 39l-4-1.5 3.5-3z"
+};
+function dragonSVG(p) {
+  const card = (x, y, r) => `<g transform="translate(${x} ${y}) rotate(${r})"><rect x="-3.6" y="-2.7" width="7.2" height="5.4" rx="1.1"/><path d="M-2.2 -.9H2.2M-2.2 .9H1"/></g>`;
+  const O = `stroke="#8f5c00" stroke-width=".8" stroke-linejoin="round"`;
+  return `<svg class="dragon" viewBox="-6 -8 126 100" aria-hidden="true">
+  <defs>
+    <linearGradient id="${p}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff7c9"/><stop offset=".3" stop-color="#ffd84f"/><stop offset=".68" stop-color="#e6a512"/><stop offset="1" stop-color="#9c6400"/></linearGradient>
+    <linearGradient id="${p}d" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0bb2e"/><stop offset="1" stop-color="#7f4f00"/></linearGradient>
+    <linearGradient id="${p}w" x1="1" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#e09a00"/><stop offset=".5" stop-color="#ffcf33"/><stop offset="1" stop-color="#fff4b0"/></linearGradient>
+    <radialGradient id="${p}f" cx=".5" cy=".75" r=".7"><stop offset="0" stop-color="#fffbe6"/><stop offset=".4" stop-color="#ffd43a"/><stop offset=".8" stop-color="#ff9a00"/><stop offset="1" stop-color="#ff7a00" stop-opacity="0"/></radialGradient>
+    <linearGradient id="${p}e" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#bdf1ff"/><stop offset="1" stop-color="#5fb8e0"/></linearGradient>
+    <clipPath id="${p}c"><path d="${DG.body}"/><path d="${DG.neck}"/><path d="${DG.head}"/><path d="${DG.tail}"/></clipPath>
+  </defs>
+  <g class="dg-wing dg-wb"><path d="${DG.wing}" transform="translate(-7 3)" fill="url(#${p}d)" ${O}/><path d="${DG.ribs}" transform="translate(-7 3)" stroke="#6e4300" stroke-width="1" fill="none" opacity=".55"/></g>
+  <g class="dg-leg dg-l1"><path d="M44 66C41 72 42 78 45 81L44 88H53L51 80C54 76 54 70 51 66Z" fill="url(#${p}d)"/></g>
+  <g class="dg-leg dg-l2"><path d="M76 64C75 71 77 78 77 81L76 88H85L83 80C85 74 84 68 82 64Z" fill="url(#${p}d)"/></g>
+  <path d="${DG.spikes}" fill="#c98a0a" ${O}/>
+  <path d="${DG.tail}" fill="url(#${p}g)" ${O}/>
+  <g class="dg-flame"><path d="M3 33C-3 27-2 19 3 11C4 17 9 20 8 26C8 30 6 33 3 33Z" fill="url(#${p}f)"/><path d="M3 31C0 28 1 24 3 20C4 24 6 26 5.5 28.5C5.2 30 4.3 31 3 31Z" fill="#fffbe6" opacity=".9"/></g>
+  <g class="dg-leg dg-l3"><path d="M34 64C30 70 31 77 35 81L33 88H43L41 80C45 76 45 69 42 64Z" fill="url(#${p}g)" ${O}/><path d="M33 88l1.5-2.5M37 88l1-2.5M41 88l.5-2.5" stroke="#8f5c00" stroke-width=".7"/></g>
+  <g class="dg-leg dg-l4"><path d="M68 64C66 71 68 78 69 81L67 88H77L75 80C77 74 77 68 75 64Z" fill="url(#${p}g)" ${O}/><path d="M67 88l1.5-2.5M71 88l1-2.5M75 88l.5-2.5" stroke="#8f5c00" stroke-width=".7"/></g>
+  <path d="${DG.body}" fill="url(#${p}g)" ${O}/>
+  <path d="M34 72C46 77 64 77 76 70" fill="none" stroke="#fff1b8" stroke-width="3.6" stroke-linecap="round" stroke-dasharray="3 1.5" opacity=".85"/>
+  <path d="${DG.neck}" fill="url(#${p}g)" ${O}/>
+  <path d="M85 61C86 52 89 45 93 39" fill="none" stroke="#fff1b8" stroke-width="3" stroke-linecap="round" stroke-dasharray="2.6 1.4" opacity=".8"/>
+  <g fill="none" stroke="#a36a00" stroke-width=".55" opacity=".6">${card(38, 58, -8)}${card(47, 54, 4)}${card(57, 55, -4)}${card(66, 57, 7)}${card(43, 65, 6)}${card(53, 64, -5)}${card(63, 65, 5)}</g>
+  <path d="M74 50q2-2 4 .2M77 44q2-2 4 .2" fill="none" stroke="#a36a00" stroke-width=".6" opacity=".7"/>
+  <g class="dg-head">
+    <path d="M86 25C80 21 75 20 69 21C75 23 79 26 83 30Z" fill="url(#${p}d)" ${O}/>
+    <path d="${DG.head}" fill="url(#${p}g)" ${O}/>
+    <path d="M89 24C84 17 80 14 74 13C79 17 83 21 86 27Z" fill="url(#${p}w)" ${O}/>
+    <path d="M101 34.5L113 33" stroke="#8f5c00" stroke-width=".8" stroke-linecap="round"/><path d="M104 36.6l1 2 1-2.2M108 36l1 1.8 .9-2" fill="#fff8dc" stroke="#8f5c00" stroke-width=".4"/>
+    <circle cx="112" cy="30" r=".8" fill="#6e4300"/>
+    <path d="M91.5 27.5L95 24.6L98.5 27.5L95 30.4Z" fill="url(#${p}e)" stroke="#6b4300" stroke-width=".5"/><circle class="dg-glint" cx="95.6" cy="27" r=".9" fill="#fff"/>
+    <path d="M91 24.2C94 22.6 97 23 99.5 24.8" fill="none" stroke="#8f5c00" stroke-width=".7" stroke-linecap="round"/>
+    <g class="dg-crown"><path d="M88.5 22.4L89.3 14.6L92.3 18.2L94.8 11.8L97.3 18.2L100.3 14.6L101 22.4Z" fill="url(#${p}w)" stroke="#7f4f00" stroke-width=".6" stroke-linejoin="round"/>
+      <circle cx="94.8" cy="19.4" r="1.55" fill="#e0193a" stroke="#7a0016" stroke-width=".3"/><circle cx="91" cy="20.6" r="1" fill="#2457e6"/><circle cx="98.6" cy="20.6" r="1" fill="#2457e6"/>
+      <circle cx="89.3" cy="14.6" r=".8" fill="#fff4b0"/><circle cx="94.8" cy="11.8" r=".8" fill="#fff4b0"/><circle cx="100.3" cy="14.6" r=".8" fill="#fff4b0"/></g>
+  </g>
+  <g clip-path="url(#${p}c)"><rect class="dg-shine" x="0" y="-8" width="12" height="100" fill="#fff" opacity=".5"/></g>
+  <g class="dg-wing dg-wf"><path d="${DG.wing}" fill="url(#${p}w)" ${O}/><path d="${DG.ribs}" stroke="#a86d00" stroke-width="1" fill="none" opacity=".75" stroke-linecap="round"/></g>
+</svg>`;
+}
+
+/* ---------- Lernserie ---------- */
+function dayNum(key) { const [y, m, d] = key.split("-").map(Number); return Math.round(Date.UTC(y, m - 1, d) / 86400000); }
+function histStreak() {
+  const days = histDays(S.me, 60);
+  let i = days.length - 1;
+  if (!days[i].c) i--;
+  let n = 0;
+  while (i >= 0 && days[i].c > 0) { n++; i--; }
+  return n;
+}
+function migrateStreak() {
+  const st = S.me.settings && S.me.settings.streak;
+  if (st && st.last) return;
+  const n = histStreak(); if (!n) return;
+  const todayDone = histDays(S.me, 1)[0].c > 0;
+  const last = todayKey(new Date(Date.now() - (todayDone ? 0 : 86400000)));
+  setSetting("streak", { count: n, last, paid: Math.floor(n / 100) * 100 });
+  setSetting("bestStreak", Math.max(n, +(S.me.settings.bestStreak) || 0));
+}
+function streakInfo() {
+  const st = (S.me && S.me.settings && S.me.settings.streak) || null;
+  const best = +(S.me && S.me.settings && S.me.settings.bestStreak) || 0;
+  if (!st || !st.last) return { count: 0, today: false, risk: false, best };
+  const gap = dayNum(todayKey()) - dayNum(st.last);
+  if (gap <= 0) return { count: st.count, today: true, risk: false, best };
+  if (gap === 1) return { count: st.count, today: false, risk: true, best };
+  return { count: 0, today: false, risk: false, best };
+}
+function streakDays() { return streakInfo().count; }
+/* erste richtige Vokabel des Tages: Serie weiterzählen */
+function bumpStreak() {
+  const t = todayKey(), st = (S.me.settings && S.me.settings.streak) || {};
+  if (st.last === t) return;
+  const cont = st.last && dayNum(t) - dayNum(st.last) === 1;
+  const count = cont ? (+st.count || 0) + 1 : 1;
+  let paid = cont ? (+st.paid || 0) : 0, reward = 0;
+  if (count % 100 === 0 && count > paid) { reward = STREAK_REWARD; paid = count; S.me.coins = (S.me.coins || 0) + reward; }
+  setSetting("streak", { count, last: t, paid });
+  if (count > (+S.me.settings.bestStreak || 0)) setSetting("bestStreak", count);
+  Pets.refreshGlow();
+  setTimeout(() => Celebrate.show(count, reward), 450);
+}
+function nextStreakGoal(n) { return n < 7 ? 7 : n < 100 ? Math.min(100, (Math.floor(n / 7) + 1) * 7) : (Math.floor(n / 100) + 1) * 100; }
+
+const FLAME_BIG = (gold) => `<svg class="cel-flame${gold ? " gold" : ""}" viewBox="0 0 64 80" aria-hidden="true">
+  <path class="f1" d="M32 2c3 10-4 15-4 22 0 4 3 7 6 7 5 0 7-4 6-10 7 5 12 13 12 22 0 13-9 23-20 23S12 56 12 43C12 28 24 20 32 2z"/>
+  <path class="f2" d="M32 30c1 6-3 9-3 13 0 3 2 5 4 5 3 0 4-2 4-6 4 3 6 7 6 11 0 7-5 12-11 12s-11-5-11-12c0-9 7-13 11-23z"/>
+  <path class="f3" d="M32 52c0 3-2 5-2 7 0 2 1 3 2 3s3-1 3-3c2 2 3 4 3 6 0 4-3 6-6 6s-6-2-6-6c0-5 4-7 6-13z"/></svg>`;
+const Celebrate = {
+  el: null,
+  close() { if (this.el) { this.el.remove(); this.el = null; } clearTimeout(this.t); },
+  show(n, reward) {
+    const big = n % 100 === 0, week = n % 7 === 0, first = n === 1;
+    if (!big && !week && !first) return this.pop(n);
+    this.close();
+    const el = document.createElement("div");
+    el.className = "celebrate " + (big ? "big" : week ? "week" : "first");
+    let title, sub, extra = "";
+    if (big) {
+      title = `${n} Tage Lernserie!`;
+      sub = "Legendär! So eine Ausdauer haben nur ganz wenige.";
+      extra = `<div class="cel-reward">${COIN}+${reward || STREAK_REWARD}</div>`;
+    } else if (week) {
+      const w = n / 7;
+      title = `${n} Tage am Stück!`;
+      sub = w === 1 ? "Eine ganze Woche ohne Pause. Stark!" : `${w} Wochen ohne Pause. Dein Feuer brennt!`;
+      extra = `<div class="week-dots">${Array.from({ length: 7 }, (_, i) => `<span style="--i:${i}">✓</span>`).join("")}</div>`;
+    } else {
+      title = "Tag 1: Deine Lernserie startet!";
+      sub = "Lerne morgen wieder, damit das Feuer weiterbrennt.";
+    }
+    const rays = Array.from({ length: 12 }, (_, i) => `<i style="--a:${i * 30}deg"></i>`).join("");
+    el.innerHTML = `<div class="cel-card" role="dialog" aria-live="assertive" aria-label="${esc(title)}">
+        <div class="cel-burst"><span class="ring"></span><span class="ring r2"></span><div class="rays">${rays}</div>${FLAME_BIG(big)}<span class="cel-num" data-n="${n}">${big ? 0 : n}</span></div>
+        <p class="eyebrow">Lernserie</p><h2>${esc(title)}</h2><p class="muted">${esc(sub)}</p>${extra}
+        ${big ? `<button class="btn primary big" data-cel-close>Weiter</button>` : `<p class="cel-hint">Tippen zum Schließen</p>`}
+      </div>`;
+    el.addEventListener("click", e => { if (!big || e.target.closest("[data-cel-close]") || e.target === el) this.close(); });
+    document.body.append(el); this.el = el;
+    if (big) {
+      const num = el.querySelector(".cel-num"); const t0 = performance.now();
+      const tick = now => { const p = Math.min(1, (now - t0) / 1400); num.textContent = Math.round(n * (1 - Math.pow(1 - p, 3))); if (p < 1 && this.el === el) requestAnimationFrame(tick); };
+      requestAnimationFrame(tick);
+      this.fireworks(el);
+    } else this.t = setTimeout(() => { if (this.el === el) this.close(); }, week ? 5200 : 4200);
+  },
+  fireworks(el) {
+    const cols = ["#ffd84f", "#ff9a00", "#ffffff", "#e0193a", "#2457e6", "#2c9455"];
+    const burst = (cx, cy, k) => {
+      for (let i = 0; i < k; i++) {
+        const s = document.createElement("i"); s.className = "fw";
+        const a = Math.PI * 2 * i / k, d = 70 + Math.random() * 70;
+        s.style.cssText = `left:${cx}%;top:${cy}%;background:${cols[i % cols.length]};--dx:${Math.cos(a) * d}px;--dy:${Math.sin(a) * d}px`;
+        el.append(s); setTimeout(() => s.remove(), 1500);
+      }
+    };
+    [[22, 25, 0], [78, 22, 350], [50, 14, 700], [30, 70, 1050], [72, 68, 1400], [50, 30, 1900]].forEach(([x, y, t]) => setTimeout(() => { if (this.el === el) burst(x, y, REDUCED ? 6 : 18); }, t));
+    goldConfetti(REDUCED ? 10 : 60, el);
+  },
+  pop(n) {
+    const el = document.createElement("div"); el.className = "streak-pop";
+    el.innerHTML = `${FLAME}<b>${n}</b> Tage Lernserie`;
+    document.body.append(el); setTimeout(() => el.remove(), 2600);
+  }
+};
+addEventListener("keydown", e => { if (e.key === "Escape" && Celebrate.el) Celebrate.close(); });
+function goldConfetti(k, host) {
+  host = host || document.body;
+  const cols = ["#fff1a8", "#ffd84f", "#f3b81f", "#d99a0b", "#fff"];
+  for (let i = 0; i < k; i++) {
+    const c = document.createElement("i"); c.className = "gconf";
+    const dur = 2 + Math.random() * 1.6;
+    c.style.cssText = `left:${Math.random() * 100}%;background:${cols[i % cols.length]};width:${5 + Math.random() * 6}px;height:${8 + Math.random() * 8}px;animation-duration:${dur}s;animation-delay:${Math.random() * .5}s;--dx:${Math.random() * 80 - 40}px;--r:${Math.random() * 900 - 450}deg;--fall:${innerHeight + 40}px`;
+    host.append(c); setTimeout(() => c.remove(), (dur + .6) * 1000);
+  }
+}
+
+/* ---------- Goldrausch (Aurelius) ---------- */
+function hasAurelius() { return !!(S.me && S.me.activePet === "aurelius" && Array.isArray(S.me.pets) && S.me.pets.includes("aurelius")); }
+function rushInfo(now = Date.now()) { const ph = now % RUSH_CYCLE; return ph < RUSH_LEN ? { on: true, left: RUSH_LEN - ph } : { on: false, left: RUSH_CYCLE - ph }; }
+function rushActive() { return hasAurelius() && rushInfo().on; }
+function rushText(r) { const s = Math.ceil(r.left / 1000); return r.on ? `Goldrausch 2× · noch ${s} s` : `Goldrausch in ${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }
+function rushBadge() { if (!hasAurelius()) return ""; const r = rushInfo(); return `<span id="rushBadge" class="rush-badge${r.on ? " on" : ""}" title="Mit Aurelius: alle 2 Minuten 30 Sekunden doppelte Münzen">${rushText(r)}</span>`; }
+let lastRush = null;
+setInterval(() => {
+  if (!hasAurelius()) { lastRush = null; return; }
+  const r = rushInfo();
+  const b = document.getElementById("rushBadge");
+  if (b) { b.textContent = rushText(r); b.classList.toggle("on", r.on); }
+  if (lastRush !== null && r.on !== lastRush && !document.hidden && (S.view === "home" || S.learn)) {
+    if (r.on) { toast("Goldrausch! 30 Sekunden lang doppelte Münzen."); Pets.rushStart(); }
+  }
+  if (Pets.el) Pets.el.classList.toggle("rush", r.on && Pets.id === "aurelius");
+  lastRush = r.on;
+}, 1000);
+
 /* ---------- animated pets ---------- */
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const Pets = {
@@ -3075,14 +3457,15 @@ const Pets = {
   },
   unmount() { if (this.raf) cancelAnimationFrame(this.raf); this.raf = 0; this.id = null; if (this.stage) this.stage.innerHTML = ""; },
   W() { return innerWidth; }, H() { return innerHeight; },
-  ground() { return this.H() - 96; },
+  ground() { return this.H() - 36 - ((this.def && this.def.h) || 60); },
   mount(id) {
     this.unmount();
     this.stage = $("#petStage"); this.id = id; this.def = PET_DEFS[id];
     this.stage.innerHTML = "";
-    this.el = document.createElement("div"); this.el.className = "pet"; this.el.title = this.def.name + " (antippen!)";
-    this.el.innerHTML = `<div class="pet-flip"><div class="pet-body">${this.def.e}</div></div>`;
+    this.el = document.createElement("div"); this.el.className = "pet" + (this.def.kind === "dragon" ? " dragon-pet" : ""); this.el.title = this.def.name + " (antippen!)";
+    this.el.innerHTML = `<div class="pet-flip"><div class="pet-body">${this.def.kind === "dragon" ? `<span class="aura"></span>${dragonSVG("pd")}` : this.def.e}</div></div>`;
     this.flipEl = this.el.firstChild; this.body = this.flipEl.firstChild;
+    if (this.def.kind === "dragon") { this.dir = 1; this.trailT = 0; this.dustT = 0; this.sparkT = 0; this.refreshGlow(); }
     this.el.addEventListener("click", () => this.poke());
     this.buildProps();
     this.stage.append(this.el);
@@ -3091,7 +3474,62 @@ const Pets = {
     if (k === "swim") { this.y = this.H() * .5; this.pickSwim(); }
     if (k === "climb") { this.x = this.trunkX - 22; this.y = this.trunkBottom - 60; this.ty = this.y; }
     if (k === "branch") { this.bi = 0; const b = this.branches[0]; this.x = b.x + b.w / 2 - 30; this.y = b.y - 54; }
+    if (k === "dragon") { this.x = 20 + Math.random() * Math.max(40, this.W() * .4); this.actT = 5 + Math.random() * 3; }
     this.draw();
+  },
+  /* Aurelius leuchtet heller, je länger die Lernserie ist (ab 7 Tagen mit Aura) */
+  refreshGlow() {
+    if (!this.el || this.id !== "aurelius") return;
+    const n = streakInfo().count;
+    this.el.style.setProperty("--glow", (3 + Math.min(n, 30) * .45).toFixed(1) + "px");
+    this.el.style.setProperty("--glowA", (.35 + Math.min(n, 30) * .02).toFixed(2));
+    this.el.classList.toggle("aura-on", n >= 7);
+  },
+  svg() { return this.body && this.body.querySelector("svg"); },
+  dpt(x, y) { return { x: this.x + (this.dir > 0 ? x + 6 : 120 - x), y: this.y + y + 8 }; },
+  spread() {
+    const s = this.svg(); if (!s) return;
+    this.busy = true; this.draw();
+    s.classList.remove("spread"); void s.getBoundingClientRect(); s.classList.add("spread");
+    this.el.classList.add("flash");
+    for (let i = 0; i < (REDUCED ? 3 : 14); i++) setTimeout(() => { if (this.id !== "aurelius") return; const p = this.dpt(36 + Math.random() * 38, 4 + Math.random() * 22); this.fx("gspark", "", p.x, p.y, 1400, { "--dx": (Math.random() * 40 - 20) + "px" }); }, 250 + i * 60);
+    setTimeout(() => { s.classList.remove("spread"); if (this.el) this.el.classList.remove("flash"); this.busy = false; }, 1700);
+  },
+  dragonLoop() {
+    if (this.busy) return;
+    const x0 = this.x, y0 = this.ground(), R = Math.min(52, this.H() * .12), D = 170;
+    this.busy = true; this.mode = "idle";
+    const s = this.svg(); if (s) s.classList.add("spread");
+    this.anim = { t: 0, dur: REDUCED ? .01 : 1.6, step: p => {
+      const lift = Math.sin(Math.PI * p) * 46;
+      const q = Math.min(1, Math.max(0, (p - .2) / .6)), th = Math.PI * 2 * q;
+      this.x = x0 + D * p + R * Math.sin(th);
+      this.y = y0 - lift - R * (1 - Math.cos(th));
+      this.body.style.transform = `rotate(${-th * 180 / Math.PI}deg)`;
+      if (Math.random() < .5) { const tp = this.dpt(30, 80); this.fx("gtrail", "✦", tp.x, tp.y, 900); }
+    }, done: () => {
+      this.body.style.transform = ""; if (s) s.classList.remove("spread");
+      this.say("Kling!");
+      for (let i = 0; i < (REDUCED ? 2 : 7); i++) this.fx("gcoin", COIN, this.x + 40 + Math.random() * 40, this.y + 60, 1300, { "--dx": (Math.random() * 120 - 60) + "px", "--up": (-50 - Math.random() * 60) + "px" });
+      this.body.classList.remove("land"); void this.body.offsetWidth; this.body.classList.add("land");
+      setTimeout(() => { this.busy = false; this.wait = .6; this.body && this.body.classList.remove("land"); }, 500);
+    } };
+  },
+  roar() {
+    this.say("ROAAR!");
+    const s = this.svg();
+    if (s) { s.classList.remove("roar"); void s.getBoundingClientRect(); s.classList.add("roar"); setTimeout(() => s.classList.remove("roar"), 900); }
+    goldConfetti(REDUCED ? 8 : 36, this.stage);
+  },
+  rushStart() {
+    if (this.id !== "aurelius" || !this.visible) return;
+    this.say("Goldrausch!"); goldConfetti(REDUCED ? 8 : 24, this.stage);
+  },
+  eyes(cx, cy) {
+    if (this.id !== "aurelius" || !this.visible || !this.el) return;
+    const g = this.el.querySelector(".dg-glint"); if (!g) return;
+    const e = this.dpt(94, 28), a = Math.atan2(cy - e.y, (cx - e.x) * (this.dir > 0 ? 1 : -1));
+    g.setAttribute("transform", `translate(${(Math.cos(a) * .9).toFixed(2)} ${(Math.sin(a) * .9).toFixed(2)})`);
   },
   buildProps() {
     this.props.forEach(p => p.remove()); this.props = []; this.branches = [];
@@ -3117,9 +3555,10 @@ const Pets = {
   },
   draw() {
     this.el.style.transform = `translate(${this.x}px,${this.y}px)`;
-    const flip = !this.def.front && this.dir > 0;
+    const flip = this.def.kind === "dragon" ? this.dir < 0 : !this.def.front && this.dir > 0;
     this.flipEl.style.transform = flip ? "scaleX(-1)" : "";
     this.el.classList.toggle("walking", this.mode === "move" && this.def.kind === "walk" && !this.busy);
+    this.el.classList.toggle("striding", this.mode === "move" && this.def.kind === "dragon" && !this.busy);
   },
   mouth() { return { x: this.def.front ? this.x + 22 : (this.dir > 0 ? this.x + 50 : this.x - 6), y: this.y + 22 }; },
   fx(cls, html, x, y, ms, vars) {
@@ -3128,7 +3567,7 @@ const Pets = {
     if (vars) for (const k in vars) el.style.setProperty(k, vars[k]);
     this.stage.append(el); setTimeout(() => el.remove(), ms);
   },
-  say(text) { this.fx("say", esc(text), this.x - 6, this.y - 34, 1700); },
+  say(text) { const dr = this.def && this.def.kind === "dragon"; this.fx("say", esc(text), dr ? this.x + (this.dir > 0 ? 66 : 4) : this.x - 6, dr ? this.y - 16 : this.y - 34, 1700); },
   bodyAnim(cls, ms) {
     this.body.classList.remove("roll", "bounce", "munch", "raise", "sleep"); void this.body.offsetWidth;
     this.body.classList.add(cls); setTimeout(() => this.body.classList.remove(cls), ms);
@@ -3167,12 +3606,14 @@ const Pets = {
       return;
     }
     if (this.id === "kangaroo") { this.flip(); return; }
+    if (this.id === "aurelius") { if (this.busy) return; const r = Math.random(); r < .4 ? this.dragonLoop() : r < .75 ? this.spread() : this.roar(); return; }
     const acts = this.def.acts.length ? this.def.acts : ["croak"];
     this.doAct(acts[Math.floor(Math.random() * acts.length)]);
   },
   onCorrect(n) {
     if (!this.id || !this.visible) return;
     if (this.id === "kangaroo" && n > 0 && n % 10 === 0) { setTimeout(() => this.flip(), 250); return; }
+    if (this.id === "aurelius") { this.roar(); return; }
     if (!this.busy && this.def.kind !== "swim") this.bodyAnim("bounce", 1000);
   },
   flip() {
@@ -3248,6 +3689,20 @@ const Pets = {
         else { this.y += step; this.body.style.transform = `rotate(${Math.sin(t / 160) * 6}deg)`; }
         if (this.mode === "idle") this.body.style.transform = "";
       }
+    } else if (k === "dragon") {
+      this.dir = 1; this.y = this.ground();
+      if (this.mode === "idle") { this.wait -= dt; if (this.wait <= 0) this.mode = "move"; }
+      else {
+        this.x += this.def.speed * dt;
+        if (this.x > W + 10) this.x = -130;
+        this.trailT -= dt;
+        if (this.trailT <= 0) { this.trailT = .11; const p = this.dpt(32 + Math.random() * 22, 82 + Math.random() * 4); this.fx("gtrail", "✦", p.x, p.y, 1200); }
+      }
+      this.dustT -= dt;
+      if (this.dustT <= 0) { this.dustT = .28; const p = this.dpt(4 + Math.random() * 5, 16 + Math.random() * 6); this.fx("gdust", "", p.x, p.y, 1300, { "--dx": (Math.random() * 16 - 8) + "px" }); }
+      this.sparkT -= dt;
+      if (this.sparkT <= 0) { this.sparkT = .45 + Math.random() * .4; const p = this.dpt(40 + Math.random() * 28, 14 + Math.random() * 20); this.fx("gspark", "", p.x, p.y, 1400, { "--dx": (Math.random() * 20 - 10) + "px" }); }
+      if (this.actT <= 0) { this.actT = 5 + Math.random() * 4; this.mode = "idle"; this.wait = 1.6; Math.random() < .35 ? this.dragonLoop() : this.spread(); }
     } else if (k === "branch") {
       if (this.mode === "idle") {
         this.wait -= dt;
@@ -3271,8 +3726,10 @@ addEventListener("resize", () => {
   if (k === "walk" || k === "hop") { Pets.x = Math.min(Pets.x, Pets.W() - 80); Pets.y = Pets.ground(); }
   if (k === "branch") { const b = Pets.branches[Pets.bi]; Pets.x = b.x + 10; Pets.y = b.y - 54; }
   if (k === "climb") { Pets.y = Math.min(Math.max(Pets.y, Pets.trunkTop - 10), Pets.trunkBottom - 60); }
+  if (k === "dragon" && !Pets.anim) Pets.y = Pets.ground();
   Pets.draw();
 });
+addEventListener("pointermove", e => Pets.eyes(e.clientX, e.clientY), { passive: true });
 
 boot();
 </script>
