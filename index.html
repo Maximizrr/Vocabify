@@ -334,6 +334,8 @@ th.n{text-align:right}
 .hint-row{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center;margin-top:.35rem;font-size:.8rem}
 .hint-chip{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:.1em .5em;font:inherit;font-size:.8rem;cursor:pointer;color:var(--ink)}
 .hint-chip:hover{border-color:var(--acc)}
+.hint-chip.undo{margin-left:.3rem;padding:.05em .45em}
+.chk-cell{white-space:nowrap}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 details.paste summary{cursor:pointer;font-weight:700;color:var(--muted)}
 details.paste summary:hover{color:var(--ink)}
@@ -882,7 +884,7 @@ th{background:var(--surface-2);font-weight:500;color:var(--muted)}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-const APP_VERSION = "1.2.7";
+const APP_VERSION = "1.2.8";
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
   authDomain: "vocabify-8abb9.firebaseapp.com",
@@ -894,6 +896,7 @@ const FIREBASE_CONFIG = {
 const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
 const TESSERACT_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
 const CHANGELOG = [
+  { v: "1.2.8", items: ["Analysator liest jede Zeile strikt von links nach rechts: Spalte 1 Fremdsprache, Spalte 2 Deutsch, Spalte 3 (Beispiele, Kontext) wird verworfen", "Doppel-Check: Die Seite wird zweimal unabhängig ausgewertet und die Zuordnungen werden abgeglichen", "Übersetzungsprüfung erkennt vertauschte Spalten und verrutschte Zeilen und ordnet sie richtig zu", "Passt eine Bedeutung laut Wörterbuch nicht, wird sie automatisch ersetzt – das Original lässt sich mit einem Klick wiederherstellen"] },
   { v: "1.2.7", items: ["Scanner: Wörterbuch-Kontrolle am Ende – Lesefehler wie „gonug“ werden zu „genug“ korrigiert, unklare Bedeutungen bekommen einen Vorschlag zum Antippen", "Gilt auch für selbst eingefügte Listen", "Neues ruhiges Design: Schrift Inter, klare Hierarchie, eine Akzentfarbe", "Flache Karten und Buttons mit feinen Linien, mehr Weißraum", "Startbildschirm und Begrüßung in normalen Farben"] },
   { v: "1.2.6", items: ["Scanner trennt auf unordentlichen Seiten Vokabeln von Arbeitsanweisungen, Übungen, Notizen und Kritzeleien", "Schief fotografierte Seiten werden automatisch gerade gedreht", "Gemischte Listen: Spalten und Zeilen wie „the bridge – die Brücke“ oder „le pain = das Brot“ auf derselben Seite", "Blaue Heftlinien und Textmarker stören nicht mehr, rote Artikel bleiben erhalten", "Erklärkästen und deutsche Infotexte werden nicht mehr als Vokabeln übernommen", "Absturz beim Scannen mancher Buchfotos behoben"] },
   { v: "1.2.5", items: ["Farbigerer Startbildschirm mit fließenden Lichtflächen, bleibt etwas länger", "Größere Menüleiste mit farbigen Symbolen für jeden Bereich", "Farbige Kacheln und Symbole auf der Startseite", "Größere Überschriften und Zahlen", "Begrüßung im Farbverlauf"] },
@@ -2206,12 +2209,14 @@ function scanPanel(s) {
       ${sc.rows.map((r, i) => {
         const c = r.chk, fx = c ? c.fixes : [];
         const fixF = fx.find(x => x.k === "f"), fixD = fx.find(x => x.k === "d");
-        const mark = !c ? "" : c.status === "fixed" ? `<span class="chk fixed" title="${esc("Vom " + c.source + " korrigiert: " + fx.map(x => x.from + " → " + x.to).join(", "))}">Korrigiert</span>`
+        const why = x => x.k === "swap" ? "Spalten vertauscht" : x.why ? x.why + ": " + x.from + " → " + x.to : x.from + " → " + x.to;
+        const mark = !c ? "" : c.status === "fixed" ? `<span class="chk fixed" title="${esc("Korrigiert (" + c.source + "): " + fx.map(why).join(", "))}">${fx.some(x => x.k === "swap") ? "Gedreht" : fx.some(x => x.why === "Zeile verrutscht") ? "Zugeordnet" : "Korrigiert"}</span>`
+          : c.status === "replaced" ? `<span class="chk fixed" title="${esc("Gelesen: „" + c.orig + "“ – passt laut Wörterbuch nicht zu „" + r.f + "“")}">Ersetzt</span><button class="hint-chip undo" data-act="scanUndo" data-i="${i}" title="${esc("Original wiederherstellen: " + c.orig)}">↺</button>`
           : c.status === "ok" ? `<span class="chk ok" title="${esc("Vom " + c.source + " bestätigt")}">Geprüft</span>`
           : c.status === "check" ? `<span class="chk check" title="Das Wörterbuch kennt andere Bedeutungen. Bitte kurz prüfen.">Prüfen</span>` : "";
         return `<tr class="${r.on ? "" : "off"}"><td><input type="checkbox" id="sr-c-${i}" data-act="scanToggle" data-i="${i}" ${r.on ? "checked" : ""} aria-label="Zeile übernehmen"></td>
         <td><input class="input${r.uf ? " unsure" : ""}${fixF ? " fixed" : ""}" id="sr-f-${i}" data-scan="${i}" data-k="f" value="${esc(r.f)}"${r.uf ? ' title="Unsicher gelesen, bitte prüfen"' : fixF ? ` title="${esc("Gelesen: " + fixF.from)}"` : ""}></td>
-        <td><input class="input${r.ud ? " unsure" : ""}${fixD ? " fixed" : ""}" id="sr-d-${i}" data-scan="${i}" data-k="d" value="${esc(r.d)}"${r.ud ? ' title="Unsicher gelesen, bitte prüfen"' : fixD ? ` title="${esc("Gelesen: " + fx.filter(x => x.k === "d").map(x => x.from).join(", "))}"` : ""}>
+        <td><input class="input${r.ud ? " unsure" : ""}${fixD || (c && c.status === "replaced") ? " fixed" : ""}" id="sr-d-${i}" data-scan="${i}" data-k="d" value="${esc(r.d)}"${r.ud ? ' title="Unsicher gelesen, bitte prüfen"' : fixD ? ` title="${esc("Gelesen: " + fx.filter(x => x.k === "d").map(x => x.from).join(", "))}"` : ""}>
           ${c && c.status === "check" && c.hint.length ? `<div class="hint-row"><span class="muted">${esc(c.source)}:</span>${c.hint.map(h => `<button class="hint-chip" data-act="scanHint" data-i="${i}" data-v="${esc(h)}">${esc(h)}</button>`).join("")}</div>` : ""}</td>
         <td class="chk-cell">${mark}</td>
         <td><button class="btn small ghost" data-act="scanRemove" data-i="${i}" aria-label="Zeile entfernen">✕</button></td></tr>`; }).join("")}
@@ -2664,6 +2669,7 @@ const A = {
     }).catch(() => { if (S.scan === sc) { sc.info = rows.length + " Vokabeln erkannt." + dictInfo({ ok: false }); render(); } });
   },
   scanRemove(t) { S.scan.rows.splice(+t.dataset.i, 1); render(); },
+  scanUndo(t) { const r = S.scan.rows[+t.dataset.i]; if (!r || !r.chk || r.chk.orig == null) return; r.d = r.chk.orig; r.chk = Object.assign({}, r.chk, { status: "check", orig: null }); render(); },
   scanHint(t) { const r = S.scan.rows[+t.dataset.i]; if (!r) return; const v = t.dataset.v, art = r.d.match(/^(der|die|das|ein|eine|sich|etw\.|jdn\.?)\s+/i); r.d = (art && !/^(der|die|das|ein|eine|sich)\s/i.test(v) ? art[0] : "") + v; r.ud = false; if (r.chk) r.chk = Object.assign({}, r.chk, { status: "ok", hint: [] }); render(); },
   scanAddRow() { (S.scan.rows || (S.scan.rows = [])).push({ f: "", d: "", on: true }); render(); const i = $("#sr-f-" + (S.scan.rows.length - 1)); if (i) i.focus(); },
   scanToggle(t) { const r = S.scan.rows[+t.dataset.i]; r.on = t.checked; render(); },
@@ -2710,6 +2716,16 @@ async scanRun() {
         if (rect.width < 20 || rect.height < 10) continue;
         try { const { data: bd } = await main.recognize(im.gray, { rectangle: rect }); pairs = VS.mergeBlock(pairs, VS.fromBlock(bd, blocks[bi], s.lang), rect, s.lang); } catch {}
       }
+      /* Doppel-Check: zweiter, unabhängiger Durchlauf über die ganze Seite (Graubild) und Abgleich der Zuordnungen */
+      let p2 = null;
+      if (S.scan === sc && pairs.length) {
+        phase = "Zweiter Durchlauf (Doppel-Check)…"; lastPct = -1; step(phase);
+        try {
+          const { data: dB } = await main.recognize(im.gray);
+          pairs = VS.reconcile(pairs, VS.extract(dB, s.lang, im.W, im.H).pairs, s.lang);
+          p2 = { same: pairs.filter(p => p.pass2 === "ok").length, conflict: pairs.filter(p => p.pass2 === "conflict").length, added: pairs.filter(p => p.pass2 === "new").length };
+        } catch {}
+      }
       /* 3. Kontrolllesung jedes Worts in seiner eigenen Sprache */
       const jobs = [];
       for (const p of pairs) {
@@ -2746,13 +2762,15 @@ async scanRun() {
       }
       sc.rows = pairs.map(p => {
         const fx = p.chk ? p.chk.fixes : [];
+        const sure = p.chk && (p.chk.status === "ok" || p.chk.status === "fixed");
+        const both = p.pass2 === "ok";                      /* beide Durchläufe gleich: weniger Gelb */
         return { f: p.f, d: p.d, on: true, chk: p.chk || null,
-          uf: (p.fConf || 0) < 60 && !fx.some(x => x.k === "f") && !(p.chk && p.chk.status === "ok"),
-          ud: (p.dConf || 0) < 60 && !fx.some(x => x.k === "d") && !(p.chk && p.chk.status === "ok") };
+          uf: (p.fConf || 0) < (both ? 45 : 60) && !fx.some(x => x.k === "f" || x.k === "swap") && !sure,
+          ud: ((p.dConf || 0) < (both ? 45 : 60) || (p.pass2 === "conflict" && !sure)) && !fx.some(x => x.k === "d" || x.k === "swap") && !sure && !(p.chk && p.chk.status === "replaced") };
       });
       const book = /^pages/.test(res.mode);
       const unsure = sc.rows.filter(r => r.uf || r.ud).length;
-      if (sc.rows.length) sc.info = `${sc.rows.length} Vokabel${sc.rows.length === 1 ? "" : "n"} erkannt und kontrolliert${book ? " (Doppelseite erkannt, Erklärseite übersprungen)" : ""}. Lautschrift, Beispielsätze, Lernhilfen und Überschriften wurden ignoriert.${unsure ? ` ${unsure} unsichere Stelle${unsure === 1 ? " ist" : "n sind"} gelb markiert.` : ""}${dictInfo(dict)}`;
+      if (sc.rows.length) sc.info = `${sc.rows.length} Vokabel${sc.rows.length === 1 ? "" : "n"} erkannt und kontrolliert${book ? " (Doppelseite erkannt, Erklärseite übersprungen)" : ""}. Spalte 3 (Beispiele), Lautschrift, Lernhilfen und Überschriften wurden ignoriert.${p2 ? ` Doppel-Check: ${p2.same} Zuordnung${p2.same === 1 ? "" : "en"} in beiden Durchläufen gleich${p2.added ? `, ${p2.added} im zweiten Durchlauf ergänzt` : ""}.` : ""}${unsure ? ` ${unsure} unsichere Stelle${unsure === 1 ? " ist" : "n sind"} gelb markiert.` : ""}${dictInfo(dict)}`;
       else sc.err = sc.raw ? "Auf dem Foto wurden keine Vokabelpaare gefunden. Fotografiere die Liste möglichst gerade und nah, oder füge die Wörter unten selbst ein." : "Auf dem Foto wurde kein Text erkannt. Versuche ein schärferes Foto mit guter Beleuchtung.";
     } catch (e) {
       sc.err = "Die Texterkennung konnte nicht geladen werden. Prüfe deine Internetverbindung.";
@@ -3061,6 +3079,14 @@ const VS = (() => {
     return [parts[0], parts.slice(1).join(", ")];
   }
 
+  /* Zeile strikt von links nach rechts in Spalten zerlegen: 1 = Fremdsprache, 2 = Deutsch, 3+ = Beispiele/Kontext (verworfen).
+     Bedeutungen mit Komma oder Semikolon bleiben zusammen, weil das keine Spaltentrenner sind. */
+  const COLSEP = /\t+|\s{3,}|\s*\|\s*|\s+[–—-]\s+|\s*=+\s*|\s*(?:→|->|=>|⇒|➔)\s*/;
+  function splitColumns(t, lang) {
+    const seg = String(t || "").split(COLSEP).map(x => x.trim()).filter(Boolean);
+    if (seg.length < 2) return splitLine(t);
+    return [seg[0], seg[1]];   /* Spalte 3 und weitere: Beispiele / Kontext, werden verworfen */
+  }
   function orient(pairs, lang) {
     let votes = 0;
     for (const p of pairs) votes += (deScore(p[1]) - fScore(p[1], lang)) - (deScore(p[0]) - fScore(p[0], lang));
@@ -3121,7 +3147,7 @@ const VS = (() => {
         /* Trennzeichen kann am Zellenrand stehen ("enough" "= genug") */
         while (i + 1 < cs.length && (/[–—=:→-]\s*$/.test(t) || /^\s*[–—=:→-]/.test(cs[i + 1].text)) && cs[i + 1].x0 - cs[i].x1 < 8 * hMed) { i++; group.push(cs[i]); t += " " + cs[i].text; }
         if (!SEP.test(t) || HEAD.test(t.trim())) continue;
-        const sp = splitLine(t);
+        const sp = splitColumns(t, lang);
         if (!sp) continue;
         let [f, d] = sp;
         if (kind(f) !== "word" || kind(d) !== "word" || words(f).length > 6 || words(d).length > 8) continue;
@@ -3301,7 +3327,7 @@ const VS = (() => {
     for (const r of rows) {
       const t = r.cells.map(c => c.text).join("   ");
       if (kind(t) !== "word" && !/[–—=:-]/.test(t)) continue;
-      const sp = splitLine(t);
+      const sp = splitColumns(t, lang);
       if (sp && kind(sp[0]) === "word" && kind(sp[1]) === "word" && words(sp[0]).length <= 6 && words(sp[1]).length <= 8) pairs.push(sp);
     }
     return { pairs: finish(orient(pairs, lang), lang), mode: "lines" };
@@ -3492,7 +3518,34 @@ const VS = (() => {
     const y = p => (p.fBox || p.dBox || { y0: 0 }).y0, x = p => (p.fBox || p.dBox || { x0: 0 }).x0;
     return out.sort((a, b) => (y(a) - y(b)) || (x(a) - x(b)));
   }
-  return { fixGerman, fixForeign, extract, gutter, combinePages, refine, fromBlock, mergeBlock, blockRect, kind, cleanCell, splitLine, deScore, fScore };
+  /* Doppel-Check: Ergebnis eines zweiten, unabhängigen Durchlaufs mit dem ersten abgleichen.
+     gleiche Zuordnung -> bestätigt; andere deutsche Bedeutung in derselben Zeile -> Konflikt (alt);
+     nur im zweiten Durchlauf gefunden -> vorsichtig ergänzt */
+  function reconcile(A, B, lang) {
+    const L = x => String(x).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zäöüß]/g, "");
+    const ovY = (a, b) => a && b && Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0) > 0.4 * Math.min(a.y1 - a.y0, b.y1 - b.y0);
+    const ovX = (a, b) => a && b && Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0) > -0.5 * (a.y1 - a.y0);
+    const ov = (a, b) => ovY(a, b) && ovX(a, b);
+    const used = new Set();
+    const out = A.map(p => {
+      let j = B.findIndex((q, k) => !used.has(k) && ov(p.fBox, q.fBox));
+      if (j < 0) j = B.findIndex((q, k) => !used.has(k) && levRatio(L(p.f), L(q.f)) <= 0.25 && ovY(p.fBox, q.fBox));
+      if (j < 0) return Object.assign({}, p, { pass2: "missing" });
+      used.add(j); const q = B[j];
+      if (ov(p.dBox, q.dBox) || levRatio(L(p.d), L(q.d)) <= 0.34) return Object.assign({}, p, { pass2: "ok" });
+      return Object.assign({}, p, { pass2: "conflict", alt: q.d, altBox: q.dBox });
+    });
+    B.forEach((q, k) => {
+      if (used.has(k)) return;
+      if (out.some(p => ov(p.fBox, q.fBox) || ov(p.dBox, q.dBox) || ov(p.fBox, q.dBox) || ov(p.dBox, q.fBox))) return;
+      /* streng: rechts eindeutig Deutsch, links nicht Deutsch, keine Sätze */
+      const strict = deScore(q.d) > fScore(q.d, lang) && fScore(q.f, lang) >= deScore(q.f) && !/[.!?]$/.test(q.f.trim()) && /\p{L}{3,}/u.test(q.f) && !HEAD.test(q.f);
+      if (strict && pairQuality(q.f, q.d, lang) > 0 && (q.fConf || 0) >= 70 && (q.dConf || 0) >= 70) out.push(Object.assign({}, q, { pass2: "new" }));
+    });
+    const y = p => (p.fBox || p.dBox || { y0: 0 }).y0, x = p => (p.fBox || p.dBox || { x0: 0 }).x0;
+    return out.sort((a, b) => (Math.abs(y(a) - y(b)) < 8 ? x(a) - x(b) : y(a) - y(b)));
+  }
+  return { reconcile, splitColumns, fixGerman, fixForeign, extract, gutter, combinePages, refine, fromBlock, mergeBlock, blockRect, kind, cleanCell, splitLine, deScore, fScore };
 })();
 /* ---------- Wörterbuch-Kontrolle nach dem Scan ---------- */
 /* Prüft jedes erkannte Paar mit dem freien Wiktionary (de.wiktionary.org) und, falls dort nichts steht,
@@ -3506,6 +3559,8 @@ const DictCheck = (() => {
   const norm = s => strip(String(s).toLowerCase()).replace(/ß/g, "ss").replace(/[^a-z]/g, "");
   const DE_STOP = /^(der|die|das|den|dem|des|ein|eine|einen|einem|einer|eines|sich|etw|etwas|jdn|jdm|jds|jemand|jemanden|jemandem|und|oder|mit|von|zu|zum|zur|im|in|an|auf|für|aus|als|bei|nach|nicht|sein|haben|hier|bes|insbes|auch|z|b|usw|fam|ugs|pl|sg)$/i;
   const words = s => String(s).split(/[\s,;\/()]+/).filter(Boolean);
+  const deScore = t => VS.deScore(t);
+  const fScore = (t, l) => VS.fScore(t, l);
   function lev(a, b) {
     const m = a.length, n = b.length; if (!m || !n) return 1;
     /* Abstand mit Buchstabendrehern (Kreig/Krieg = 1 Fehler) */
@@ -3620,83 +3675,128 @@ const DictCheck = (() => {
     return [...new Set(out)];
   }
   function LANGNAME(lang) { return LNAME[lang]; }
-  /* Kern: Paare prüfen und korrigieren. pairs: [{f, d}] – bekommt .chk = {status, fixes, hint, source} */
+  /* Kern: Paare prüfen und korrigieren. pairs: [{f, d, alt?}] – bekommt .chk = {status, fixes, hint, source, orig}
+     status: ok (bestätigt) | fixed (Lesefehler, Vertauschung oder Zeile korrigiert) | replaced (Bedeutung ersetzt) | check | unknown */
   async function check(pairs, lang, opt = {}) {
     const fetchFn = opt.fetch || (typeof fetch !== "undefined" ? fetch.bind(globalThis) : null);
     if (!fetchFn || !pairs.length) return { ok: false };
     const step = opt.onStep || (() => {});
+    const autoReplace = opt.autoReplace !== false;
     const clean = w => w.replace(/^[^\p{L}]+|[^\p{L}-]+$/gu, "").replace(/-$/, "");
-    /* 1. Fremdwörter nachschlagen (+ Grundform bei gebeugten Formen) */
-    const lem = pairs.map(p => lemmas(p.f, lang));
+    const deTokens = t => words(t).map(clean).filter(w => w.replace(/[^\p{L}]/gu, "").length >= 3 && !DE_STOP.test(w));
+    const fixesOf = pairs.map(() => []);
+    /* 1. Fremdwörter nachschlagen (+ Grundform) */
+    let lem = pairs.map(p => lemmas(p.f, lang));
     step(0.05);
     const P = await pages(lem.flat(), fetchFn);
-    const base = [];
-    for (const ls of lem) for (const l of ls) { const t = P.get(l); if (t && !meaningLinks(t, lang).length) { const b = baseForm(t, lang); if (b) base.push(b); } }
-    if (base.length) for (const [k, v] of await pages(base, fetchFn)) P.set(k, v);
-    step(0.3);
-    const fwd = lem.map(ls => {
+    const addBase = async ls => { const base = []; for (const l of ls) { const t = P.get(l); if (t && !meaningLinks(t, lang).length) { const b = baseForm(t, lang); if (b && !P.has(b)) base.push(b); } } if (base.length) for (const [k, v] of await pages(base, fetchFn)) P.set(k, v); };
+    await addBase(lem.flat());
+    const lookup = ls => {
       for (const l of ls) {
-        let t = P.get(l); if (!t || !section(t, LNAME[lang])) continue;
+        const t = P.get(l); if (!t || !section(t, LNAME[lang])) continue;
         let links = meaningLinks(t, lang), all = meanings(t, lang);
         if (!links.length && !all.length) { const b = baseForm(t, lang); if (b && P.get(b)) { links = meaningLinks(P.get(b), lang); all = meanings(P.get(b), lang); } }
         return { lemma: l, found: true, links, all };
       }
       return { lemma: ls[0] || "", found: false, links: [], all: [] };
-    });
-    /* 2. deutsche Wörter nachschlagen: gibt es sie, und welche Übersetzungen nennt das Wörterbuch? */
-    const dTok = pairs.map(p => words(p.d).map(clean).filter(w => w.replace(/[^\p{L}]/gu, "").length >= 3 && !DE_STOP.test(w)));
-    const D = await pages(dTok.flat(), fetchFn).catch(() => new Map());
-    step(0.6);
+    };
+    let fwd = lem.map(lookup);
+    step(0.2);
+    /* 2. vertauschte Paare: links steht Deutsch, rechts die Fremdsprache */
+    const swapIdx = pairs.map((p, i) => i).filter(i => !fwd[i].found && deScore(pairs[i].f) > fScore(pairs[i].f, lang));
+    if (swapIdx.length) {
+      const dl = swapIdx.map(i => lemmas(pairs[i].d, lang));
+      for (const [k, v] of await pages(dl.flat().filter(t => !P.has(t)), fetchFn)) P.set(k, v);
+      await addBase(dl.flat());
+      swapIdx.forEach((i, k) => {
+        const r = lookup(dl[k]); if (!r.found) return;
+        const p = pairs[i]; fixesOf[i].push({ k: "swap", from: p.f + " / " + p.d, to: p.d + " / " + p.f });
+        [p.f, p.d] = [p.d, p.f]; lem[i] = dl[k]; fwd[i] = r;
+      });
+    }
+    step(0.3);
+    /* 3. deutsche Wörter (auch die des zweiten Durchlaufs) nachschlagen */
+    const dTok = pairs.map(p => deTokens(p.d));
+    const aTok = pairs.map(p => p.alt ? deTokens(p.alt) : []);
+    const D = await pages([...dTok.flat(), ...aTok.flat()], fetchFn).catch(() => new Map());
+    step(0.55);
     const realDe = w => { const t = D.get(w); return !!(t && isGerman(t)); };
     const back = w => { const t = D.get(w); return t ? translations(t, lang) : []; };
-    /* 3. Vergleich, Korrektur */
-    const stats = { ok: 0, fixed: 0, check: 0, unknown: 0 };
+    const candOf = F => { const c = new Set(); [...F.links, ...F.all].flatMap(x => words(x)).forEach(w => { const x = clean(w); if (x.length >= 3 && !DE_STOP.test(x)) c.add(x); }); return c; };
+    /* passt ein deutscher Text zum Fremdwort? (Wörterbuch hin und zurück) */
+    const fits = (toks, F) => {
+      const nL = norm(F.lemma), cand = candOf(F);
+      const rev = toks.flatMap(back);
+      if (rev.some(r => { const rn = norm(lemmas(r, lang)[0] || r); return rn === nL || (nL.length >= 4 && lev(rn, nL) <= 0.2); })) return 2;
+      return toks.some(w => { const n = norm(w); return [...cand].some(c => { const cn = norm(c); return cn === n || inflected(n, cn); }); }) ? 1 : 0;
+    };
+    /* 4. jede Zeile prüfen, Lesefehler korrigieren */
+    const R = [];
     let mmLeft = opt.maxTranslate || 25;
     for (let i = 0; i < pairs.length; i++) {
       const p = pairs[i], F = fwd[i], L0 = F.lemma, nL = norm(L0);
-      const fixes = []; let source = "Wörterbuch";
-      const cand = new Set(); [...F.links, ...F.all].flatMap(x => words(x)).forEach(w => { const c = clean(w); if (c.length >= 3 && !DE_STOP.test(c)) cand.add(c); });
-      const confirmTok = n => [...cand].some(c => { const cn = norm(c); return cn === n || inflected(n, cn); });
-      /* Rückweg: nennt das deutsche Wort das Fremdwort als Übersetzung? */
-      const rev = new Set(dTok[i].flatMap(back));
-      const revHit = [...rev].some(r => { const rn = norm(lemmas(r, lang)[0] || r); return rn === nL || (nL.length >= 4 && lev(rn, nL) <= 0.2); });
-      let d = p.d, confirmed = revHit ? 1 : 0;
-      const suspects = [];
-      for (const w of dTok[i]) {
-        const n = norm(w); if (!n) continue;
-        if (confirmTok(n)) { confirmed++; continue; }
-        if (n.length >= 4 && !realDe(w)) suspects.push(w);
-      }
-      /* Lesefehler im Deutschen: Kandidaten aus Wörterbuch-Links und notfalls dem Übersetzer */
-      if (suspects.length && !confirmed && mmLeft > 0 && L0) {
+      const fixes = fixesOf[i]; let source = "Wörterbuch";
+      const cand = candOf(F);
+      let d = p.d, f = p.f;
+      let confirmed = fits(dTok[i], F);
+      /* zweiter Durchlauf hat eine andere deutsche Bedeutung gelesen: die passende nehmen */
+      if (!confirmed && p.alt && fits(aTok[i], F)) { fixes.push({ k: "d", from: d, to: p.alt, why: "zweiter Durchlauf" }); d = p.alt; confirmed = 1; dTok[i] = aTok[i]; }
+      const suspects = confirmed ? [] : dTok[i].filter(w => norm(w).length >= 4 && !realDe(w));
+      if (suspects.length && mmLeft > 0 && L0) {
         mmLeft--;
-        try { (await myMemory(L0, lang, "de", fetchFn)).flatMap(x => words(x)).forEach(w => { const c = clean(w); if (c.length >= 3 && !DE_STOP.test(c)) cand.add(c); }); source = F.found ? "Wörterbuch" : "Übersetzer"; } catch {}
+        try { (await myMemory(L0, lang, "de", fetchFn)).flatMap(x => words(x)).forEach(w => { const c = clean(w); if (c.length >= 3 && !DE_STOP.test(c)) cand.add(c); }); if (!F.found) source = "Übersetzer"; } catch {}
       }
       for (const w of suspects) {
         const n = norm(w); let best = null, bd = 1;
         for (const c of cand) { const dd = lev(n, norm(c)); if (dd < bd) { bd = dd; best = c; } }
-        if (best && bd === 0) confirmed++;
-        else if (best && bd <= 0.34) { d = d.replace(w, best); fixes.push({ k: "d", from: w, to: best }); confirmed++; }
+        if (best && bd === 0) confirmed = 1;
+        else if (best && bd <= 0.34) { d = d.replace(w, best); fixes.push({ k: "d", from: w, to: best }); confirmed = 1; }
       }
-      /* Lesefehler im Fremdwort: über die Übersetzungen der (korrigierten) deutschen Wörter */
-      let f = p.f;
-      if (!revHit && nL.length >= 3) {
-        const rev2 = new Set([...rev, ...fixes.flatMap(x => back(x.to))]);
+      /* Lesefehler im Fremdwort */
+      const rev = new Set([...deTokens(d)].flatMap(back));
+      if (!F.links.length && nL.length >= 3 && !fixes.some(x => x.k === "swap")) {
         let best = null, bd = 1;
-        for (const r of rev2) { const dd = lev(nL, norm(r)); if (dd < bd) { bd = dd; best = r; } }
-        if (best && bd > 0 && bd <= 0.4 && !F.links.length) {
+        for (const r of rev) { const dd = lev(nL, norm(r)); if (dd < bd) { bd = dd; best = r; } }
+        if (best && bd > 0 && bd <= 0.4) {
           const fc = f.normalize("NFC"), at = strip(fc).toLowerCase().indexOf(L0.toLowerCase());
-          if (at >= 0) { f = fc.slice(0, at) + best + fc.slice(at + L0.length); fixes.push({ k: "f", from: fc.slice(at, at + L0.length), to: best }); confirmed++; }
+          if (at >= 0) { f = fc.slice(0, at) + best + fc.slice(at + L0.length); fixes.push({ k: "f", from: fc.slice(at, at + L0.length), to: best }); confirmed = 1; }
         }
       }
-      /* Hinweis nur, wenn das Wörterbuch eindeutig etwas anderes sagt (z. B. verrutschte Zeile) */
-      let status = fixes.length ? "fixed" : confirmed ? "ok" : "unknown";
-      if (status === "unknown" && F.found && F.links.length && (rev.size || suspects.length)) status = "check";
-      stats[status]++;
-      p.chk = { status, fixes, hint: status === "check" ? F.links.slice(0, 4) : [], source };
-      if (fixes.length) { p.f = f; p.d = d; }
-      if (i % 5 === 4) step(0.6 + 0.4 * i / pairs.length);
+      const clash = !confirmed && F.found && F.links.length && (rev.size || suspects.length);
+      R.push({ f, d, confirmed, clash, source, F });
+      if (i % 5 === 4) step(0.55 + 0.3 * i / pairs.length);
     }
+    /* 5. verrutschte Zeilen: passt die deutsche Bedeutung einer anderen unklaren Zeile? */
+    const open = R.map((r, i) => i).filter(i => !R[i].confirmed && R[i].F.lemma);
+    const take = new Map(), given = new Set();
+    for (const j of open) for (const i of open) {
+      if (i === j || given.has(i) || take.has(j)) continue;
+      if (fits(deTokens(pairs[i].d), R[j].F)) { take.set(j, i); given.add(i); }
+    }
+    const origD = R.map(r => r.d);
+    for (const [j, i] of take) { fixesOf[j].push({ k: "d", from: origD[j], to: origD[i], why: "Zeile verrutscht" }); R[j].d = origD[i]; R[j].confirmed = 1; R[j].clash = false; }
+    /* 6. Bedeutung passt eindeutig nicht: auf die Wörterbuch-Bedeutung setzen (Original bleibt wiederherstellbar) */
+    const stats = { ok: 0, fixed: 0, replaced: 0, check: 0, unknown: 0 };
+    R.forEach((r, i) => {
+      const p = pairs[i], fixes = fixesOf[i];
+      let status, orig = null;
+      if (r.clash || (given.has(i) && !take.has(i) && !r.confirmed)) {
+        const links = r.F.links;
+        if (autoReplace && links.length) {
+          /* kontextuell passendste Bedeutung: die dem gelesenen Text am ähnlichsten ist, sonst die erste */
+          const nd = norm(origD[i]); let best = links[0], bs = 0.5;
+          for (const l of links) { const dd = lev(nd, norm(l)); if (dd < bs) { bs = dd; best = l; } }
+          const art = /^(der|die|das|ein|eine)\s+/i.exec(origD[i]);
+          /* so viele Bedeutungen wie im gelesenen Text (z. B. "ruhig, leise") */
+          const k = Math.min(3, String(origD[i]).split(/[,;]/).filter(x => x.trim()).length);
+          const pick = [best, ...links.filter(l => l !== best)].slice(0, Math.max(1, k));
+          orig = origD[i]; r.d = (art && /^\p{Lu}/u.test(best) ? art[0] : "") + pick.join(", "); status = "replaced";
+        } else status = "check";
+      } else status = fixes.length ? "fixed" : r.confirmed ? "ok" : "unknown";
+      stats[status]++;
+      p.chk = { status, fixes, orig, hint: status === "check" || status === "replaced" ? r.F.links.slice(0, 4) : [], source: r.source };
+      p.f = r.f; p.d = r.d;
+    });
     step(1);
     return { ok: true, stats };
   }
@@ -3708,6 +3808,7 @@ function dictInfo(dict) {
   const st = dict.stats, parts = [];
   if (st.ok) parts.push(`${st.ok} bestätigt`);
   if (st.fixed) parts.push(`${st.fixed} korrigiert`);
+  if (st.replaced) parts.push(`${st.replaced} Bedeutung${st.replaced === 1 ? "" : "en"} ersetzt`);
   if (st.check) parts.push(`${st.check} bitte prüfen`);
   return parts.length ? ` Wörterbuch: ${parts.join(", ")}.` : "";
 }
@@ -3834,16 +3935,20 @@ function prepareImage(file) {
 function smartParseText(text, lang) {
   const pairs = [];
   for (let line of String(text || "").split(/\n/)) {
-    line = VS.cleanCell(line);
-    if (!line) continue;
-    const sp = VS.splitLine(line);
+    if (!line.trim()) continue;
+    /* erst Spalten trennen (Tabs, Gedankenstriche …), dann jede Spalte säubern */
+    let sp = VS.splitColumns(line.trim(), lang);
     if (!sp) continue;
+    sp = sp.map(x => VS.cleanCell(x));
+    if (!sp[0] || !sp[1]) continue;
     if (VS.kind(sp[0]) !== "word" || VS.kind(sp[1]) !== "word") continue;
     pairs.push(sp);
   }
-  let votes = 0;
-  for (const p of pairs) votes += (VS.deScore(p[1]) - VS.fScore(p[1], lang)) - (VS.deScore(p[0]) - VS.fScore(p[0], lang));
-  return (votes < 0 ? pairs.map(p => [p[1], p[0]]) : pairs).map(p => ({ f: p[0], d: p[1], on: true }));
+  /* ganze Liste nur drehen, wenn die meisten Zeilen eindeutig verkehrt herum sind (Deutsch links);
+     einzelne vertauschte Zeilen korrigiert danach die Wörterbuch-Kontrolle */
+  const q = pairs.map(p => (VS.deScore(p[1]) - VS.fScore(p[1], lang)) - (VS.deScore(p[0]) - VS.fScore(p[0], lang))).filter(x => Math.abs(x) >= 2);
+  const flip = q.length >= 3 && q.filter(x => x < 0).length / q.length >= 0.7;
+  return (flip ? pairs.map(p => [p[1], p[0]]) : pairs).map(p => ({ f: p[0], d: p[1], on: true }));
 }
 const loadedScripts = {};
 function loadScript(src) {
