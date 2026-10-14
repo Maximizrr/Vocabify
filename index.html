@@ -837,7 +837,7 @@ body[data-lang] .btn.primary,body[data-lang] .btn.primary:hover{background:linea
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-const APP_VERSION = "1.2.5";
+const APP_VERSION = "1.2.6";
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
   authDomain: "vocabify-8abb9.firebaseapp.com",
@@ -849,6 +849,7 @@ const FIREBASE_CONFIG = {
 const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
 const TESSERACT_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
 const CHANGELOG = [
+  { v: "1.2.6", items: ["Scanner trennt auf unordentlichen Seiten Vokabeln von Arbeitsanweisungen, Übungen, Notizen und Kritzeleien", "Schief fotografierte Seiten werden automatisch gerade gedreht", "Gemischte Listen: Spalten und Zeilen wie „the bridge – die Brücke“ oder „le pain = das Brot“ auf derselben Seite", "Blaue Heftlinien und Textmarker stören nicht mehr, rote Artikel bleiben erhalten", "Erklärkästen und deutsche Infotexte werden nicht mehr als Vokabeln übernommen", "Absturz beim Scannen mancher Buchfotos behoben"] },
   { v: "1.2.5", items: ["Farbigerer Startbildschirm mit fließenden Lichtflächen, bleibt etwas länger", "Größere Menüleiste mit farbigen Symbolen für jeden Bereich", "Farbige Kacheln und Symbole auf der Startseite", "Größere Überschriften und Zahlen", "Begrüßung im Farbverlauf"] },
   { v: "1.2.4", items: ["Neues Design im minimalistischen Apple-Stil: viel Freiraum, runde Ecken, Glas-Leiste oben", "Systemschrift von iPhone, iPad und Mac (SF Pro)", "Neue Startanimation beim Öffnen der App", "Lebendige Flamme für die Lernserie", "Münzen fliegen beim Verdienen in deinen Münzzähler", "Sanfte Hover-Effekte und Umschalter wie in iOS"] },
   { v: "1.2.3", items: ["Neues, schlichteres Design mit ruhigeren Farben", "Neue Schrift (Figtree) für bessere Lesbarkeit", "Flachere Flächen, feinere Linien und ein überarbeiteter dunkler Modus"] },
@@ -2633,6 +2634,7 @@ async scanRun() {
       /* 1. Aufbau der Seite (Spalten, Kästen, Doppelseiten) aus dem Schwarz-Weiß-Bild */
       const { data } = await main.recognize(im.bin);
       sc.raw = String(data && data.text || "").trim();
+      if (window.VOCABIFY_EMULATOR) { window.__vsSkew = im.skew; window.__vsBin = im.bin.toDataURL("image/png"); }
       if (window.VOCABIFY_EMULATOR) window.__vsLast = { w: im.W, h: im.H, lines: (data.lines || []).map(l => ({ baseline: l.baseline, words: l.words.map(w => ({ text: w.text, bbox: w.bbox, confidence: w.confidence })) })) };
       const res = VS.extract(data, s.lang, im.W, im.H);
       let pairs = res.pairs;
@@ -2824,8 +2826,9 @@ async function importVocabFile(text, filename) {
    und ignoriert Überschriften, Seitenzahlen, Lautschrift und Beispielsätze. */
 const VS = (() => {
   const IPA = /[ˈˌːəɪʊɜɑɒɔæʌθðŋʃʒɛɐʔ]/;
-  const HEAD = /^(unit|lektion|lesson|le[cç]on|unit[ée]|atelier|module|étape|dossier|approfondissement|liste des mots|lernwortschatz|chapter|chapitre|kapitel|vocabulary|vocabulaire|vokabeln?|vokabeltest|vokabelliste|wortschatz|wörter|station|seite|page|name|klasse|datum|date|test|tipp|tip|exemple|example|beispiel|übung|exercise|aufgabe|total|summe|viel erfolg|good luck)\b/i;
+  const HEAD = /^(unit|lektion|lesson|le[cç]on|unit[ée]|atelier|module|étape|dossier|approfondissement|liste des mots|lernwortschatz|chapter|chapitre|kapitel|vocabulary|vocabulaire|vokabeln?|vokabeltest|vokabelliste|wortschatz|wörter|station|seite|page|name|klasse|datum|date|test|tipp|tip|exemple|example|beispiel|übung|exercise|aufgabe|total|summe|viel erfolg|good luck|merke|merk|achtung|hinweis|beachte|lernhilfe|hausaufgabe|hausaufgaben|hausübung|wiederholung|lerne|lernt|übersetze|ergänze|schreibe|ordne|verbinde|kreuze|translate|complete|write|match|fill)\b/i;
   const DE_WORDS = /^(der|die|das|den|dem|des|ein|eine|einen|einem|einer|sich|jdn|jdm|etw|und|oder|nicht|mit|von|zu|zum|zur|im|in|auf|für|aus)$/i;
+  const DE_PROSE = /^(ich|wir|ihr|ist|sind|hier|dir|dich|mir|mich|dass|daß|als|wie|auch|noch|nur|man|kann|können|wird|werden|wurde|stehen|steht|zeigt|findest|findet|gibt|bei|nach|über|unter|wenn|weil|aber|dein|deine|deinen|diese|dieser|dieses|welche|immer|sowie|wo|bis|zwischen|lernst|lerne|bedeutet|gedruckte|wörter|wörtern|markierungen)$/i;
   const LANG = {
     en: { words: /^(the|to|a|an|of|and|or|be|sb|sth|somebody|something|with|for|on|in|at|up|out|off)$/i, chars: /(th|sh|wh|ck|ea|oo|ow|ay|y\b|qu|ph)/i, end: /(ing|tion|ness|ful|less|ly|ed)$/i },
     fr: { words: /^(le|la|les|l|un|une|des|du|de|d|et|ou|à|au|aux|en|qn|qc|ne|pas|se|s)$/i, chars: /[éèêëàâçùûôîïœ]|(eau|oi|ou|qu|ai)/i, end: /(er|ir|re|eur|euse|ment|tion|té|ée|eux|elle)$/i },
@@ -2974,7 +2977,7 @@ const VS = (() => {
 
   /* Rückfall: einspaltige Listen mit Trennzeichen ("house – Haus", "1. dog = Hund") */
   function splitLine(t) {
-    let parts = t.split(/\s+[–—-]\s+|\s*=\s*|\t+|\s*;\s*|\s+:\s+|\s{3,}|\s*\|\s*/).map(x => x.trim()).filter(Boolean);
+    let parts = t.split(/\s+[–—-]\s+|\s*=+\s*|\s*(?:→|->|=>|⇒|➔)\s*|\t+|\s*;\s*|\s+:\s+|\s{3,}|\s*\|\s*/).map(x => x.trim()).filter(Boolean);
     if (parts.length < 2) {
       const toks = words(t);
       const art = toks.findIndex((w, i) => i > 0 && /^(der|die|das)$/i.test(w));
@@ -3012,6 +3015,9 @@ const VS = (() => {
       if (words(bare(f)).length > 6 || words(bare(d)).length > 10) continue;
       if (!(/\p{L}{3,}/u.test(f) || /^\p{Ll}{2}$/u.test(f)) || !/\p{L}{3,}/u.test(d)) continue;
       if (pairQuality(f, d, lang) <= -2) continue;   /* links steht eindeutig Deutsch: Erklärtext, keine Vokabel */
+      if (deScore(f) - fScore(f, lang) >= 2.5 && words(f).length >= 2 && pairQuality(f, d, lang) < 1.5) continue;   /* deutscher Fließtext (Infokästen) */
+      { const pro = words(f).filter(w => DE_PROSE.test(w.replace(/[^\p{L}]/gu, ""))).length;
+        if (words(f).length >= 3 && (pro >= 2 || (pro >= 1 && deScore(f) >= fScore(f, lang)))) continue; }   /* Erklärsätze ("Hier findest du ...") */
       if (/^[^\p{Ll}]*$/u.test(f) && /^[^\p{Ll}]*$/u.test(d)) continue;                      /* beides nur Großbuchstaben/Zeichen: Müll */
       if ((fConf || 99) < 30 && (dConf || 99) < 30) continue;
       if (f.replace(/[^\p{L}]/gu, "").length <= 3 && d.replace(/[^\p{L}]/gu, "").length <= 3 && ((fConf || 99) < 80 || (dConf || 99) < 80) && !/^\p{Ll}{2,3}$/u.test(f.trim()) ) continue;
@@ -3030,6 +3036,38 @@ const VS = (() => {
   }
   const bare = t => t.replace(/\([^)]*\)/g, " ").replace(/\s+/g, " ").trim();
 
+  /* Gemischte Seiten: Zeilen wie "the bridge – die Brücke" neben einer Spaltenliste */
+  const SEP = /\s[–—-]\s|=|→|->|=>|⇒|➔|\s:\s/;
+  function inlinePairs(rows, lang, hMed, box, conf) {
+    const out = [];
+    for (const r of rows) {
+      const cs = r.cells.filter(c => !c.used && (c.k === "word" || c.k === "sentence"));
+      for (let i = 0; i < cs.length; i++) {
+        let group = [cs[i]], t = cs[i].text;
+        /* Trennzeichen kann am Zellenrand stehen ("enough" "= genug") */
+        while (i + 1 < cs.length && (/[–—=:→-]\s*$/.test(t) || /^\s*[–—=:→-]/.test(cs[i + 1].text)) && cs[i + 1].x0 - cs[i].x1 < 8 * hMed) { i++; group.push(cs[i]); t += " " + cs[i].text; }
+        if (!SEP.test(t) || HEAD.test(t.trim())) continue;
+        const sp = splitLine(t);
+        if (!sp) continue;
+        let [f, d] = sp;
+        if (kind(f) !== "word" || kind(d) !== "word" || words(f).length > 6 || words(d).length > 8) continue;
+        if (pairQuality(f, d, lang) < 0) { if (pairQuality(d, f, lang) > 1.5) [f, d] = [d, f]; else continue; }
+        const b = box(group);
+        out.push([f, d, r.yr, b, b, conf(group), conf(group)]);
+        group.forEach(c => { c.used = true; });
+      }
+    }
+    return out;
+  }
+  /* Wenn die meisten Paare verdreht wirken (Deutsch links), Spalten tauschen */
+  function fixOrientation(res, lang) {
+    if (res.length < 3) return res;
+    const qs = res.map(p => pairQuality(p.f, p.d, lang)).filter(q => q !== 0);
+    if (qs.length < 3) return res;
+    const neg = qs.filter(q => q < 0).length / qs.length;
+    if (neg < 0.65) return res;
+    return finish(res.map(p => [p.d, p.f, 0, p.dBox, p.fBox, p.dConf, p.fConf]), lang);
+  }
   function extractPage(cells, data, lang, width, zone) {
     if (!cells.length) return { pairs: [], mode: "empty" };
     const { rows, hMed } = rowsFrom(cells, data);
@@ -3048,6 +3086,19 @@ const VS = (() => {
       if (good.length >= 2) {
         const net = o => (o.s.de - o.s.fo) / Math.max(1, o.s.word);
         const deCol = good.slice().sort((a, b) => net(b) - net(a))[0].i;
+        /* deutsche Spalte, die durch schiefes Foto oder unruhigen Satz in zwei Nachbarspalten zerfallen ist, wieder vereinen */
+        {
+          const ord0 = good.map(o => o.i).sort((a, b) => cols[a].x - cols[b].x), k0 = ord0.indexOf(deCol), merged = [];
+          for (const dir of [-1, 1]) for (let j = k0 + dir; ord0[j] != null; j += dir) {
+            const o = good.find(x => x.i === ord0[j]);
+            if (o && net(o) > 0.6 && Math.abs(cols[o.i].x - cols[deCol].x) < width * 0.15) merged.push(o.i); else break;
+          }
+          if (merged.length) {
+            for (const r of rows) for (const c of r.cells) if (merged.includes(c.col)) c.col = deCol;
+            const sd = stat[deCol]; for (const m of merged) for (const key in sd) sd[key] += stat[m][key];
+            for (const m of merged) good.splice(good.findIndex(o => o.i === m), 1);
+          }
+        }
         /* Fremdsprache = direkte Nachbarspalte der deutschen Spalte mit den kürzesten Einträgen (Stichwörter statt Beispielsätze) */
         const order = good.map(o => o.i).sort((a, b) => cols[a].x - cols[b].x);
         const k = order.indexOf(deCol);
@@ -3060,7 +3111,7 @@ const VS = (() => {
           - 0.12 * (o.s.wsum / Math.max(1, o.s.word))                         /* Beispielsätze sind lang */
           - 0.6 * o.s.sent / Math.max(1, o.s.n)
           + 0.15 * Math.min(2, (o.s.fo - o.s.de) / Math.max(1, o.s.word))     /* passt zur gewählten Sprache */
-          + (cols[o.i].x < cols[deCol].x ? 0.05 : 0);                         /* meist links von Deutsch */
+          + (cols[o.i].x < cols[deCol].x ? 0.3 : 0);                          /* Fremdsprache steht fast immer links von Deutsch */
         const fCol = neigh.sort((a, b) => fit(b) - fit(a))[0].i;
         const goodIdx = good.map(o => o.i).sort((a, b) => cols[a].x - cols[b].x);
         const gaps = goodIdx.slice(1).map((gi, k) => cols[gi].x - cols[goodIdx[k]].x);
@@ -3131,17 +3182,17 @@ const VS = (() => {
           for (const r of pairRows(fCol, deCol)) {
             const fc = r.cells.filter(c => c.col === fCol && c.k === "word"), dc = r.cells.filter(c => c.col === deCol && c.k === "word");
             const f = fc.map(c => c.text).join(" "), d = dc.map(c => c.text).join(" ");
-            if (f && d) { last = [f, d, r.yr, box(fc), box(dc), conf(fc), conf(dc)]; pairs.push(last); pendingF = null; }
+            if (f && d) { last = [f, d, r.yr, box(fc), box(dc), conf(fc), conf(dc)]; pairs.push(last); pendingF = null; fc.concat(dc).forEach(c => { c.used = true; }); }
             else if (f && !d) {
               if (/^\(/.test(f)) { /* Zusatz wie (AusE infml: roo) */ }
-              else if (last && r.yr - last[2] < 1.65 * hMed && /[\/,]\s*$/.test(last[0])) { last[0] += " " + f; last[2] = r.yr; last[3] = uni(last[3], box(fc)); }
-              else { pendingF = [f, r.yr, box(fc), conf(fc)]; last = null; }
+              else if (last && r.yr - last[2] < 1.65 * hMed && /[\/,]\s*$/.test(last[0])) { last[0] += " " + f; last[2] = r.yr; last[3] = uni(last[3], box(fc)); fc.forEach(c => { c.used = true; }); }
+              else { pendingF = [f, r.yr, box(fc), conf(fc)]; pendingF.cells = fc; last = null; }
             }
             else if (d && !f) {
               const gap = last ? r.yr - last[2] : Infinity;
-              if (pendingF && r.yr - pendingF[1] < 2.2 * hMed) { last = [pendingF[0], d, r.yr, pendingF[2], box(dc), pendingF[3], conf(dc)]; pairs.push(last); pendingF = null; }
+              if (pendingF && r.yr - pendingF[1] < 2.2 * hMed) { last = [pendingF[0], d, r.yr, pendingF[2], box(dc), pendingF[3], conf(dc)]; pairs.push(last); pendingF.cells.forEach(c => { c.used = true; }); dc.forEach(c => { c.used = true; }); pendingF = null; }
               /* zweite Zeile einer Bedeutung: direkt darunter, oder die erste Zeile endet mit Komma/Semikolon */
-              else if (last && (gap < 1.65 * hMed || (gap < 2.9 * hMed && /[,;]\s*$/.test(last[1])))) { last[1] += " " + d; last[2] = r.yr; last[4] = uni(last[4], box(dc)); }
+              else if (last && (gap < 1.65 * hMed || (gap < 2.9 * hMed && /[,;]\s*$/.test(last[1])))) { last[1] += " " + d; last[2] = r.yr; last[4] = uni(last[4], box(dc)); dc.forEach(c => { c.used = true; }); }
             } else if (!r.cells.some(c => c.col === deCol || c.col === fCol)) { /* Zeile nur in anderen Spalten: Zusammenhang bleibt */ }
             else { last = null; pendingF = null; }
           }
@@ -3165,7 +3216,9 @@ const VS = (() => {
           if (more.length >= 2) pairs.push(...more);
         }
         pairs.push(...zonePairs);
-        const res = finish(pairs, lang);
+        pairs.push(...inlinePairs(rows.filter(r => !r.skip), lang, hMed, box, conf));
+        let res = finish(pairs, lang);
+        res = fixOrientation(res, lang);
         if (res.length >= 2) return { pairs: res, mode: "columns", blocks: blocks.concat(zoneBlocks) };
       }
     }
@@ -3195,6 +3248,22 @@ const VS = (() => {
     const peak = Math.max(...cov);
     if (cov[best] > Math.max(3, peak * 0.15)) return null;
     return (best + 0.5) / bins * W;
+  }
+  /* Falz einer Doppelseite aus den Wortpositionen (Anteil der Breite) */
+  function gutter(data, width, height) {
+    const cells = cellsFrom(data); if (!cells.length) return null;
+    const W = width || Math.max(...cells.map(c => c.x1)), H = height || Math.max(...cells.map(c => c.y1));
+    const g = findGutter(cells, W, H); return g == null ? null : g / W;
+  }
+  /* getrennt gelesene Seiten zusammenführen: Erklärseiten ohne Vokabelliste fallen weg */
+  function combinePages(pages, lang) {
+    const foreignness = p => p.pairs.reduce((n, x) => n + fScore(x.f, lang) - deScore(x.f), 0) / Math.max(1, p.pairs.length);
+    const order = pages.slice().sort((a, b) => b.pairs.length - a.pairs.length);
+    const best = order[0];
+    const kept = order.filter(p => p === best
+      ? p.pairs.length >= 1
+      : p.pairs.length >= 3 && p.pairs.length >= best.pairs.length * 0.3 && quality(p, lang) >= 0.7 && foreignness(p) >= -0.2);
+    return { pages: pages.map(p => kept.includes(p)), mode: "split:" + pages.map(p => p.pairs.length + "/" + quality(p, lang).toFixed(2)).join(",") };
   }
   function extract(data, lang, width, height) {
     const cells = cellsFrom(data);
@@ -3346,16 +3415,58 @@ const VS = (() => {
       }
       out.push(r);
     }
-    const y = p => (p.fBox || p.dBox).y0, x = p => (p.fBox || p.dBox).x0;
+    const y = p => (p.fBox || p.dBox || { y0: 0 }).y0, x = p => (p.fBox || p.dBox || { x0: 0 }).x0;
     return out.sort((a, b) => (y(a) - y(b)) || (x(a) - x(b)));
   }
-  return { fixGerman, fixForeign, extract, refine, fromBlock, mergeBlock, blockRect, kind, cleanCell, splitLine, deScore, fScore };
+  return { fixGerman, fixForeign, extract, gutter, combinePages, refine, fromBlock, mergeBlock, blockRect, kind, cleanCell, splitLine, deScore, fScore };
 })();
 /* Foto für die Texterkennung vorbereiten:
-   1. auf ~3000 px bringen und in Graustufen umwandeln (Kontrast gestreckt)
-   2. adaptive Schwarz-Weiß-Umwandlung (Bradley): gleicht Schatten und gewölbte Seiten aus, graue Schrift bleibt erhalten
-   3. dünne, lange Tabellenlinien erkennen und entfernen (sie zerschneiden sonst die Wörter)
+   1. auf ~3000 px bringen; Graustufen, bei denen helle kühle Farben (blaue Heftlinien, Textmarker) verschwinden,
+      rote Druckschrift (z. B. rote Artikel) aber dunkel bleibt
+   2. adaptive Schwarz-Weiß-Umwandlung (Bradley): gleicht Schatten und gewölbte Seiten aus
+   3. Schräglage messen (Projektionsprofil) und das Foto gerade drehen
+   4. dünne, lange Tabellen- und Heftlinien erkennen und entfernen
    Ergebnis: { gray, bin } – "bin" für den Aufbau, "gray" für die genauen Lesungen */
+function inkGray(d, n) {
+  const Y = new Float32Array(n);
+  for (let i = 0, p = 0; p < n; i += 4, p++) {
+    const r = d[i], g = d[i + 1], b = d[i + 2], lum = (r * 299 + g * 587 + b * 114) / 1000;
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+    Y[p] = (r >= g && r >= b) || mx - mn <= 40 ? lum : 0.5 * lum + 0.5 * mx;
+  }
+  return Y;
+}
+function bradley(Y, W, H) {
+  const win = Math.max(31, Math.floor(W / 16)), r = win >> 1, ii = new Float64Array((W + 1) * (H + 1));
+  for (let y = 0; y < H; y++) { let row = 0; for (let x = 0; x < W; x++) { row += Y[y * W + x]; ii[(y + 1) * (W + 1) + x + 1] = ii[y * (W + 1) + x + 1] + row; } }
+  const B = new Uint8Array(W * H);
+  for (let y = 0; y < H; y++) {
+    const y0 = Math.max(0, y - r), y1 = Math.min(H, y + r + 1);
+    for (let x = 0; x < W; x++) {
+      const x0 = Math.max(0, x - r), x1 = Math.min(W, x + r + 1);
+      const sum = ii[y1 * (W + 1) + x1] - ii[y0 * (W + 1) + x1] - ii[y1 * (W + 1) + x0] + ii[y0 * (W + 1) + x0];
+      B[y * W + x] = Y[y * W + x] < sum / ((y1 - y0) * (x1 - x0)) * 0.75 ? 1 : 0;
+    }
+  }
+  return B;
+}
+/* Schräglage in Grad: bei welcher Scherung liegen die Textzeilen am schärfsten übereinander? */
+function skewAngle(B, W, H) {
+  const f = Math.max(1, Math.floor(W / 700)), xs = [], ys = [];
+  for (let y = 0; y < H; y += f) for (let x = 0; x < W; x += f) if (B[y * W + x]) { xs.push(x / f); ys.push(y / f); }
+  if (xs.length < 200) return 0;
+  const n = xs.length, h = Math.ceil(H / f), w = Math.ceil(W / f);
+  const score = a => {
+    const t = Math.tan(a * Math.PI / 180), off = Math.ceil(Math.abs(t) * w) + 1, hist = new Float64Array(h + 2 * off + 2);
+    for (let i = 0; i < n; i++) hist[Math.round(ys[i] - xs[i] * t) + off]++;
+    let s = 0; for (const v of hist) s += v * v; return s;
+  };
+  let best = 0, bs = -1;
+  for (let a = -12; a <= 12.001; a += 0.5) { const s = score(a); if (s > bs) { bs = s; best = a; } }
+  const c = best;
+  for (let a = c - 0.5; a <= c + 0.501; a += 0.1) { const s = score(a); if (s > bs) { bs = s; best = a; } }
+  return best;
+}
 function prepareImage(file) {
   return new Promise((res, rej) => {
     const url = URL.createObjectURL(file), img = new Image();
@@ -3363,27 +3474,29 @@ function prepareImage(file) {
       try {
         const long = Math.max(img.width, img.height);
         const sc = Math.max(0.5, Math.min(2.5, 3000 / long));
-        const W = Math.round(img.width * sc), H = Math.round(img.height * sc);
-        const mk = () => { const c = document.createElement("canvas"); c.width = W; c.height = H; return c; };
-        const gray = mk(), g = gray.getContext("2d", { willReadFrequently: true });
+        let W = Math.round(img.width * sc), H = Math.round(img.height * sc);
+        const mk = (w, h) => { const c = document.createElement("canvas"); c.width = w; c.height = h; return c; };
+        let gray = mk(W, H), g = gray.getContext("2d", { willReadFrequently: true });
         g.imageSmoothingQuality = "high";
         g.drawImage(img, 0, 0, W, H);
-        URL.revokeObjectURL(url);
-        const id = g.getImageData(0, 0, W, H), d = id.data, n = W * H;
-        const Y = new Float32Array(n), hist = new Uint32Array(256);
-        for (let i = 0, p = 0; p < n; i += 4, p++) { const y = (d[i] * 299 + d[i + 1] * 587 + d[i + 2] * 114) / 1000; Y[p] = y; hist[y | 0]++; }
-        /* Bradley-Schwelle mit Integralbild */
-        const win = Math.max(31, Math.floor(W / 16)), r = win >> 1, ii = new Float64Array((W + 1) * (H + 1));
-        for (let y = 0; y < H; y++) { let row = 0; for (let x = 0; x < W; x++) { row += Y[y * W + x]; ii[(y + 1) * (W + 1) + x + 1] = ii[y * (W + 1) + x + 1] + row; } }
-        const B = new Uint8Array(n);
-        for (let y = 0; y < H; y++) {
-          const y0 = Math.max(0, y - r), y1 = Math.min(H, y + r + 1);
-          for (let x = 0; x < W; x++) {
-            const x0 = Math.max(0, x - r), x1 = Math.min(W, x + r + 1);
-            const sum = ii[y1 * (W + 1) + x1] - ii[y0 * (W + 1) + x1] - ii[y1 * (W + 1) + x0] + ii[y0 * (W + 1) + x0];
-            B[y * W + x] = Y[y * W + x] < sum / ((y1 - y0) * (x1 - x0)) * 0.75 ? 1 : 0;
-          }
+        let id = g.getImageData(0, 0, W, H), d = id.data, n = W * H;
+        let Y = inkGray(d, n), B = bradley(Y, W, H);
+        /* schräges Foto gerade drehen */
+        const ang = skewAngle(B, W, H);
+        if (Math.abs(ang) >= 0.4) {
+          const h2 = new Uint32Array(256); for (let p = 0; p < n; p += 7) h2[Math.max(0, Math.min(255, Y[p] | 0))]++;
+          let acc = 0, med = 0, tot = h2.reduce((a, b) => a + b, 0); while (med < 255 && (acc += h2[med]) < tot / 2) med++;
+          const rad = ang * Math.PI / 180, cs = Math.abs(Math.cos(rad)), sn = Math.abs(Math.sin(rad));
+          const W2 = Math.round(W * cs + H * sn), H2 = Math.round(W * sn + H * cs);
+          const rc = mk(W2, H2), rg = rc.getContext("2d", { willReadFrequently: true });
+          rg.fillStyle = `rgb(${med},${med},${med})`; rg.fillRect(0, 0, W2, H2);
+          rg.imageSmoothingQuality = "high";
+          rg.translate(W2 / 2, H2 / 2); rg.rotate(-rad); rg.drawImage(img, -W / 2, -H / 2, W, H); rg.setTransform(1, 0, 0, 1, 0, 0);
+          gray = rc; g = rg; W = W2; H = H2; n = W * H;
+          id = g.getImageData(0, 0, W, H); d = id.data; Y = inkGray(d, n); B = bradley(Y, W, H);
         }
+        URL.revokeObjectURL(url);
+        const hist = new Uint32Array(256); for (let p = 0; p < n; p++) hist[Math.max(0, Math.min(255, Y[p] | 0))]++;
         /* dünne waagrechte Linien: schwarze Pixel mit Dicke <= 5, die zu langen waagrechten Läufen gehören */
         const thin = new Uint8Array(n);
         for (let x = 0; x < W; x++) {
@@ -3411,7 +3524,7 @@ function prepareImage(file) {
         while (lo < 255 && (acc += hist[lo]) < n * 0.01) lo++;
         acc = 0; while (hi > 0 && (acc += hist[hi]) < n * 0.01) hi--;
         const span = Math.max(40, hi - lo);
-        const bin = mk(), bg = bin.getContext("2d", { willReadFrequently: true }), bd = bg.createImageData(W, H);
+        const bin = mk(W, H), bg = bin.getContext("2d", { willReadFrequently: true }), bd = bg.createImageData(W, H);
         for (let p = 0, i = 0; p < n; p++, i += 4) {
           const v = line[p] ? 255 : Math.max(0, Math.min(255, (Y[p] - lo) * 255 / span));
           d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 255;
@@ -3419,7 +3532,7 @@ function prepareImage(file) {
           bd.data[i] = bd.data[i + 1] = bd.data[i + 2] = b; bd.data[i + 3] = 255;
         }
         g.putImageData(id, 0, 0); bg.putImageData(bd, 0, 0);
-        res({ gray, bin, W, H });
+        res({ gray, bin, W, H, skew: ang });
       } catch (e) { rej(e); }
     };
     img.onerror = () => { URL.revokeObjectURL(url); rej(new Error("img")); };
