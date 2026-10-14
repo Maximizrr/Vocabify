@@ -845,6 +845,24 @@ th{background:var(--surface-2);font-weight:500;color:var(--muted)}
   .hello h1{font-size:2.1rem}
 }
 
+.modes{grid-template-columns:repeat(6,minmax(0,1fr))}
+.modes .mode{grid-column:span 2}
+.modes .mode.wide{grid-column:span 3}
+@media (max-width:700px){.modes{grid-template-columns:repeat(2,minmax(0,1fr))}.modes .mode,.modes .mode.wide{grid-column:span 1}.modes .mode:first-child{grid-column:span 2}}
+.all-sol{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin-top:-.2rem;font-size:.92rem}
+.sol-chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:.2em .75em;font-weight:600}
+.sol-chip.hit{border-color:var(--good);color:var(--good);background:color-mix(in srgb,var(--good) 10%,var(--surface))}
+.size-hint{font-size:.85rem;margin-top:.45rem}
+.pick-list{max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);margin-top:.5rem}
+.pick-sec+.pick-sec{border-top:1px solid var(--line)}
+.pick-head{position:sticky;top:0;z-index:1;display:flex;align-items:center;gap:.5rem;padding:.6rem .8rem;background:var(--surface-2);cursor:pointer}
+.pick-head .num{margin-left:auto;font-size:.8rem}
+.pick-row{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1fr);gap:.6rem;align-items:center;padding:.45rem .8rem;cursor:pointer;font-size:.92rem}
+.pick-row:hover{background:var(--surface-2)}
+.pick-row span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pick-cb{width:18px;height:18px;accent-color:var(--acc);margin:0}
+.grade{display:flex;align-items:baseline;justify-content:center;gap:.6rem;margin:.2rem 0 .4rem}
+.grade .g{font-size:1.6rem;font-weight:700;color:var(--acc)}
 /* ---------- Accessoires ---------- */
 .pet:not(.dragon-pet) .pet-body{position:relative}
 .acc-w{position:absolute;pointer-events:none;line-height:1;font-size:16px;text-align:left}
@@ -972,7 +990,7 @@ th{background:var(--surface-2);font-weight:500;color:var(--muted)}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-const APP_VERSION = "1.2.9";
+const APP_VERSION = "1.3.0";
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
   authDomain: "vocabify-8abb9.firebaseapp.com",
@@ -983,6 +1001,7 @@ const FIREBASE_CONFIG = {
 };
 const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
 const CHANGELOG = [
+  { v: "1.3.0", items: ["Generelles Lernen: Jede Vokabel kommt einmal dran, bevor sich eine wiederholt. Lange nicht gefragte zuerst", "Ältere Vokabeln: seit mehr als 7 Tagen nicht geübt", "Neueste Vokabeln: in den letzten 3 Tagen hinzugefügt", "Fehler-Fokus: zuerst 100 % Fehlerquote, dann absteigend", "Bei richtiger Antwort werden alle Antwortmöglichkeiten angezeigt", "Neuer Modus „Eigene Auswahl“: Vokabeln für die Runde selbst auswählen", "Neue Rundenlänge „Jede einmal“", "10 Fragen als Probe-Vokabeltest mit Note am Ende"] },
   { v: "1.2.9", items: ["Neue Shop-Kategorie „Accessoires“: drei Teile für jedes Haustier", "Accessoires sieht man auf der Startseite, viele bringen neue Aktionen mit", "Accessoires in „Mein Besitz“ an- und ablegen", "Neue Akzentfarbe: Blau"] },
   { v: "1.2.8", items: ["Vokabeldatei direkt in einen bestehenden Abschnitt importieren", "Doppelte Vokabeln werden beim Import übersprungen"] },
   { v: "1.2.7", items: ["Neues ruhiges Design: Schrift Inter, klare Hierarchie, eine Akzentfarbe", "Flache Karten und Buttons mit feinen Linien, mehr Weißraum", "Startbildschirm und Begrüßung in normalen Farben"] },
@@ -1107,11 +1126,13 @@ function wearHTML(pet, k) {
 }
 
 const MODES = {
-  general: { name: "Generelles Lernen", desc: "Gemischter Pool aller Vokabeln" },
-  older:   { name: "Ältere Vokabeln",   desc: "Schon mindestens 3-mal beantwortet" },
-  errors:  { name: "Fehler-Fokus",      desc: "Hohe Fehlerquote zuerst" },
-  newest:  { name: "Neueste Vokabeln",  desc: "Die 20 zuletzt hinzugefügten" }
+  general: { name: "Generelles Lernen", desc: "Alle Vokabeln gleichmäßig, lange nicht gefragte zuerst" },
+  errors:  { name: "Fehler-Fokus",      desc: "Zuerst 100 % Fehlerquote, dann absteigend" },
+  custom:  { name: "Eigene Auswahl",    desc: "Du wählst genau die Vokabeln aus" },
+  older:   { name: "Ältere Vokabeln",   desc: "Seit mehr als 7 Tagen nicht geübt" },
+  newest:  { name: "Neueste Vokabeln",  desc: "In den letzten 3 Tagen hinzugefügt" }
 };
+const DAY_MS = 86400000, OLDER_DAYS = 7, NEWEST_DAYS = 3;
 
 /* ---------- helpers ---------- */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1647,13 +1668,37 @@ function langPicker(act, cur) {
   </div>`;
 }
 function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-function poolFor(mode, secIds) {
+/* zuletzt geübt (oder hinzugefügt, wenn noch nie geübt) */
+function lastAct(v) { return +v.lastSeen || +v.added || 0; }
+function errRate(v) { const n = (v.r || 0) + (v.w || 0); return n ? (v.w || 0) / n : 0; }
+function customPick() {
+  if (!S.cfg.custom) { try { S.cfg.custom = JSON.parse(lsGet("vocabify:custom:" + (S.me && S.me.username)) || "[]"); } catch { S.cfg.custom = []; } }
+  return S.cfg.custom;
+}
+function saveCustom() { lsSet("vocabify:custom:" + (S.me && S.me.username), JSON.stringify(S.cfg.custom || [])); }
+function poolFor(mode, secIds, pick) {
   let items = allVocab(secIds);
-  if (mode === "older") items = items.filter(x => (x.v.r || 0) + (x.v.w || 0) >= 3);
-  if (mode === "errors") items = items.filter(x => (x.v.w || 0) > 0 && x.v.w / ((x.v.r || 0) + x.v.w) >= 0.3)
-    .sort((a, b) => b.v.w / (b.v.r + b.v.w) - a.v.w / (a.v.r + a.v.w));
-  if (mode === "newest") items = items.sort((a, b) => (b.v.added || 0) - (a.v.added || 0)).slice(0, 20);
+  const now = Date.now();
+  if (mode === "older") items = items.filter(x => now - lastAct(x.v) > OLDER_DAYS * DAY_MS);
+  if (mode === "errors") items = items.filter(x => (x.v.w || 0) > 0)
+    .sort((a, b) => errRate(b.v) - errRate(a.v) || (b.v.w || 0) - (a.v.w || 0));
+  if (mode === "newest") items = items.filter(x => x.v.added && now - x.v.added < NEWEST_DAYS * DAY_MS).sort((a, b) => b.v.added - a.v.added);
+  if (mode === "custom") { const set = new Set(pick || customPick()); items = items.filter(x => set.has(x.s.id + ":" + x.v.id)); }
   return items;
+}
+/* Reihenfolge einer Runde: jede Vokabel kommt einmal dran, bevor sich eine wiederholt */
+function buildDeck(mode, pool, last) {
+  let d;
+  if (mode === "errors") {
+    /* 100 % zuerst, dann absteigend; gleiche Quote zufällig gemischt */
+    d = shuffle(pool.slice()).sort((a, b) => Math.round(errRate(b.v) * 100) - Math.round(errRate(a.v) * 100));
+  } else if (mode === "general" || mode === "older") {
+    /* noch nie gefragte zuerst, dann die am längsten nicht gefragten (leicht gemischt, damit die Reihenfolge nicht immer gleich ist) */
+    const now = Date.now(), key = new Map(pool.map(x => [x, x.v.lastSeen ? x.v.lastSeen + Math.random() * .35 * Math.max(0, now - x.v.lastSeen) : -1 - Math.random()]));
+    d = pool.slice().sort((a, b) => key.get(a) - key.get(b));
+  } else d = shuffle(pool.slice());
+  if (d.length > 1 && d[0].v.id === last) d.push(d.shift());
+  return d.map(x => ({ sid: x.s.id, vid: x.v.id }));
 }
 const MACRON = { "ā": "a", "ē": "e", "ī": "i", "ō": "o", "ū": "u", "ȳ": "y" };
 function norm(s) {
@@ -1689,6 +1734,21 @@ function lev(a, b) {
     d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
   return d[a.length][b.length];
 }
+/* einzelne Antwortmöglichkeiten einer Lösung (getrennt durch Komma, Semikolon oder Schrägstrich, nicht innerhalb von Klammern) */
+function solParts(sol) {
+  const out = []; let depth = 0, cur = "";
+  for (const ch of String(sol || "")) {
+    if (ch === "(" || ch === "[") depth++; else if ((ch === ")" || ch === "]") && depth) depth--;
+    if (!depth && /[,;\/]/.test(ch)) { if (cur.trim()) out.push(cur.trim()); cur = ""; } else cur += ch;
+  }
+  if (cur.trim()) out.push(cur.trim());
+  return out.length ? out : [String(sol || "")];
+}
+function allAnswers(given, sol) {
+  const parts = solParts(sol);
+  return `<div class="all-sol"><span class="muted">${parts.length > 1 ? "Alle Antwortmöglichkeiten:" : "Lösung:"}</span>
+    ${parts.map(p => `<span class="sol-chip${given && checkAnswer(given, p).ok ? " hit" : ""}">${esc(p)}</span>`).join("")}</div>`;
+}
 function checkAnswer(given, sol) {
   const g = norm(given);
   if (!g) return { ok: false };
@@ -1703,7 +1763,7 @@ function checkAnswer(given, sol) {
 /* ---------- learning ---------- */
 function newRound(extra) {
   return Object.assign({ mode: S.cfg.mode, dir: S.cfg.dir, secs: effSecs(S.cfg.secs, S.cfg.lang), size: S.cfg.size, n: 0, right: 0, cur: null, state: "ask", last: null,
-    coin: false, typo: false, coinsEarned: 0, wrongs: [], finished: false, startedAt: Date.now(), queue: null, retry: false }, extra || {});
+    coin: false, typo: false, coinsEarned: 0, wrongs: [], finished: false, startedAt: Date.now(), queue: null, retry: false, refill: false, pick: null, test: false }, extra || {});
 }
 function repeatWrongs() {
   const prev = S.learn; if (!prev) return;
@@ -1714,9 +1774,11 @@ function repeatWrongs() {
   nextQuestion();
 }
 function startLearning() {
-  const pool = poolFor(S.cfg.mode, effSecs(S.cfg.secs, S.cfg.lang));
-  if (!pool.length) { toast("Für diesen Modus gibt es noch keine passenden Vokabeln."); return; }
-  S.learn = newRound();
+  const secs = effSecs(S.cfg.secs, S.cfg.lang), pick = S.cfg.mode === "custom" ? customPick().slice() : null;
+  const pool = poolFor(S.cfg.mode, secs, pick);
+  if (!pool.length) { toast(S.cfg.mode === "custom" ? "Wähle zuerst ein paar Vokabeln aus." : "Für diesen Modus gibt es noch keine passenden Vokabeln."); return; }
+  const once = S.cfg.size === -1;
+  S.learn = newRound({ secs, pick, size: once ? pool.length : S.cfg.size, queue: buildDeck(S.cfg.mode, pool), refill: !once, test: S.cfg.size === 10 });
   window.scrollTo({ top: 0 });
   nextQuestion();
 }
@@ -1724,27 +1786,22 @@ function nextQuestion() {
   const L = S.learn; if (!L || L.finished) return;
   clearTimeout(L.timer);
   if (L.size && L.n >= L.size) { finishLearning(); return; }
+  if (L.queue && !L.queue.length && L.refill) L.queue = buildDeck(L.mode, poolFor(L.mode, L.secs, L.pick), L.last);
   if (L.queue) {
     let item = null;
     while (L.queue.length && !item) {
       const q = L.queue.shift(); const s = S.sections.find(x => x.id === q.sid); const v = s && s.vocab.find(x => x.id === q.vid);
       if (v) item = { s, v };
     }
+    if (!item && L.refill && !L.refilled) { L.refilled = true; L.queue = buildDeck(L.mode, poolFor(L.mode, L.secs, L.pick), L.last); return nextQuestion(); }
     if (!item) { finishLearning(); return; }
+    L.refilled = false;
     const dir = L.dir === "mix" ? (Math.random() < .5 ? "f2d" : "d2f") : L.dir;
     L.cur = { sid: item.s.id, vid: item.v.id, dir };
     L.state = "ask"; L.given = ""; L.coin = false; L.typo = false; L.last = item.v.id;
     render(); return;
   }
-  const pool = poolFor(L.mode, L.secs);
-  if (!pool.length) { finishLearning(); return; }
-  let cands = pool.length > 1 ? pool.filter(x => x.v.id !== L.last) : pool;
-  if (L.mode === "errors") cands = cands.slice(0, Math.max(5, Math.ceil(cands.length / 2)));
-  const pick = cands[Math.floor(Math.random() * cands.length)];
-  const dir = L.dir === "mix" ? (Math.random() < .5 ? "f2d" : "d2f") : L.dir;
-  L.cur = { sid: pick.s.id, vid: pick.v.id, dir };
-  L.state = "ask"; L.given = ""; L.coin = false; L.typo = false; L.last = pick.v.id;
-  render();
+  finishLearning();
 }
 function finishLearning() {
   const L = S.learn; if (!L) return;
@@ -1794,7 +1851,7 @@ function submitAnswer(val) {
     v.r = (v.r || 0) + 1; L.state = "right"; L.typo = !!res.typo;
     registerCorrect(s, v);
     clearTimeout(L.timer);
-    if (!res.typo) L.timer = setTimeout(() => { if (S.learn === L && L.state === "right") nextQuestion(); }, 1100);
+    if (!res.typo) L.timer = setTimeout(() => { if (S.learn === L && L.state === "right") nextQuestion(); }, Math.min(4000, 1800 + 450 * (solParts(sol).length - 1)));
   } else {
     v.w = (v.w || 0) + 1; L.state = "wrong";
     if (!L.wrongs.some(x => x.vid === v.id)) L.wrongs.push({ sid: s.id, vid: v.id });
@@ -1817,7 +1874,7 @@ function overrideCorrect() {
   registerCorrect(it.s, it.v);
   markDirty("sec:" + it.s.id);
   render();
-  L.timer = setTimeout(() => { if (S.learn === L && L.state === "right") nextQuestion(); }, 900);
+  L.timer = setTimeout(() => { if (S.learn === L && L.state === "right") nextQuestion(); }, 1800);
 }
 function openChest(m) {
   ensureDay();
@@ -1858,6 +1915,11 @@ function setLang() {
   if (S.view === "vocab" && !S.openSection && S.vocabTab === "stats" && S.statsLang) lang = S.statsLang;
   if (S.view === "vocab" && S.openSection) { const s = S.sections.find(x => x.id === S.openSection); if (s) lang = s.lang; }
   if (lang) document.body.dataset.lang = lang; else delete document.body.dataset.lang;
+}
+function renderKeepScroll() {
+  const pl = $(".pick-list"), top = pl ? pl.scrollTop : 0, y = scrollY;
+  render();
+  const pl2 = $(".pick-list"); if (pl2) pl2.scrollTop = top; scrollTo(0, y);
 }
 function render() {
   const app = $("#app");
@@ -2010,7 +2072,7 @@ function settingsView() {
 function learnHeader() {
   const L = S.learn;
   const done = L.finished;
-  const label = done ? "Runde abgeschlossen" : L.size ? `Frage ${Math.min(L.n + (L.state === "ask" ? 1 : 0), L.size)} von ${L.size}` : `${L.n} beantwortet · Endlos`;
+  const label = done ? "Runde abgeschlossen" : L.size ? `${L.test && !L.retry ? "Probetest · " : ""}Frage ${Math.min(L.n + (L.state === "ask" ? 1 : 0), L.size)} von ${L.size}` : `${L.n} beantwortet · Endlos`;
   const pct = done ? 100 : L.size ? Math.min(100, L.n / L.size * 100) : 0;
   return `<header class="topbar learnbar"><div class="topbar-in">
     <span class="brand" aria-label="Vocabify">${LOGO_SVG(false)}<span class="word">Vocabify</span></span>
@@ -2026,14 +2088,18 @@ function summaryView() {
   const pct = L.n ? Math.round(L.right / L.n * 100) : 0;
   const mins = Math.max(1, Math.round((Date.now() - L.startedAt) / 60000));
   const msg = pct >= 90 ? "Hervorragend!" : pct >= 70 ? "Stark gemacht!" : pct >= 50 ? "Gut geübt!" : "Dranbleiben lohnt sich!";
+  const isTest = L.test && !L.retry && L.n >= L.size;
+  const grade = pct >= 90 ? 1 : pct >= 80 ? 2 : pct >= 65 ? 3 : pct >= 50 ? 4 : pct >= 25 ? 5 : 6;
+  const gradeName = ["", "sehr gut", "gut", "befriedigend", "ausreichend", "mangelhaft", "ungenügend"][grade];
   const wrongRows = L.wrongs.map(w => {
     const s = S.sections.find(x => x.id === w.sid); const v = s && s.vocab.find(x => x.id === w.vid);
     return v ? `<tr><td>${esc(v.f)}</td><td>${esc(v.d)}</td><td><span class="lang-dot ${s.lang}"></span> ${esc(s.name)}</td></tr>` : "";
   }).join("");
   return `<section class="card summary">
-      <p class="eyebrow">${L.retry ? "Wiederholung der Fehler" : L.size && L.n >= L.size ? "Runde fertig" : "Runde beendet"}</p>
+      <p class="eyebrow">${L.retry ? "Wiederholung der Fehler" : isTest ? "Probe-Vokabeltest" : L.size && L.n >= L.size ? "Runde fertig" : "Runde beendet"}</p>
       <h1>${msg}</h1>
       <div class="score">${L.right} / ${L.n}</div>
+      ${isTest ? `<div class="grade"><span class="g">Note ${grade}</span><span class="muted">${gradeName}</span></div>` : ""}
       <p class="muted">${pct} % richtig in etwa ${mins} Minute${mins === 1 ? "" : "n"}</p>
       <div class="stats">
         <div class="stat"><span class="l">Münzen verdient</span><span class="v" style="display:flex;align-items:center;justify-content:center;gap:.3em">${COIN}${L.coinsEarned}</span></div>
@@ -2204,8 +2270,8 @@ function configView() {
     .map(([k, l]) => `<button data-act="cfgDir" data-k="${k}" aria-pressed="${S.cfg.dir === k}">${l}</button>`).join("");
   const modes = Object.entries(MODES).map(([k, m]) => {
     const n = poolFor(k, scope).length;
-    const mc = { general: ["shuffle", "blue"], older: ["clock", "purple"], errors: ["alert", "pink"], newest: ["spark", "green"] }[k] || ["spark", "blue"];
-    return `<button class="mode" data-act="cfgMode" data-k="${k}" style="--tc:var(--c-${mc[1]})" aria-pressed="${S.cfg.mode === k}">${chip(mc[0], mc[1])}<b>${m.name}</b><span>${m.desc}</span><em>${n} Vokabel${n === 1 ? "" : "n"}</em></button>`;
+    const mc = { general: ["shuffle", "blue"], older: ["clock", "purple"], errors: ["alert", "pink"], newest: ["spark", "green"], custom: ["target", "indigo"] }[k] || ["spark", "blue"];
+    return `<button class="mode${k === "older" || k === "newest" ? " wide" : ""}" data-act="cfgMode" data-k="${k}" style="--tc:var(--c-${mc[1]})" aria-pressed="${S.cfg.mode === k}">${chip(mc[0], mc[1])}<b>${m.name}</b><span>${m.desc}</span><em>${n} Vokabel${n === 1 ? "" : "n"}</em></button>`;
   }).join("");
   const n = poolFor(S.cfg.mode, scope).length;
   return `<div class="cfg">
@@ -2214,10 +2280,25 @@ function configView() {
     <div class="cfg-group"><span class="eyebrow">Abschnitte</span><div class="chips">${chips}</div></div>
     <div class="cfg-group"><span class="eyebrow">Richtung</span><div class="seg">${dirs}</div></div>
     <div class="cfg-group"><span class="eyebrow">Lernmodus</span><div class="modes">${modes}</div></div>
-    <div class="cfg-group"><span class="eyebrow">Rundenlänge</span><div class="seg">${[[10, "10 Fragen"], [20, "20 Fragen"], [30, "30 Fragen"], [0, "Endlos"]]
-      .map(([k, l]) => `<button data-act="cfgSize" data-k="${k}" aria-pressed="${S.cfg.size === k}">${l}</button>`).join("")}</div></div>
+    ${S.cfg.mode === "custom" ? customPicker(scope) : ""}
+    <div class="cfg-group"><span class="eyebrow">Rundenlänge</span><div class="seg">${[[10, "10 Fragen · Probetest"], [20, "20 Fragen"], [30, "30 Fragen"], [-1, `Jede einmal${n ? " (" + n + ")" : ""}`], [0, "Endlos"]]
+      .map(([k, l]) => `<button data-act="cfgSize" data-k="${k}" aria-pressed="${S.cfg.size === k}">${l}</button>`).join("")}</div>
+      <p class="muted size-hint">${S.cfg.size === 10 ? "Wie ein Probe-Vokabeltest: 10 Vokabeln wie in der Schule, am Ende bekommst du eine Note."
+        : S.cfg.size === -1 ? "Jede Vokabel im Pool kommt genau einmal dran." : S.cfg.size ? "Jede Vokabel kommt einmal dran, bevor sich eine wiederholt." : "Läuft, bis du auf „Beenden“ tippst."}</p></div>
     <div class="row"><button class="btn primary big" data-act="start" ${n ? "" : "disabled"}>Lernen starten</button>
       <span class="muted">${n ? n + " Vokabeln im Pool" : "Keine passenden Vokabeln für diesen Modus"}</span></div>
+  </div>`;
+}
+function customPicker(scope) {
+  const sel = new Set(customPick());
+  const secs = S.sections.filter(s => !scope || scope.includes(s.id)).filter(s => (s.vocab || []).length);
+  const inScope = secs.reduce((n, s) => n + s.vocab.filter(v => sel.has(s.id + ":" + v.id)).length, 0);
+  return `<div class="cfg-group"><span class="eyebrow">Deine Auswahl</span>
+    <div class="row"><span class="muted"><b class="num">${inScope}</b> Vokabel${inScope === 1 ? "" : "n"} ausgewählt</span><span class="spacer"></span>
+      <button class="btn small" data-act="pickAll" data-k="1">Alle auswählen</button><button class="btn small" data-act="pickAll" data-k="">Keine</button></div>
+    <div class="pick-list">${secs.map(s => { const on = s.vocab.filter(v => sel.has(s.id + ":" + v.id)).length;
+      return `<div class="pick-sec"><label class="pick-head"><input type="checkbox" class="pick-cb" data-sec="${s.id}" ${on === s.vocab.length ? "checked" : ""}><span class="lang-dot ${s.lang}"></span><b>${esc(s.name)}</b><span class="muted num">${on}/${s.vocab.length}</span></label>
+      ${s.vocab.map(v => `<label class="pick-row"><input type="checkbox" class="pick-cb" data-k="${s.id}:${v.id}" ${sel.has(s.id + ":" + v.id) ? "checked" : ""}><span>${esc(v.f)}</span><span class="muted">${esc(v.d)}</span></label>`).join("")}</div>`; }).join("")}</div>
   </div>`;
 }
 function quizView() {
@@ -2230,9 +2311,10 @@ function quizView() {
   const target = f2d ? "Deutsche" : LANGS[s.lang].name.replace(/isch$/, "ische");
   let fb = "";
   if (L.state === "right") {
-    fb = `<div class="fb right" role="status">Richtig!${L.typo ? ` <span>Fast perfekt, achte auf die Schreibweise: <span class="sol">${esc(sol)}</span></span>` : ""}
+    fb = `<div class="fb right" role="status">Richtig!${L.typo ? ` <span>Fast perfekt, achte auf die Schreibweise.</span>` : ""}
       ${L.coin ? `<span class="coin-pop${L.coinAmt > 1 ? " rush" : ""}">${COIN}+${L.coinAmt || 1}${L.coinAmt > 1 ? " Goldrausch!" : ""}</span>` : `<span class="muted" style="font-weight:600">Heute schon belohnt</span>`}
-      ${L.typo ? `<span class="spacer"></span><button class="btn small" id="nextBtn" data-act="next">Weiter</button>` : ""}</div>`;
+      <span class="spacer"></span><button class="btn small" id="nextBtn" data-act="next">Weiter</button></div>
+      ${allAnswers(L.given, sol)}`;
   } else if (L.state === "wrong") {
     fb = `<div class="fb wrong" role="status"><span>Leider falsch. Richtig ist: <span class="sol">${esc(sol)}</span></span><span class="spacer"></span>
       <button class="btn small" data-act="override">Ich hatte recht</button>
@@ -2726,6 +2808,11 @@ const A = {
   leave() { leaveLearning(); },
   again() { S.learn = null; startLearning(); },
   cfgSize(t) { S.cfg.size = +t.dataset.k; render(); },
+  pickAll(t) {
+    const scope = effSecs(S.cfg.secs, S.cfg.lang), keys = allVocab(scope).map(x => x.s.id + ":" + x.v.id), set = new Set(customPick());
+    keys.forEach(k => t.dataset.k ? set.add(k) : set.delete(k));
+    S.cfg.custom = [...set]; saveCustom(); renderKeepScroll();
+  },
   fbCat(t) { syncFb(); S.fbDraft.cat = t.dataset.k; render(); const ta = $("#fb-text"); if (ta) ta.focus(); },
   fbFilter(t) { S.fbFilter = t.dataset.k; render(); },
   fbAmt(t) { syncReward(t.dataset.id); S.fbReward[t.dataset.id].amt = t.dataset.k; render(); },
@@ -3105,6 +3192,12 @@ document.addEventListener("input", e => {
 document.addEventListener("change", async e => {
   const el = e.target;
   if (el.dataset.change === "statsFilter") { S.statsFilter = el.value; render(); }
+  if (el.classList.contains("pick-cb")) {
+    const set = new Set(customPick());
+    const keys = el.dataset.sec ? ((S.sections.find(x => x.id === el.dataset.sec) || {}).vocab || []).map(v => el.dataset.sec + ":" + v.id) : [el.dataset.k];
+    keys.forEach(k => el.checked ? set.add(k) : set.delete(k));
+    S.cfg.custom = [...set]; saveCustom(); renderKeepScroll();
+  }
   if ((el.id === "imp-file" || el.id === "imp-file-sec") && el.files[0]) {
     const target = el.id === "imp-file-sec" ? S.sections.find(x => x.id === S.openSection) : null;
     try { importVocabFile(await el.files[0].text(), el.files[0].name, target); } catch { toast("Datei konnte nicht gelesen werden."); }
