@@ -20,7 +20,7 @@
 /* Layout: sticky top bar with nav, single centered column (max 1080px), cards only for working areas; fixed version label bottom-left; pet stage overlays the start page. */
 :root{
   --bg:#f7f7f8; --surface:#ffffff; --surface-2:#f1f1f3; --ink:#111113; --muted:#6b6b73; --line:#e5e5e8;
-  --brand:#17803d; --brand-soft:#e9f4ed; --check:#17803d; --logo:#111113;
+  --brand:#2563eb; --brand-soft:#eaf1fe; --check:#2563eb; --logo:#111113;
   --en:#d1453b; --la:#2f8f4e; --fr:#d9820b;
   --en-soft:#fbeeed; --la-soft:#eaf5ee; --fr-soft:#fcf2e3;
   --coin:#d99a0b; --coin-soft:#fbf3de; --good:#17803d; --bad:#c62828; --warn:#a15c00;
@@ -36,24 +36,24 @@
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0e0e10; --surface:#161618; --surface-2:#1f1f22; --ink:#ededee; --muted:#9b9ba3; --line:#2a2a2e;
-  --brand:#3fb96b; --brand-soft:#16291d; --check:#3fb96b; --logo:#ededee;
+  --brand:#5b9bff; --brand-soft:#15223b; --check:#5b9bff; --logo:#ededee;
   --en:#ec6a61; --la:#4cc27a; --fr:#efa13c;
   --en-soft:#33191a; --la-soft:#132a1c; --fr-soft:#33250f;
   --coin:#f0bb3c; --coin-soft:#2f2712; --good:#3fb96b; --bad:#ef5350; --warn:#efa13c;
   --wood:#8a5630; --wood-2:#a96e3f; --metal:#d9ad35;
   --shadow:0 8px 24px -12px rgba(0,0,0,.6);
-  --on-acc:#08140c;
+  --on-acc:#06101f;
   color-scheme:dark;
 }}
 :root[data-theme="dark"]{
   --bg:#0e0e10; --surface:#161618; --surface-2:#1f1f22; --ink:#ededee; --muted:#9b9ba3; --line:#2a2a2e;
-  --brand:#3fb96b; --brand-soft:#16291d; --check:#3fb96b; --logo:#ededee;
+  --brand:#5b9bff; --brand-soft:#15223b; --check:#5b9bff; --logo:#ededee;
   --en:#ec6a61; --la:#4cc27a; --fr:#efa13c;
   --en-soft:#33191a; --la-soft:#132a1c; --fr-soft:#33250f;
   --coin:#f0bb3c; --coin-soft:#2f2712; --good:#3fb96b; --bad:#ef5350; --warn:#efa13c;
   --wood:#8a5630; --wood-2:#a96e3f; --metal:#d9ad35;
   --shadow:0 8px 24px -12px rgba(0,0,0,.6);
-  --on-acc:#08140c;
+  --on-acc:#06101f;
   color-scheme:dark;
 }
 
@@ -796,7 +796,7 @@ h2 .ic-chip{display:none}
 .track{background:var(--surface-2)}
 .marker{background:var(--ink);color:var(--surface)}
 .fb{border-radius:12px;font-weight:500}
-.fb.right{background:var(--brand-soft);color:var(--good)}
+.fb.right{background:color-mix(in srgb,var(--good) 12%,var(--surface));color:var(--good)}
 /* Karten in Listen: flach, keine Hebe-Effekte */
 .sec-card,.art-card,.pet-card,.invite,.fb-item,.theme-opt,.own{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:none;transform:none!important}
 .sec-card:hover,.art-card:hover,.pet-card:hover{border-color:color-mix(in srgb,var(--ink) 22%,var(--line));box-shadow:none}
@@ -845,6 +845,114 @@ th{background:var(--surface-2);font-weight:500;color:var(--muted)}
   .hello h1{font-size:2.1rem}
 }
 
+/* ---------- Accessoires ---------- */
+.pet:not(.dragon-pet) .pet-body{position:relative}
+.acc-w{position:absolute;pointer-events:none;line-height:1;font-size:16px;text-align:left}
+.acc-collar{width:7px;height:18px;border-radius:4px;background:#d63c3c;left:13px;top:25px;transform:rotate(16deg);box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.acc-collar i{position:absolute;width:7px;height:7px;border-radius:50%;background:#f2c230;left:0;bottom:-6px;box-shadow:0 0 0 1px #a8790a}
+.acc-cat-collar{background:#3a7bd5}
+.acc-cat-collar i{width:8px;height:8px;background:radial-gradient(circle at 35% 35%,#fff3b0,#e6b422 60%,#9c7409)}
+.acc-cape{left:30px;top:22px;width:24px;height:19px;background:linear-gradient(160deg,#e53935,#b71c1c);border-radius:4px 14px 18px 6px;transform-origin:4px 4px;transform:rotate(-8deg);opacity:.95}
+.pet.walking .acc-cape{animation:cape .35s ease-in-out infinite alternate}
+.pet.hero .acc-cape{animation-duration:.14s}
+@keyframes cape{to{transform:rotate(-26deg) scaleX(1.12)}}
+.acc-leash{left:29px;bottom:28px;width:2px;height:3000px;background:repeating-linear-gradient(180deg,#8d6e63 0 6px,#bcaaa4 6px 9px)}
+.acc-tank{left:-4px;top:38px;width:68px;height:22px}
+.acc-tank .tracks{position:absolute;left:4px;right:4px;bottom:0;height:13px;border-radius:7px;background:#4b5320;box-shadow:inset 0 0 0 2px #2f3514;display:flex;justify-content:space-around;align-items:center;padding:0 3px}
+.acc-tank .tracks i{width:8px;height:8px;border-radius:50%;background:#9aa36a;box-shadow:inset 0 0 0 2px #2f3514}
+.acc-tank .barrel{position:absolute;left:-10px;top:-12px;width:26px;height:6px;background:#556b2f;border-radius:3px;box-shadow:inset 0 0 0 1px #2f3514;transform:rotate(-8deg)}
+.acc-shoes{left:20px;top:46px;font-size:14px}
+.acc-gloves{left:4px;top:24px;font-size:15px}
+.acc-joey{left:21px;top:27px;font-size:17px;filter:drop-shadow(0 0 1px #fff)}
+.pet.peek .acc-joey{animation:peek 2s ease-in-out}
+@keyframes peek{20%,80%{transform:translateY(-12px) rotate(-10deg)}}
+.acc-glasses{left:4px;top:13px;font-size:17px}
+.acc-bow{left:24px;top:2px;font-size:17px}
+.acc-cap{left:15px;top:-8px;font-size:26px}
+.acc-crown{left:18px;top:-6px;font-size:22px}
+.pet-body.scratch{animation:scratch .15s linear 8}
+@keyframes scratch{50%{transform:translateX(-3px) rotate(-4deg)}}
+.pet-body.recoil{animation:recoil .5s ease-out}
+@keyframes recoil{30%{transform:translateX(7px)}}
+.pet-body.sway{animation:sway .55s ease-in-out 4}
+@keyframes sway{25%{transform:rotate(-9deg)}75%{transform:rotate(9deg)}}
+.pet-body.punch{animation:punch .3s ease-in-out 3}
+@keyframes punch{50%{transform:translateX(-7px)}}
+.pet.inside{opacity:0;transition:opacity .35s}
+.pet.lying .pet-body{transform:translateY(14px) rotate(-75deg);transition:transform .4s}
+.heart{color:#e53950;font-size:22px;line-height:1;animation:spray 1.4s ease-out forwards}
+.note{font-size:22px;line-height:1;font-weight:700;color:var(--ink);animation:rise 2s ease-out forwards}
+.peel{font-size:18px;line-height:1;animation:peel 1.6s ease-in forwards}
+@keyframes peel{to{transform:translate(var(--dx),240px) rotate(260deg);opacity:0}}
+.ripple{width:20px;height:6px;margin:-3px 0 0 -10px;border:2px solid #7cc4f0;border-radius:50%;animation:ripple 1.2s ease-out forwards}
+@keyframes ripple{to{transform:scale(4);opacity:0}}
+.emo.rainbow{font-size:46px}
+.prop.bowl{font-size:30px;line-height:1}
+.prop.post{width:56px;height:112px}
+.prop.post::before{content:"";position:absolute;left:21px;top:10px;bottom:6px;width:14px;background:repeating-linear-gradient(180deg,#d9b779 0 4px,#c49a55 4px 7px);border-radius:3px}
+.prop.post::after{content:"";position:absolute;left:0;right:0;bottom:0;height:9px;border-radius:5px;background:var(--wood)}
+.prop.post i{position:absolute;left:0;top:0;width:56px;height:13px;border-radius:7px;background:#b9a3d6}
+.prop.algae{width:40px;height:92px}
+.prop.algae i{position:absolute;bottom:0;width:10px;border-radius:10px 10px 2px 2px;background:linear-gradient(#5fbf6a,#2e7d32);transform-origin:bottom center;animation:algae 3s ease-in-out infinite alternate}
+.prop.algae i:nth-child(1){left:2px;height:70px}
+.prop.algae i:nth-child(2){left:15px;height:92px;animation-delay:-1s}
+.prop.algae i:nth-child(3){left:28px;height:58px;animation-delay:-2s}
+@keyframes algae{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}
+.prop.chest{width:54px;height:40px}
+.prop.chest b{position:absolute;left:0;right:0;bottom:0;height:26px;border-radius:3px 3px 5px 5px;background:linear-gradient(90deg,#8d5a2b,#a86b3c 50%,#8d5a2b);box-shadow:inset 0 0 0 2px #5d3a17}
+.prop.chest b::after{content:"";position:absolute;left:22px;top:-3px;width:10px;height:10px;border-radius:2px;background:#e6b422;box-shadow:0 0 0 1px #8f6a00}
+.prop.chest i{position:absolute;left:0;right:0;top:0;height:15px;border-radius:12px 12px 2px 2px;background:linear-gradient(180deg,#b97a45,#8d5a2b);box-shadow:inset 0 0 0 2px #5d3a17;transform-origin:2px 15px;transition:transform .4s var(--ease);z-index:1}
+.prop.chest.open i{transform:rotate(-38deg)}
+.prop.chest.open b{box-shadow:inset 0 0 0 2px #5d3a17,inset 0 10px 12px -4px #ffd84f}
+.prop.house{width:76px;height:66px}
+.prop.house i{position:absolute;left:0;top:0;width:76px;height:32px;background:#c0533a;clip-path:polygon(50% 0,100% 100%,0 100%)}
+.prop.house::before{content:"";position:absolute;left:8px;right:8px;bottom:0;height:36px;background:#f1d9a8;border-radius:2px;box-shadow:inset 0 0 0 2px #c79f5b}
+.prop.house b{position:absolute;left:26px;bottom:0;width:24px;height:24px;border-radius:12px 12px 0 0;background:#5a3b22}
+.prop.basket{font-size:30px;line-height:1}
+.prop.basket span{position:absolute;left:5px;top:-12px;font-size:18px}
+.prop.crate{width:46px;height:24px;background:repeating-linear-gradient(90deg,#c98a52 0 10px,#a86b3c 10px 12px);border-radius:3px;box-shadow:inset 0 0 0 2px #7a4a22}
+.prop.crate span{position:absolute;left:3px;top:-13px;font-size:16px;letter-spacing:-4px;z-index:-1}
+.prop.vine{width:4px;margin-left:-2px;background:linear-gradient(90deg,#5d7d2b,#7da23a);border-radius:2px;transform-origin:50% 0}
+.prop.vine span{position:absolute;width:14px;height:8px;border-radius:8px 0;background:var(--la);left:2px}
+.prop.vine span:nth-child(1){top:30%}.prop.vine span:nth-child(2){top:55%;left:-12px;transform:scaleX(-1)}.prop.vine span:nth-child(3){top:80%}
+.prop.ball{width:34px;height:34px;border-radius:50%;background:conic-gradient(#e53935 0 60deg,#fff 0 120deg,#1e88e5 0 180deg,#fff 0 240deg,#fdd835 0 300deg,#fff 0);box-shadow:inset -4px -5px 8px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.08)}
+.prop.ball.kick{animation:kick 1.3s cubic-bezier(.3,.6,.5,1) forwards}
+@keyframes kick{40%{transform:translate(calc(var(--dx)*.45),-130px) rotate(300deg)}75%{transform:translate(calc(var(--dx)*.85),0) rotate(540deg)}88%{transform:translate(calc(var(--dx)*.95),-22px) rotate(620deg)}100%{transform:translate(var(--dx),0) rotate(700deg)}}
+.prop.pillow{width:66px;height:22px;border-radius:12px;background:linear-gradient(180deg,#fff,#dfe6f3);box-shadow:inset 0 0 0 1px #c5cfe0}
+.prop.swing-frame{width:120px;border-top:8px solid var(--wood);border-radius:4px}
+.prop.swing-frame::before,.prop.swing-frame::after{content:"";position:absolute;top:-6px;bottom:0;width:7px;background:var(--wood);border-radius:3px;transform-origin:top}
+.prop.swing-frame::before{left:4px;transform:rotate(8deg)}
+.prop.swing-frame::after{right:4px;transform:rotate(-8deg)}
+.prop.swing-ropes{width:40px;border-left:2px solid #8d6e63;border-right:2px solid #8d6e63;transform-origin:50% 0}
+.prop.swing-ropes i{position:absolute;left:-8px;right:-8px;bottom:-6px;height:8px;border-radius:3px;background:var(--wood-2)}
+.prop.lily{width:90px;height:16px;border-radius:50%;background:radial-gradient(ellipse at 50% 40%,#9fd6f5,#4aa3df)}
+.prop.lily span{position:absolute;left:30px;top:-12px;font-size:24px;line-height:1}
+.prop.bfly{left:0;top:0;font-size:22px;line-height:1}
+.prop.bfly span{display:block;animation:flutter .22s ease-in-out infinite alternate}
+@keyframes flutter{to{transform:scaleX(.5)}}
+.acc-group{margin-top:1.1rem}
+.acc-group.locked .acc-card{opacity:.6}
+.acc-title{display:flex;align-items:center;gap:.5rem;font-size:1.05rem;margin:0 0 .6rem}
+.acc-title .e{font-size:1.4rem;line-height:1}
+.acc-title .muted{font-weight:500;font-size:.85rem}
+.acc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.8rem}
+.acc-card{border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:.9rem;display:flex;gap:.8rem;min-width:0}
+.acc-card.owned{border-color:var(--acc)}
+.acc-ava{flex:none;width:64px;height:64px;border-radius:14px;background:var(--surface-2);display:grid;place-items:center;position:relative;overflow:hidden}
+.acc-ic{font-size:34px;line-height:1}
+.acc-badge{position:absolute;right:3px;bottom:3px;font-size:18px;line-height:1}
+.acc-pv{position:relative;width:60px;height:60px;display:block;overflow:hidden}
+.acc-pv .pv-body{display:block;width:60px;height:60px;font-size:52px;line-height:60px;text-align:center}
+.acc-pv.sm{zoom:.62}
+.acc-info{min-width:0;flex:1;display:flex;flex-direction:column;gap:.3rem}
+.acc-info h4{margin:0;font-size:1rem}
+.acc-info p{margin:0;font-size:.84rem;color:var(--muted);flex:1}
+.acc-info .row{gap:.4rem}
+.acc-card .price{display:flex;align-items:center;gap:.35em;font-weight:700;font-variant-numeric:tabular-nums}
+.acc-lock{font-size:.8rem}
+.acc-own-row{display:flex;flex-direction:column;gap:.45rem;margin-top:.8rem}
+.acc-own-pet{font-weight:600;font-size:.9rem;color:var(--muted)}
+.own .e{overflow:hidden}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .logo-check{stroke-dashoffset:0}
@@ -864,7 +972,7 @@ th{background:var(--surface-2);font-weight:500;color:var(--muted)}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-const APP_VERSION = "1.2.8";
+const APP_VERSION = "1.2.9";
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
   authDomain: "vocabify-8abb9.firebaseapp.com",
@@ -875,6 +983,7 @@ const FIREBASE_CONFIG = {
 };
 const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
 const CHANGELOG = [
+  { v: "1.2.9", items: ["Neue Shop-Kategorie „Accessoires“: drei Teile für jedes Haustier", "Accessoires sieht man auf der Startseite, viele bringen neue Aktionen mit", "Accessoires in „Mein Besitz“ an- und ablegen", "Neue Akzentfarbe: Blau"] },
   { v: "1.2.8", items: ["Vokabeldatei direkt in einen bestehenden Abschnitt importieren", "Doppelte Vokabeln werden beim Import übersprungen"] },
   { v: "1.2.7", items: ["Neues ruhiges Design: Schrift Inter, klare Hierarchie, eine Akzentfarbe", "Flache Karten und Buttons mit feinen Linien, mehr Weißraum", "Startbildschirm und Begrüßung in normalen Farben"] },
   { v: "1.2.5", items: ["Farbigerer Startbildschirm mit fließenden Lichtflächen, bleibt etwas länger", "Größere Menüleiste mit farbigen Symbolen für jeden Bereich", "Farbige Kacheln und Symbole auf der Startseite", "Größere Überschriften und Zahlen", "Begrüßung im Farbverlauf"] },
@@ -925,6 +1034,77 @@ function petPrice(id) {
   return PET_BASE + PET_STEP * owned;
 }
 function petArticle(id, cap) { const f = id === "cat" || id === "turtle"; return cap ? (f ? "Deine" : "Dein") : (f ? "deine" : "dein"); }
+
+/* Accessoires: je Tier drei Stück zu 50, 100 und 200 Münzen. wear = sitzt am Tier, prop = steht im Bild, act = neue Aktion */
+const ACC_PRICES = [50, 100, 200];
+const ACC_DEFS = {
+  dog: [
+    { k: "collar", name: "Halsband", wear: 1, desc: "Rotes Halsband mit goldener Marke." },
+    { k: "bowl", name: "Napf", ic: "🥣", prop: 1, act: "eat", desc: "Ab und zu läuft dein Hund zum Napf und frisst." },
+    { k: "cape", name: "Cape", wear: 1, act: "hero", desc: "Mit Heldencape flitzt er im Supertempo durchs Bild." }],
+  cat: [
+    { k: "collar", name: "Halsband", wear: 1, desc: "Halsband mit kleinem Glöckchen." },
+    { k: "bowl", name: "Napf", ic: "🥣", prop: 1, act: "eat", desc: "Die Katze schleicht zum Napf und nascht." },
+    { k: "post", name: "Kratzbaum", ic: "🪵", prop: 1, act: "scratch", desc: "Sie wetzt die Krallen und klettert nach oben." }],
+  fish: [
+    { k: "algae", name: "Algen", ic: "🌱", prop: 1, act: "nibble", desc: "Wiegen sich am Boden, dein Fisch knabbert daran." },
+    { k: "leash", name: "Leine", wear: 1, desc: "Gassi gehen unter Wasser: Der Fisch schwimmt an der Leine." },
+    { k: "chest", name: "Truhe", ic: "💰", prop: 1, act: "treasure", desc: "Eine Schatztruhe am Grund. Manchmal öffnet sie sich und Gold glitzert." }],
+  turtle: [
+    { k: "bowl", name: "Napf", ic: "🥣", prop: 1, act: "eat", desc: "Ganz gemächlich zum Napf und dann ein Salatblatt." },
+    { k: "house", name: "Schildihaus", ic: "🏠", prop: 1, act: "home", desc: "Ein eigenes Häuschen. Sie schlüpft hinein und hält ein Nickerchen." },
+    { k: "tank", name: "Panzer", wear: 1, act: "fire", desc: "Panzer auf dem Panzer: mit Ketten und Kanone. Antippen und sie feuert Herzen ab." }],
+  koala: [
+    { k: "branch", name: "Ast", ic: "🌳", prop: 1, act: "rest", desc: "Ein Seitenast am Baum. Der Koala setzt sich drauf und genießt die Aussicht." },
+    { k: "food", name: "Essen", ic: "🧺", prop: 1, act: "feast", desc: "Ein Korb voller Eukalyptus, der am Baum hängt." },
+    { k: "sing", name: "Singen", ic: "🎤", act: "sing", desc: "Der Koala singt ab und zu ein Liedchen." }],
+  kangaroo: [
+    { k: "shoes", name: "Schuhe", wear: 1, desc: "Sprungschuhe: Es hüpft höher und weiter." },
+    { k: "gloves", name: "Handschuhe", wear: 1, act: "box", desc: "Boxhandschuhe für ein kleines Schattenboxen." },
+    { k: "joey", name: "Kind", wear: 1, act: "joey", desc: "Ein Baby-Känguru im Beutel, das neugierig herausschaut." }],
+  monkey: [
+    { k: "glasses", name: "Sonnenbrille", wear: 1, act: "cool", desc: "Der coolste Affe im Baum." },
+    { k: "crate", name: "Bananenkiste", ic: "🍌", prop: 1, act: "crate", desc: "Eine Kiste voller Bananen auf dem obersten Ast." },
+    { k: "vine", name: "Liane", ic: "🌿", prop: 1, act: "swing", desc: "Er schwingt sich an der Liane von Ast zu Ast." }],
+  elephant: [
+    { k: "bow", name: "Schleife", wear: 1, desc: "Eine hübsche Schleife auf dem Kopf." },
+    { k: "ball", name: "Wasserball", ic: "🏐", prop: 1, act: "ball", desc: "Er schubst den Ball mit dem Rüssel quer durchs Bild." },
+    { k: "shower", name: "Dusche", ic: "🚿", act: "shower", desc: "Eine Rüsseldusche mit Regenbogen." }],
+  panda: [
+    { k: "cap", name: "Mütze", wear: 1, desc: "Eine Mütze für kühle Tage." },
+    { k: "pillow", name: "Kissen", ic: "🛏️", prop: 1, act: "pillow", desc: "Ein weiches Kissen für ein Nickerchen." },
+    { k: "swing", name: "Schaukel", ic: "🪢", prop: 1, act: "pswing", desc: "Der Panda schaukelt gemütlich hin und her." }],
+  frog: [
+    { k: "crown", name: "Krone", wear: 1, desc: "Der Froschkönig persönlich." },
+    { k: "lily", name: "Seerose", ic: "🪷", prop: 1, act: "lily", desc: "Ein kleiner Teich mit Seerose. Er hüpft hin und quakt." },
+    { k: "fly", name: "Schmetterling", ic: "🦋", prop: 1, act: "catch", desc: "Ein Schmetterling-Freund flattert um ihn herum. Fangen klappt nie." }]
+};
+Object.values(ACC_DEFS).forEach(list => list.forEach((a, i) => { a.price = ACC_PRICES[i]; }));
+function accFind(full) { const [p, k] = String(full).split("."); const a = (ACC_DEFS[p] || []).find(x => x.k === k); return a ? { pet: p, a } : null; }
+function accOwned() { const s = S.me && S.me.settings; return s && Array.isArray(s.acc) ? s.acc : []; }
+function accOffList() { const s = S.me && S.me.settings; return s && Array.isArray(s.accOff) ? s.accOff : []; }
+function accHas(pet, k) { return accOwned().includes(pet + "." + k); }
+function accWorn(pet, k) { return accHas(pet, k) && !accOffList().includes(pet + "." + k); }
+function accOn(pet) { return (ACC_DEFS[pet] || []).filter(a => accWorn(pet, a.k)); }
+function accKey(pet) { return accOn(pet).map(a => a.k).join(","); }
+/* Teile, die direkt am Tier sitzen (drehen sich mit) */
+function wearHTML(pet, k) {
+  const c = `acc-w acc-${k} acc-${pet}-${k}`;
+  switch (k) {
+    case "collar": return `<span class="${c}"><i></i></span>`;
+    case "cape": return `<span class="${c}"></span>`;
+    case "leash": return `<span class="${c}"></span>`;
+    case "tank": return `<span class="${c}"><b class="barrel"></b><b class="tracks"><i></i><i></i><i></i><i></i></b></span>`;
+    case "shoes": return `<span class="${c}">👟</span>`;
+    case "gloves": return `<span class="${c}">🥊</span>`;
+    case "joey": return `<span class="${c}">🦘</span>`;
+    case "glasses": return `<span class="${c}">🕶️</span>`;
+    case "bow": return `<span class="${c}">🎀</span>`;
+    case "cap": return `<span class="${c}">🧢</span>`;
+    case "crown": return `<span class="${c}">👑</span>`;
+  }
+  return "";
+}
 
 const MODES = {
   general: { name: "Generelles Lernen", desc: "Gemischter Pool aller Vokabeln" },
@@ -1702,7 +1882,7 @@ function render() {
   if (ans && S.learn && S.learn.state === "ask") ans.focus({ preventScroll: true });
   const nextBtn = $("#nextBtn"); if (nextBtn) nextBtn.focus({ preventScroll: true });
   const wantPet = (S.view === "home" || S.learn) && S.me.activePet && S.me.pets.includes(S.me.activePet);
-  if (wantPet) { if (Pets.id !== S.me.activePet) Pets.mount(S.me.activePet); Pets.setVisible(true); }
+  if (wantPet) { if (Pets.id !== S.me.activePet || Pets.accKey !== accKey(S.me.activePet)) Pets.mount(S.me.activePet); Pets.setVisible(true); }
   else Pets.setVisible(false);
 }
 function loginView() {
@@ -2218,17 +2398,53 @@ function buyControls(id, price, total) {
   if (conf) return `<button class="btn small" data-act="cancelConfirm">Nein</button><button class="btn small primary" data-act="buy" data-id="${id}">Kaufen!</button>`;
   return `<button class="btn small${id === "aurelius" && total >= price ? " gold" : ""}" data-act="askConfirm" data-k="buy:${id}" ${total < price ? "disabled" : ""}>${total < price ? `Noch ${price - total}` : "Kaufen"}</button>`;
 }
+function accAva(pet, a) {
+  const pe = PET_DEFS[pet].e;
+  if (a.wear) return `<span class="acc-pv pv-${pet}"><span class="pv-body">${pe}</span>${wearHTML(pet, a.k)}</span>`;
+  return `<span class="acc-ic">${a.ic}</span><span class="acc-badge">${pe}</span>`;
+}
+function accControls(pet, a, total) {
+  const id = pet + "." + a.k;
+  if (accHas(pet, a.k)) { const on = accWorn(pet, a.k); return `<button class="btn small${on ? "" : " primary"}" data-act="toggleAcc" data-id="${id}" aria-pressed="${on}">${on ? "Ablegen" : "Anlegen"}</button>`; }
+  if (!S.me.pets.includes(pet)) return `<span class="muted acc-lock">Erst ${PET_DEFS[pet].name} kaufen</span>`;
+  if (S.confirm === "acc:" + id) return `<button class="btn small" data-act="cancelConfirm">Nein</button><button class="btn small primary" data-act="buyAcc" data-id="${id}">Kaufen!</button>`;
+  return `<button class="btn small" data-act="askConfirm" data-k="acc:${id}" ${total < a.price ? "disabled" : ""}>${total < a.price ? `Noch ${a.price - total}` : "Kaufen"}</button>`;
+}
+function accShopView(total) {
+  const pets = Object.keys(ACC_DEFS).sort((x, y) => (S.me.pets.includes(y) ? 1 : 0) - (S.me.pets.includes(x) ? 1 : 0));
+  return `<section><div class="card-head"><h2>Accessoires</h2><span class="muted" style="font-size:.88rem">Für jedes Tier drei Teile. Sie erscheinen auf der Startseite.</span></div>
+    ${pets.map(pet => { const has = S.me.pets.includes(pet); return `<div class="acc-group${has ? "" : " locked"}">
+      <h3 class="acc-title"><span class="e" aria-hidden="true">${PET_DEFS[pet].e}</span>${PET_DEFS[pet].name}${has ? "" : `<span class="muted">· noch nicht gekauft</span>`}</h3>
+      <div class="acc-grid">${ACC_DEFS[pet].map(a => `<article class="acc-card${accHas(pet, a.k) ? " owned" : ""}">
+        <div class="acc-ava" aria-hidden="true">${accAva(pet, a)}</div>
+        <div class="acc-info"><h4>${a.name}</h4><p>${a.desc}</p>
+        <div class="row">${accHas(pet, a.k) ? `<span class="ok">Gekauft</span>` : `<span class="price">${COIN}${a.price}</span>`}<span class="spacer"></span>${accControls(pet, a, total)}</div></div>
+      </article>`).join("")}</div></div>`; }).join("")}
+  </section>`;
+}
+function ownedAccView() {
+  const pets = Object.keys(ACC_DEFS).filter(p => ACC_DEFS[p].some(a => accHas(p, a.k)));
+  if (!pets.length) return "";
+  return `<section class="card">
+    <div class="card-head"><h2>Accessoires</h2><span class="muted" style="font-size:.88rem">Antippen zum Anlegen oder Ablegen.</span></div>
+    ${pets.map(p => `<div class="acc-own-row"><span class="acc-own-pet">${PET_DEFS[p].e} ${PET_DEFS[p].name}</span><div class="owned-list">
+      ${ACC_DEFS[p].filter(a => accHas(p, a.k)).map(a => `<button class="own" data-act="toggleAcc" data-id="${p}.${a.k}" aria-pressed="${accWorn(p, a.k)}"><span class="e">${a.wear ? `<span class="acc-pv sm pv-${p}"><span class="pv-body">${PET_DEFS[p].e}</span>${wearHTML(p, a.k)}</span>` : a.ic}</span>${a.name}</button>`).join("")}
+    </div></div>`).join("")}
+  </section>`;
+}
 function shopView() {
   const owned = S.me.pets;
   const total = coinsTotal();
-  const cat = S.shopCat === "owned" ? "owned" : "pets";
+  const cat = S.shopCat === "owned" || S.shopCat === "acc" ? S.shopCat : "pets";
+  const accAll = Object.values(ACC_DEFS).reduce((n, l) => n + l.length, 0), accN = accOwned().filter(x => accFind(x)).length;
   const regular = Object.entries(PET_DEFS).filter(([, p]) => !p.legendary);
   const regOwned = owned.filter(id => PET_DEFS[id] && !PET_DEFS[id].legendary).length;
   const price = petPrice("dog");
   const side = `<nav class="shop-side" aria-label="Shop-Kategorien">
       <p class="eyebrow">Kategorien</p>
       <button class="shop-cat" data-act="shopCat" data-k="pets" aria-current="${cat === "pets"}"><span class="ic" aria-hidden="true">🐾</span><span class="t">Haustiere</span><span class="n">${regOwned + (owned.includes("aurelius") ? 1 : 0)}/${Object.keys(PET_DEFS).length}</span></button>
-      <button class="shop-cat" data-act="shopCat" data-k="owned" aria-current="${cat === "owned"}"><span class="ic" aria-hidden="true">🎒</span><span class="t">Mein Besitz</span><span class="n">${owned.length}</span></button>
+      <button class="shop-cat" data-act="shopCat" data-k="acc" aria-current="${cat === "acc"}"><span class="ic" aria-hidden="true">🎀</span><span class="t">Accessoires</span><span class="n">${accN}/${accAll}</span></button>
+      <button class="shop-cat" data-act="shopCat" data-k="owned" aria-current="${cat === "owned"}"><span class="ic" aria-hidden="true">🎒</span><span class="t">Mein Besitz</span><span class="n">${owned.length + accN}</span></button>
       <p class="side-note">Weitere Kategorien folgen.</p>
     </nav>`;
   let body;
@@ -2238,7 +2454,9 @@ function shopView() {
       <div class="owned-list">
         <button class="own" data-act="setPet" data-id="" aria-pressed="${!S.me.activePet}"><span class="e" style="font-size:16px">–</span>Keins</button>
         ${owned.filter(id => PET_DEFS[id]).map(id => `<button class="own${PET_DEFS[id].legendary ? " legend" : ""}" data-act="setPet" data-id="${id}" aria-pressed="${S.me.activePet === id}"><span class="e">${petAva(id, PET_DEFS[id])}</span>${PET_DEFS[id].name}</button>`).join("")}
-      </div></section>` : `<div class="empty"><strong>Du besitzt noch nichts.</strong><span class="muted">Dein erstes Haustier kostet nur ${PET_BASE} Münzen.</span><button class="btn primary" data-act="shopCat" data-k="pets">Zu den Haustieren</button></div>`;
+      </div></section>${ownedAccView()}` : `<div class="empty"><strong>Du besitzt noch nichts.</strong><span class="muted">Dein erstes Haustier kostet nur ${PET_BASE} Münzen.</span><button class="btn primary" data-act="shopCat" data-k="pets">Zu den Haustieren</button></div>`;
+  } else if (cat === "acc") {
+    body = accShopView(total);
   } else {
     const a = PET_DEFS.aurelius;
     const legend = `<article class="legend-card${owned.includes("aurelius") ? " owned" : ""}">
@@ -2604,6 +2822,22 @@ const A = {
     toast(PET_DEFS[id].legendary ? "Aurelius gehört jetzt dir! Er begleitet dich ab sofort beim Lernen." : `${PET_DEFS[id].name} gekauft! Schau auf der Startseite vorbei.`);
   },
   shopCat(t) { S.shopCat = t.dataset.k; S.confirm = null; render(); },
+  async buyAcc(t) {
+    const f = accFind(t.dataset.id); if (!f) return;
+    const { pet, a } = f, id = pet + "." + a.k;
+    if (!S.me.pets.includes(pet) || accHas(pet, a.k) || coinsTotal() < a.price) return;
+    S.me.coins = (S.me.coins || 0) - a.price;
+    S.me.settings = Object.assign({}, S.me.settings || {}, { acc: [...accOwned(), id], accOff: accOffList().filter(x => x !== id) });
+    S.confirm = null; markDirty("me"); await flush();
+    render();
+    toast(`${a.name} für ${pet === "kangaroo" ? "dein" : pet === "cat" || pet === "turtle" ? "deine" : "deinen"} ${PET_DEFS[pet].name} gekauft!${S.me.activePet === pet ? " Schau auf der Startseite vorbei." : ""}`);
+  },
+  toggleAcc(t) {
+    const f = accFind(t.dataset.id); if (!f || !accHas(f.pet, f.a.k)) return;
+    const id = t.dataset.id, off = accOffList();
+    setSetting("accOff", off.includes(id) ? off.filter(x => x !== id) : [...off, id]);
+    render();
+  },
   setPet(t) { S.me.activePet = t.dataset.id || null; markDirty("me"); render(); toast(S.me.activePet ? PET_DEFS[S.me.activePet].name + " läuft jetzt auf der Startseite." : "Kein Haustier aktiv."); },
   wtab(t) { S.wikiTab = t.dataset.k; render(); },
   openArt(t) { S.openArticle = t.dataset.id; if (S.view === "admin") S.view = "wiki"; render(); window.scrollTo({ top: 0 }); },
@@ -3091,22 +3325,38 @@ const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const Pets = {
   stage: null, el: null, body: null, flipEl: null, id: null, def: null,
   x: 80, y: 0, dir: -1, tx: 0, ty: 0, mode: "idle", wait: 1, anim: null, busy: false, raf: 0, last: 0, visible: false,
-  props: [], branches: [], bi: 0, actT: 3,
+  props: [], branches: [], bi: 0, actT: 3, tok: 0, acc: new Set(), accKey: null, actList: [], goal: null, xOff: 0, spots: {}, boost: 1, bfly: null,
   setVisible(v) {
     if (!this.stage) this.stage = $("#petStage");
     this.visible = v; this.stage.hidden = !v;
     if (v && this.id && !this.raf) { this.last = performance.now(); this.raf = requestAnimationFrame(t => this.loop(t)); }
     if (!v && this.raf) { cancelAnimationFrame(this.raf); this.raf = 0; }
   },
-  unmount() { if (this.raf) cancelAnimationFrame(this.raf); this.raf = 0; this.id = null; if (this.stage) this.stage.innerHTML = ""; },
+  unmount() { if (this.raf) cancelAnimationFrame(this.raf); this.raf = 0; this.id = null; this.accKey = null; this.tok++; this.props = []; this.bfly = null; if (this.stage) this.stage.innerHTML = ""; },
+  later(fn, ms) { const tok = this.tok; setTimeout(() => { if (this.tok === tok && this.id) fn(); }, ms); },
+  hold(ms) { this.busy = true; this.mode = "idle"; this.draw(); this.later(() => { this.busy = false; this.wait = .8; }, ms); },
+  jump(x1, y1, dur, h, done) {
+    const x0 = this.x, y0 = this.y; if (Math.abs(x1 - x0) > 2) this.dir = x1 > x0 ? 1 : -1; this.mode = "idle";
+    this.anim = { t: 0, dur: REDUCED ? .01 : dur, step: p => { this.x = x0 + (x1 - x0) * p; this.y = y0 + (y1 - y0) * p - Math.sin(Math.PI * p) * h; }, done };
+  },
+  /* zu einem Ziel laufen und dann etwas tun (Laufen/Hüpfen, Klettern, Schwimmen) */
+  goTo(x, then) { this.goal = { x: Math.max(10, Math.min(this.W() - 70, x)), then }; if (this.mode === "idle") this.wait = 0; },
+  climbTo(y, then) { this.goal = { y, then }; if (this.mode === "idle") this.wait = 0; },
+  swimTo(x, y, then) { this.tx = Math.max(10, Math.min(this.W() - 70, x)); this.ty = y; this.dir = this.tx > this.x ? 1 : -1; this.goal = { then, go: true }; },
+  arrive() { if (this.goal && this.goal.go) { const g = this.goal; this.goal = null; this.boost = 1; this.el.classList.remove("hero"); g.then(); return true; } return false; },
   W() { return innerWidth; }, H() { return innerHeight; },
-  ground() { return this.H() - 36 - ((this.def && this.def.h) || 60); },
+  ground() { return this.H() - 36 - ((this.def && this.def.h) || 60) - (this.acc.has("tank") ? 8 : 0); },
   mount(id) {
     this.unmount();
     this.stage = $("#petStage"); this.id = id; this.def = PET_DEFS[id];
     this.stage.innerHTML = "";
     this.el = document.createElement("div"); this.el.className = "pet" + (this.def.kind === "dragon" ? " dragon-pet" : ""); this.el.title = this.def.name + " (antippen!)";
-    this.el.innerHTML = `<div class="pet-flip"><div class="pet-body">${this.def.kind === "dragon" ? `<span class="aura"></span>${dragonSVG("pd")}` : this.def.e}</div></div>`;
+    this.acc = new Set(accOn(id).map(a => a.k)); this.accKey = accKey(id);
+    this.actList = [...this.def.acts, ...accOn(id).filter(a => a.act).map(a => a.act)];
+    this.goal = null; this.xOff = 0; this.spots = {}; this.boost = 1;
+    this.acc.forEach(k => this.el.classList.add("has-" + k));
+    this.bodyHTML = this.def.kind === "dragon" ? `<span class="aura"></span>${dragonSVG("pd")}` : this.def.e + [...this.acc].map(k => wearHTML(id, k)).join("");
+    this.el.innerHTML = `<div class="pet-flip"><div class="pet-body">${this.bodyHTML}</div></div>`;
     this.flipEl = this.el.firstChild; this.body = this.flipEl.firstChild;
     if (this.def.kind === "dragon") { this.dir = 1; this.trailT = 0; this.dustT = 0; this.sparkT = 0; this.refreshGlow(); }
     this.el.addEventListener("click", () => this.poke());
@@ -3195,6 +3445,32 @@ const Pets = {
         this.stage.append(el); this.props.push(el); this.branches.push(b);
       }
     }
+    this.accProps();
+  },
+  accProps() {
+    const W = this.W(), H = this.H(), G = H - 36, id = this.id, has = k => this.acc.has(k), sp = this.spots;
+    const add = (cls, html, css) => { const el = document.createElement("div"); el.className = "prop " + cls; el.innerHTML = html || ""; Object.assign(el.style, css); this.stage.prepend(el); this.props.push(el); return el; };
+    if (has("bowl")) { sp.bowl = Math.max(16, W * .14); add("bowl", "🥣", { left: sp.bowl + "px", top: (G - 30) + "px" }); }
+    if (has("post")) { sp.post = W - 96; add("post", "<i></i>", { left: sp.post + "px", top: (G - 112) + "px" }); }
+    if (has("algae")) { sp.algae = Math.max(14, W * .1); add("algae", "<i></i><i></i><i></i>", { left: sp.algae + "px", top: (G - 92) + "px" }); }
+    if (has("chest")) { sp.chest = W * .68; sp.chestEl = add("chest", "<i></i><b></b>", { left: sp.chest + "px", top: (G - 40) + "px" }); }
+    if (has("house")) { sp.house = W - 110; add("house", "<i></i><b></b>", { left: sp.house + "px", top: (G - 66) + "px" }); }
+    if (has("branch") && this.def.kind === "climb") {
+      sp.kbranch = this.trunkTop + (this.trunkBottom - this.trunkTop) * .38;
+      add("branch-h kbranch", '<span class="leaf" style="left:-6px;top:-9px;transform:rotate(200deg)"></span><span class="leaf" style="left:30px;top:8px;transform:rotate(-30deg)"></span>', { left: (this.trunkX - 104) + "px", top: sp.kbranch + "px", width: "112px" });
+    }
+    if (has("food") && this.def.kind === "climb") { sp.basket = this.trunkBottom - 150; add("basket", "<span>🌿</span>🧺", { left: (this.trunkX + 10) + "px", top: sp.basket + "px" }); }
+    if (has("crate") && this.branches[1]) { const b = this.branches[1]; sp.crate = b.x + b.w - 50; add("crate", "<span>🍌🍌</span>", { left: sp.crate + "px", top: (b.y - 26) + "px" }); }
+    if (has("vine")) { sp.vine = W * .58; sp.vineL = Math.max(160, H * .4); sp.vineEl = add("vine", "<span></span><span></span><span></span>", { left: sp.vine + "px", top: "0px", height: sp.vineL + "px" }); }
+    if (has("ball")) { sp.ball = W * .62; sp.ballEl = add("ball", "", { left: sp.ball + "px", top: (G - 34) + "px" }); }
+    if (has("pillow")) { sp.pillow = Math.max(16, W * .2); add("pillow", "", { left: sp.pillow + "px", top: (G - 22) + "px" }); }
+    if (has("swing")) {
+      sp.swing = Math.min(W - 70, W * .74); sp.swingBar = G - 176; sp.swingL = 146;
+      add("swing-frame", "", { left: (sp.swing - 60) + "px", top: sp.swingBar + "px", height: "176px" });
+      sp.swingEl = add("swing-ropes", "<i></i>", { left: (sp.swing - 20) + "px", top: sp.swingBar + "px", height: sp.swingL + "px" });
+    }
+    if (has("lily")) { sp.lily = Math.max(16, W * .3); add("lily", "<span>🪷</span>", { left: sp.lily + "px", top: (G - 16) + "px" }); }
+    if (has("fly")) { if (!this.bfly) this.bfly = { x: this.x, y: this.y - 60, flee: 0 }; this.bfly.el = add("bfly", "<span>🦋</span>", {}); }
   },
   draw() {
     this.el.style.transform = `translate(${this.x}px,${this.y}px)`;
@@ -3212,7 +3488,7 @@ const Pets = {
   },
   say(text) { const dr = this.def && this.def.kind === "dragon"; this.fx("say", esc(text), dr ? this.x + (this.dir > 0 ? 66 : 4) : this.x - 6, dr ? this.y - 16 : this.y - 34, 1700); },
   bodyAnim(cls, ms) {
-    this.body.classList.remove("roll", "bounce", "munch", "raise", "sleep"); void this.body.offsetWidth;
+    this.body.classList.remove("roll", "bounce", "munch", "raise", "sleep", "scratch", "recoil", "sway", "punch"); void this.body.offsetWidth;
     this.body.classList.add(cls); setTimeout(() => this.body.classList.remove(cls), ms);
   },
   doAct(a) {
@@ -3237,20 +3513,152 @@ const Pets = {
       }
       case "bamboo": this.fx("emo", "🎋", m.x + 16, m.y - 2, 2600); this.bodyAnim("munch", 2400); hold(2600); break;
       case "croak": this.say("Quak!"); hold(900); break;
+      default: this.accAct(a);
+    }
+  },
+  accAct(a) {
+    const W = this.W(), G = this.H() - 36, sp = this.spots, id = this.id, fx = (...x) => this.fx(...x), rnd = Math.random;
+    switch (a) {
+      case "eat": this.goTo(sp.bowl + 20, () => {
+        this.dir = -1; this.draw(); this.say(id === "turtle" ? "Mampf …" : id === "cat" ? "Mjam!" : "Mampf!");
+        fx("emo", id === "dog" ? "🦴" : id === "cat" ? "🐟" : "🥬", sp.bowl + 2, G - 54, 2100); this.bodyAnim("munch", 1800); this.hold(2000);
+      }); break;
+      case "hero": this.say("Super-Hund!"); this.boost = 3.2; this.el.classList.add("hero"); this.goTo(this.x < W / 2 ? W - 80 : 20, () => { this.say("Ta-daa!"); this.bodyAnim("bounce", 1000); this.hold(1100); }); break;
+      case "scratch": this.goTo(sp.post + 38, () => {
+        this.dir = -1; this.say("Krrr!"); this.bodyAnim("scratch", 1300); this.busy = true; this.draw();
+        this.later(() => this.jump(sp.post - 2, G - 112 - 50, .6, 50, () => {
+          this.say("Aussicht!");
+          this.later(() => this.jump(sp.post + 62, this.ground(), .6, 30, () => { this.busy = false; this.wait = 1; }), 2600);
+        }), 1400);
+      }); break;
+      case "nibble": this.swimTo(sp.algae + 6, G - 128, () => { this.dir = -1; this.say("Mjam!"); this.bodyAnim("munch", 1500); this.hold(1700); }); break;
+      case "treasure": this.swimTo(sp.chest + 24, G - 112, () => {
+        sp.chestEl.classList.add("open"); this.say("Schatz!");
+        for (let i = 0; i < 6; i++) this.later(() => fx("gcoin", COIN, sp.chest + 18 + rnd() * 16, G - 46, 1300, { "--dx": (rnd() * 70 - 35) + "px", "--up": (-50 - rnd() * 50) + "px" }), 150 + i * 120);
+        this.hold(1900); this.later(() => sp.chestEl.classList.remove("open"), 2300);
+      }); break;
+      case "home": this.goTo(sp.house + 8, () => {
+        this.el.classList.add("inside"); this.busy = true; this.draw();
+        for (let i = 0; i < 3; i++) this.later(() => fx("zzz", "Zzz", sp.house + 44, G - 86, 2500), 300 + i * 1200);
+        this.later(() => { this.el.classList.remove("inside"); this.say("Ausgeschlafen!"); this.hold(1200); }, 4300);
+      }); break;
+      case "fire": {
+        this.say("Peng!"); this.bodyAnim("recoil", 500);
+        for (let i = 0; i < 3; i++) this.later(() => fx("heart", "❤", this.dir > 0 ? this.x + 70 : this.x - 16, this.y + 18, 1500, { "--dx": (this.dir > 0 ? 1 : -1) * (120 + rnd() * 80) + "px", "--up": (-30 - rnd() * 50) + "px" }), i * 180);
+        this.hold(900); break;
+      }
+      case "rest": this.climbTo(sp.kbranch - 52, () => {
+        this.busy = true;
+        this.anim = { t: 0, dur: .6, step: p => { this.xOff = 54 * p; this.x = this.trunkX - 22 - this.xOff; }, done: () => {
+          this.say("Aussicht!");
+          this.later(() => { this.anim = { t: 0, dur: .6, step: p => { this.xOff = 54 * (1 - p); this.x = this.trunkX - 22 - this.xOff; }, done: () => { this.busy = false; this.wait = 1.5; } }; }, 3200);
+        } };
+      }); break;
+      case "feast": this.climbTo(sp.basket - 20, () => {
+        this.say("Mmh, Eukalyptus!"); this.bodyAnim("munch", 2000);
+        for (let i = 0; i < 3; i++) this.later(() => fx("emo", "🍃", this.x + 34 + rnd() * 20, this.y + 4 + rnd() * 16, 1800), i * 450);
+        this.hold(2300);
+      }); break;
+      case "sing": {
+        this.say("La-la-la ♪"); this.bodyAnim("sway", 2200);
+        for (let i = 0; i < 6; i++) this.later(() => fx("note", "♪♫♬"[i % 3], this.x + 20 + rnd() * 30, this.y - 4, 2000, { "--dx": (rnd() * 50 - 25) + "px" }), i * 300);
+        this.hold(2300); break;
+      }
+      case "box": {
+        this.say("Boing!"); this.bodyAnim("punch", 900);
+        for (let i = 0; i < 2; i++) this.later(() => fx("emo", "💥", this.dir > 0 ? this.x + 56 : this.x - 26, this.y + 14 + i * 6, 700), 150 + i * 330);
+        this.hold(1000); break;
+      }
+      case "joey": {
+        this.el.classList.remove("peek"); void this.el.offsetWidth; this.el.classList.add("peek");
+        this.later(() => fx("say", "Hallo!", this.x + 6, this.y - 30, 1700), 350);
+        this.later(() => this.el.classList.remove("peek"), 2200); this.hold(2200); break;
+      }
+      case "cool": this.say("Cool."); this.bodyAnim("bounce", 1000); this.hold(1100); break;
+      case "crate": {
+        const eat = () => { this.say("Jackpot!"); fx("emo", "🍌", this.x + 2, this.y + 18, 2000); this.bodyAnim("munch", 1800);
+          this.later(() => fx("peel", "🍌", this.x + 30, this.y + 40, 1600, { "--dx": (rnd() * 60 - 30) + "px" }), 1500);
+          this.later(() => { this.busy = false; this.wait = 1.4; }, 2000); };
+        const b = this.branches[1]; this.busy = true;
+        if (this.bi === 1 && Math.abs(this.x - (sp.crate - 50)) < 30) eat();
+        else { this.bi = 1; this.jump(Math.max(b.x, sp.crate - 50), b.y - 54, .9, 110, () => { this.dir = 1; eat(); }); }
+        break;
+      }
+      case "swing": {
+        const L = sp.vineL, vx = sp.vine, side = this.x + 30 < vx ? -1 : 1, th0 = side * .7;
+        const pos = th => ({ x: vx + L * Math.sin(th) - 30, y: L * Math.cos(th) - 8 });
+        const p0 = pos(th0); this.busy = true; this.say("Uiii!");
+        this.jump(p0.x, p0.y, .7, 50, () => {
+          this.anim = { t: 0, dur: REDUCED ? .01 : 2.6, step: p => {
+            const th = th0 * Math.cos(Math.PI * 3 * p) * (1 - .35 * p), q = pos(th);
+            this.x = q.x; this.y = q.y; this.dir = Math.sin(Math.PI * 3 * p) * -th0 > 0 ? 1 : -1;
+            sp.vineEl.style.transform = `rotate(${-th}rad)`;
+          }, done: () => {
+            sp.vineEl.style.transform = "";
+            const opts = this.branches.map((b, i) => i).filter(i => (this.branches[i].x + this.branches[i].w / 2 - vx) * side < 0);
+            const nb = opts.length ? opts[Math.floor(rnd() * opts.length)] : 0, b = this.branches[nb]; this.bi = nb;
+            this.jump(b.x + 10 + rnd() * (b.w - 70), b.y - 54, .8, 60, () => { this.busy = false; this.wait = 1.5; });
+          } };
+        });
+        break;
+      }
+      case "ball": this.goTo(sp.ball + 30, () => {
+        this.dir = -1; this.draw(); this.bodyAnim("raise", 900); this.hold(1600);
+        this.later(() => {
+          const nx = sp.ball > W / 2 ? W * (.08 + rnd() * .25) : W * (.55 + rnd() * .3), el = sp.ballEl;
+          el.style.setProperty("--dx", (nx - sp.ball) + "px"); el.classList.remove("kick"); void el.offsetWidth; el.classList.add("kick");
+          this.say("Töröö!");
+          this.later(() => { el.classList.remove("kick"); el.style.left = nx + "px"; sp.ball = nx; }, 1400);
+        }, 350);
+      }); break;
+      case "shower": {
+        this.bodyAnim("raise", 1700); this.say("Erfrischend!");
+        for (let i = 0; i < 18; i++) this.later(() => { const mm = this.mouth(); fx("drop", "", mm.x, mm.y - 14, 1200, { "--dx": ((this.dir > 0 ? -1 : 1) * (10 + rnd() * 40)) + "px", "--up": (-70 - rnd() * 40) + "px" }); }, i * 70);
+        this.later(() => fx("emo rainbow", "🌈", this.x + 2, this.y - 52, 2200), 700);
+        this.hold(2400); break;
+      }
+      case "pillow": this.goTo(sp.pillow + 2, () => {
+        this.el.classList.add("lying"); this.busy = true; this.draw();
+        for (let i = 0; i < 3; i++) this.later(() => fx("zzz", "Zzz", this.x + 40, this.y - 4, 2500), 200 + i * 1200);
+        this.later(() => { this.el.classList.remove("lying"); this.say("Gähn!"); this.hold(1000); }, 4200);
+      }); break;
+      case "pswing": this.goTo(sp.swing - 30, () => {
+        const L = sp.swingL, bar = sp.swingBar, sx = sp.swing, pos = th => ({ x: sx + L * Math.sin(th) - 30, y: bar + L * Math.cos(th) - 48 });
+        this.busy = true; const p0 = pos(0);
+        this.jump(p0.x, p0.y, .4, 24, () => {
+          this.say("Hui!");
+          this.anim = { t: 0, dur: REDUCED ? .01 : 3.4, step: p => {
+            const th = .55 * Math.sin(Math.PI * 4 * p) * (1 - .3 * p), q = pos(th);
+            this.x = q.x; this.y = q.y; sp.swingEl.style.transform = `rotate(${-th}rad)`;
+          }, done: () => { sp.swingEl.style.transform = ""; this.jump(sx + 30, this.ground(), .5, 30, () => { this.busy = false; this.wait = 1; }); } };
+        });
+      }); break;
+      case "lily": this.goTo(sp.lily + 16, () => {
+        this.say("Quak!"); this.bodyAnim("bounce", 1000);
+        for (let i = 0; i < 2; i++) this.later(() => fx("ripple", "", sp.lily + 45, G - 8, 1200), i * 350);
+        this.hold(1300);
+      }); break;
+      case "catch": {
+        const f = this.bfly; if (!f) break;
+        this.say("Hab dich!"); f.flee = 1.6;
+        this.jump(Math.max(10, Math.min(W - 70, f.x - 30)), this.ground(), .8, 130, () => { this.say("Fast …"); this.wait = 1; });
+        break;
+      }
     }
   },
   poke() {
+    if (this.id === "turtle" && this.acc.has("tank")) { this.doAct("fire"); return; }
     if (this.id === "turtle") {
       if (this.busy) return;
       this.busy = true; this.mode = "idle";
       this.body.innerHTML = '<div class="shell" aria-hidden="true"></div>';
       this.draw();
-      setTimeout(() => { if (this.id === "turtle") { this.body.textContent = this.def.e; this.busy = false; this.wait = 1.2; } }, 2600);
+      this.later(() => { this.body.innerHTML = this.bodyHTML; this.busy = false; this.wait = 1.2; }, 2600);
       return;
     }
     if (this.id === "kangaroo") { this.flip(); return; }
     if (this.id === "aurelius") { if (this.busy) return; const r = Math.random(); r < .4 ? this.dragonLoop() : r < .75 ? this.spread() : this.roar(); return; }
-    const acts = this.def.acts.length ? this.def.acts : ["croak"];
+    const acts = this.actList.length ? this.actList : ["croak"];
     this.doAct(acts[Math.floor(Math.random() * acts.length)]);
   },
   onCorrect(n) {
@@ -3279,6 +3687,12 @@ const Pets = {
     this.raf = requestAnimationFrame(tt => this.loop(tt));
     const dt = Math.min(.05, (t - this.last) / 1000); this.last = t;
     if (!this.id || !this.visible) return;
+    if (this.bfly && this.bfly.el) {
+      const f = this.bfly; f.flee = Math.max(0, f.flee - dt);
+      const tx = this.x + 30 + 70 * Math.sin(t / 1100), ty = this.y - 60 + 22 * Math.sin(t / 420) - (f.flee > 0 ? 130 : 0);
+      f.x += (tx - f.x) * Math.min(1, dt * (f.flee > 0 ? 4 : 1.6)); f.y += (ty - f.y) * Math.min(1, dt * (f.flee > 0 ? 4 : 1.6));
+      f.el.style.transform = `translate(${f.x}px,${f.y}px)`;
+    }
     if (this.anim) {
       this.anim.t += dt; const p = Math.min(1, this.anim.t / this.anim.dur);
       this.anim.step(p); this.draw();
@@ -3292,43 +3706,49 @@ const Pets = {
       if (this.mode === "idle") {
         this.y = this.ground();
         this.wait -= dt;
-        if (this.actT <= 0 && this.def.acts.length) { this.actT = 5 + Math.random() * 6; this.doAct(this.def.acts[Math.floor(Math.random() * this.def.acts.length)]); }
+        if (this.goal && !this.goal.go) {
+          this.goal.go = true; this.tx = this.goal.x; this.dir = this.tx > this.x ? 1 : -1; this.mode = "move";
+          if (Math.abs(this.tx - this.x) < 3) { this.mode = "idle"; this.arrive(); }
+          else if (k === "hop") this.hopFrom = this.x, this.hopT = 0;
+        }
+        else if (this.actT <= 0 && this.actList.length) { this.actT = 5 + Math.random() * 6; this.doAct(this.actList[Math.floor(Math.random() * this.actList.length)]); }
         else if (this.wait <= 0) {
           this.tx = 10 + Math.random() * (W - 90); this.dir = this.tx > this.x ? 1 : -1; this.mode = "move";
           if (k === "hop") this.hopFrom = this.x, this.hopT = 0;
         }
       } else if (k === "walk") {
-        this.x += this.dir * this.def.speed * dt; this.y = this.ground();
-        if ((this.dir > 0 && this.x >= this.tx) || (this.dir < 0 && this.x <= this.tx)) { this.mode = "idle"; this.wait = .8 + Math.random() * 2.5; }
+        this.x += this.dir * this.def.speed * this.boost * dt; this.y = this.ground();
+        if ((this.dir > 0 && this.x >= this.tx) || (this.dir < 0 && this.x <= this.tx)) { this.x = this.tx; this.mode = "idle"; this.wait = .8 + Math.random() * 2.5; this.arrive(); }
       } else {
-        const hopLen = Math.min(110, Math.abs(this.tx - this.hopFrom)) || 1;
+        const shoes = this.acc.has("shoes"), hopLen = Math.min(shoes ? 160 : 110, Math.abs(this.tx - this.hopFrom)) || 1;
         const hopDur = this.id === "frog" ? .55 : .5;
         this.hopT += dt;
         if (this.hopT < 0) { this.y = this.ground(); }
         else {
           const p = Math.min(1, this.hopT / hopDur);
           this.x = this.hopFrom + this.dir * hopLen * p;
-          this.y = this.ground() - Math.sin(Math.PI * p) * (this.id === "frog" ? 70 : 55);
+          this.y = this.ground() - Math.sin(Math.PI * p) * (this.id === "frog" ? 70 : shoes ? 100 : 55);
           if (p >= 1) {
             this.hopFrom = this.x; this.hopT = -(.12 + Math.random() * .25); this.y = this.ground();
-            if ((this.dir > 0 && this.x >= this.tx - 2) || (this.dir < 0 && this.x <= this.tx + 2)) { this.mode = "idle"; this.wait = .8 + Math.random() * 2.5; this.hopT = 0; }
+            if ((this.dir > 0 && this.x >= this.tx - 2) || (this.dir < 0 && this.x <= this.tx + 2)) { this.mode = "idle"; this.wait = .8 + Math.random() * 2.5; this.hopT = 0; this.arrive(); }
           }
         }
       }
     } else if (k === "swim") {
       const dx = this.tx - this.x, dy = this.ty - this.y, dist = Math.hypot(dx, dy);
-      if (dist < 6) this.pickSwim();
-      else { this.x += dx / dist * this.def.speed * dt; this.y += dy / dist * this.def.speed * dt + Math.sin(t / 300) * .4; }
-      if (this.actT <= 0) { this.actT = 3 + Math.random() * 4; this.doAct("bubbles"); }
+      if (dist < 6) { if (!this.arrive()) this.pickSwim(); }
+      else { this.x += dx / dist * this.def.speed * dt; this.y += dy / dist * this.def.speed * dt + (this.goal ? 0 : Math.sin(t / 300) * .4); }
+      if (this.actT <= 0 && !this.goal) { this.actT = 3 + Math.random() * 4; this.doAct(this.actList[Math.floor(Math.random() * this.actList.length)]); }
     } else if (k === "climb") {
-      this.x = this.trunkX - 22;
+      this.x = this.trunkX - 22 - this.xOff;
       if (this.mode === "idle") {
         this.wait -= dt;
-        if (this.actT <= 0) { this.actT = 6 + Math.random() * 6; this.doAct(this.def.acts[Math.floor(Math.random() * this.def.acts.length)]); }
+        if (this.goal && !this.goal.go) { this.goal.go = true; this.ty = this.goal.y; this.mode = "move"; }
+        else if (this.actT <= 0) { this.actT = 6 + Math.random() * 6; this.doAct(this.actList[Math.floor(Math.random() * this.actList.length)]); }
         else if (this.wait <= 0) { this.ty = this.trunkTop - 10 + Math.random() * (this.trunkBottom - this.trunkTop - 50); this.mode = "move"; }
       } else {
         const d = this.ty - this.y; const step = Math.sign(d) * this.def.speed * dt;
-        if (Math.abs(d) <= Math.abs(step)) { this.y = this.ty; this.mode = "idle"; this.wait = 1.5 + Math.random() * 3; }
+        if (Math.abs(d) <= Math.abs(step)) { this.y = this.ty; this.mode = "idle"; this.wait = 1.5 + Math.random() * 3; this.body.style.transform = ""; this.arrive(); }
         else { this.y += step; this.body.style.transform = `rotate(${Math.sin(t / 160) * 6}deg)`; }
         if (this.mode === "idle") this.body.style.transform = "";
       }
@@ -3349,7 +3769,7 @@ const Pets = {
     } else if (k === "branch") {
       if (this.mode === "idle") {
         this.wait -= dt;
-        if (this.actT <= 0) { this.actT = 6 + Math.random() * 5; this.doAct("banana"); }
+        if (this.actT <= 0) { this.actT = 6 + Math.random() * 5; this.doAct(this.actList[Math.floor(Math.random() * this.actList.length)]); }
         else if (this.wait <= 0) {
           let nb = this.bi; while (nb === this.bi) nb = Math.floor(Math.random() * this.branches.length);
           const b = this.branches[nb], x0 = this.x, y0 = this.y, x1 = b.x + 10 + Math.random() * (b.w - 70), y1 = b.y - 54;
