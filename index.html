@@ -849,6 +849,16 @@ th{background:var(--surface-2);font-weight:500;color:var(--muted)}
 .modes .mode{grid-column:span 2}
 .modes .mode.wide{grid-column:span 3}
 @media (max-width:700px){.modes{grid-template-columns:repeat(2,minmax(0,1fr))}.modes .mode,.modes .mode.wide{grid-column:span 1}.modes .mode:first-child{grid-column:span 2}}
+.spk{display:inline-grid;place-items:center;width:34px;height:34px;margin-left:.45rem;vertical-align:middle;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--acc);cursor:pointer;flex:none;transition:background .2s,border-color .2s}
+.spk:hover{background:var(--acc-soft);border-color:var(--acc)}
+.spk .ico{width:18px;height:18px}
+.spk.big{width:44px;height:44px;margin-left:.7rem;position:relative;top:-.15em}
+.spk.big .ico{width:22px;height:22px}
+.spk.sm{width:26px;height:26px;margin-left:.35rem}.spk.sm .ico{width:14px;height:14px}
+.btn .ico{width:16px;height:16px;vertical-align:-3px}
+body.has-pet #main{padding-bottom:130px}
+.learn-teaser{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.learn-teaser h2{margin:0 0 .3rem}
 .all-sol{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin-top:-.2rem;font-size:.92rem}
 .sol-chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:.2em .75em;font-weight:600}
 .sol-chip.hit{border-color:var(--good);color:var(--good);background:color-mix(in srgb,var(--good) 10%,var(--surface))}
@@ -990,7 +1000,7 @@ th{background:var(--surface-2);font-weight:500;color:var(--muted)}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-const APP_VERSION = "1.3.0";
+const APP_VERSION = "1.3.1";
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
   authDomain: "vocabify-8abb9.firebaseapp.com",
@@ -1001,6 +1011,7 @@ const FIREBASE_CONFIG = {
 };
 const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
 const CHANGELOG = [
+  { v: "1.3.1", items: ["Neuer Menüpunkt „Lernen“: Hier startest du jetzt deine Lernrunden", "Vokabeln laut aussprechen (Englisch und Französisch), in den Einstellungen an- und abschaltbar", "Haustiere laufen jetzt in allen Bereichen herum, nur beim Lernen nicht. Aurelius ist überall dabei"] },
   { v: "1.3.0", items: ["Generelles Lernen: Jede Vokabel kommt einmal dran, bevor sich eine wiederholt. Lange nicht gefragte zuerst", "Ältere Vokabeln: seit mehr als 7 Tagen nicht geübt", "Neueste Vokabeln: in den letzten 3 Tagen hinzugefügt", "Fehler-Fokus: zuerst 100 % Fehlerquote, dann absteigend", "Bei richtiger Antwort werden alle Antwortmöglichkeiten angezeigt", "Neuer Modus „Eigene Auswahl“: Vokabeln für die Runde selbst auswählen", "Neue Rundenlänge „Jede einmal“", "10 Fragen als Probe-Vokabeltest mit Note am Ende"] },
   { v: "1.2.9", items: ["Neue Shop-Kategorie „Accessoires“: drei Teile für jedes Haustier", "Accessoires sieht man auf der Startseite, viele bringen neue Aktionen mit", "Accessoires in „Mein Besitz“ an- und ablegen", "Neue Akzentfarbe: Blau"] },
   { v: "1.2.8", items: ["Vokabeldatei direkt in einen bestehenden Abschnitt importieren", "Doppelte Vokabeln werden beim Import übersprungen"] },
@@ -1544,7 +1555,7 @@ setInterval(async () => {
     if (invs.length > S.invites.length) toast("Neue Einladung: Jemand hat dir einen Abschnitt geschickt.");
     const changed = invs.length !== S.invites.length;
     S.invites = invs;
-    if (changed && !(S.learn && S.view === "home")) render();
+    if (changed && !S.learn) render();
   } catch {}
 }, 45000);
 
@@ -1744,10 +1755,10 @@ function solParts(sol) {
   if (cur.trim()) out.push(cur.trim());
   return out.length ? out : [String(sol || "")];
 }
-function allAnswers(given, sol) {
+function allAnswers(given, sol, extra) {
   const parts = solParts(sol);
   return `<div class="all-sol"><span class="muted">${parts.length > 1 ? "Alle Antwortmöglichkeiten:" : "Lösung:"}</span>
-    ${parts.map(p => `<span class="sol-chip${given && checkAnswer(given, p).ok ? " hit" : ""}">${esc(p)}</span>`).join("")}</div>`;
+    ${parts.map(p => `<span class="sol-chip${given && checkAnswer(given, p).ok ? " hit" : ""}">${esc(p)}</span>`).join("")}${extra || ""}</div>`;
 }
 function checkAnswer(given, sol) {
   const g = norm(given);
@@ -1758,6 +1769,38 @@ function checkAnswer(given, sol) {
   for (const v of vs) if (plain(stripArt(g)) === plain(stripArt(v))) return { ok: true, typo: true };
   for (const v of vs) { const sv = stripArt(v); if (sv.length >= 6 && lev(stripArt(g), sv) <= 1) return { ok: true, typo: true }; }
   return { ok: false };
+}
+
+/* ---------- Vorlesen (Englisch und Französisch) ---------- */
+const SPEAK_LANGS = { en: "en-GB", fr: "fr-FR" };
+function speakOn(lang) { return !!SPEAK_LANGS[lang] && (S.me && S.me.settings && S.me.settings.speak) !== false && "speechSynthesis" in window; }
+function speakClean(text) {
+  return String(text || "")
+    .replace(/\([^)]*\)|\[[^\]]*\]/g, " ")
+    .replace(/\b(BE|AE)\b:?/g, " ")
+    .replace(/\b(sb|sth|smb|smth)\b'?s?\.?/gi, " ")
+    .replace(/\b(qn|qc|qqn|qqch)\b\.?/gi, " ")
+    .replace(/\s*[\/;]\s*/g, ", ").replace(/\s*,\s*(,\s*)+/g, ", ")
+    .replace(/\s+/g, " ").replace(/^[\s,.-]+|[\s,.-]+$/g, "").trim();
+}
+function pickVoice(tag) {
+  const vs = speechSynthesis.getVoices(), pre = tag.slice(0, 2);
+  const good = v => /premium|enhanced|natural|google|siri/i.test(v.name);
+  return vs.find(v => v.lang === tag && good(v)) || vs.find(v => v.lang === tag) || vs.find(v => v.lang.replace("_", "-").startsWith(pre) && good(v)) || vs.find(v => v.lang.startsWith(pre)) || null;
+}
+function speak(text, lang) {
+  if (!("speechSynthesis" in window)) { toast("Dein Browser kann leider nicht vorlesen."); return; }
+  const t = speakClean(text); if (!t || !SPEAK_LANGS[lang]) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(t);
+  u.lang = SPEAK_LANGS[lang]; u.rate = .9;
+  const v = pickVoice(u.lang); if (v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+if ("speechSynthesis" in window) { try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => {}; } catch {} }
+function spkBtn(text, lang, cls) {
+  if (!speakOn(lang)) return "";
+  return `<button type="button" class="spk${cls ? " " + cls : ""}" data-act="speak" data-t="${esc(text)}" data-l="${lang}" aria-label="Laut aussprechen" title="Laut aussprechen">${icon("speaker")}</button>`;
 }
 
 /* ---------- learning ---------- */
@@ -1778,6 +1821,7 @@ function startLearning() {
   const pool = poolFor(S.cfg.mode, secs, pick);
   if (!pool.length) { toast(S.cfg.mode === "custom" ? "Wähle zuerst ein paar Vokabeln aus." : "Für diesen Modus gibt es noch keine passenden Vokabeln."); return; }
   const once = S.cfg.size === -1;
+  S.view = "learn";
   S.learn = newRound({ secs, pick, size: once ? pool.length : S.cfg.size, queue: buildDeck(S.cfg.mode, pool), refill: !once, test: S.cfg.size === 10 });
   window.scrollTo({ top: 0 });
   nextQuestion();
@@ -1910,8 +1954,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal()
 /* ---------- rendering ---------- */
 function setLang() {
   let lang = "";
-  if (S.view === "home" && S.learn) { const it = curItem(); if (it) lang = it.s.lang; }
-  if (S.view === "home" && !S.learn && S.cfg.lang) lang = S.cfg.lang;
+  if (S.learn) { const it = curItem(); if (it) lang = it.s.lang; }
+  if (S.view === "learn" && !S.learn && S.cfg.lang) lang = S.cfg.lang;
   if (S.view === "vocab" && !S.openSection && S.vocabTab === "stats" && S.statsLang) lang = S.statsLang;
   if (S.view === "vocab" && S.openSection) { const s = S.sections.find(x => x.id === S.openSection); if (s) lang = s.lang; }
   if (lang) document.body.dataset.lang = lang; else delete document.body.dataset.lang;
@@ -1943,7 +1987,9 @@ function render() {
   const ans = $("#answer");
   if (ans && S.learn && S.learn.state === "ask") ans.focus({ preventScroll: true });
   const nextBtn = $("#nextBtn"); if (nextBtn) nextBtn.focus({ preventScroll: true });
-  const wantPet = (S.view === "home" || S.learn) && S.me.activePet && S.me.pets.includes(S.me.activePet);
+  const learning = !!S.learn || S.view === "learn";
+  const wantPet = S.me.activePet && S.me.pets.includes(S.me.activePet) && (S.me.activePet === "aurelius" || !learning);
+  document.body.classList.toggle("has-pet", !!wantPet);
   if (wantPet) { if (Pets.id !== S.me.activePet || Pets.accKey !== accKey(S.me.activePet)) Pets.mount(S.me.activePet); Pets.setVisible(true); }
   else Pets.setVisible(false);
 }
@@ -2048,6 +2094,14 @@ function settingsView() {
       <span class="swatch" style="background:${bg}"><i style="background:${fg}"></i><i style="background:${fg};width:40%"></i></span><b>${l}</b></button>`).join("")}</div>
   </section>
   <section class="card">
+    <div class="card-head"><h2>Laut aussprechen (Französisch und Englisch)</h2><span class="muted" style="font-size:.88rem">Zeigt einen Lautsprecher neben englischen und französischen Vokabeln. Antippen liest das Wort vor.</span></div>
+    <div class="row">
+      <div class="seg">${[["1", "An"], ["0", "Aus"]].map(([k, l]) => `<button data-act="setSpeak" data-k="${k}" aria-pressed="${(st.speak !== false) === (k === "1")}">${l}</button>`).join("")}</div>
+      ${st.speak !== false ? `<button class="btn small" data-act="speak" data-t="Hello, how are you?" data-l="en">${icon("speaker")} Englisch testen</button><button class="btn small" data-act="speak" data-t="Bonjour, ça va ?" data-l="fr">${icon("speaker")} Französisch testen</button>` : ""}
+    </div>
+    ${"speechSynthesis" in window ? "" : `<p class="muted" style="margin-top:.6rem">Dein Browser unterstützt das Vorlesen leider nicht.</p>`}
+  </section>
+  <section class="card">
     <div class="card-head"><h2>Tagesziel</h2><span class="muted" style="font-size:.88rem">Nur für dich. Die Truhen bleiben bei 30, 50 und 100.</span></div>
     <div class="chips" style="margin-bottom:1rem">${[20, 30, 50, 75, 100, 150, 200].map(g => `<button class="chip" data-act="setGoal" data-k="${g}" aria-pressed="${goal === g}">${g} Vokabeln</button>`).join("")}</div>
     <form data-form="goal" class="row">
@@ -2112,7 +2166,7 @@ function summaryView() {
       <div class="row" style="justify-content:center">
         ${L.wrongs.length ? `<button class="btn primary big" id="nextBtn" data-act="repeatWrong">Nur die falschen wiederholen (${L.wrongs.length})</button>` : ""}
         <button class="btn big" data-act="again">Neue Runde</button>
-        <button class="btn ${L.wrongs.length ? "" : "primary"} big" ${L.wrongs.length ? "" : 'id="nextBtn"'} data-act="leave">Zur Startseite</button>
+        <button class="btn ${L.wrongs.length ? "" : "primary"} big" ${L.wrongs.length ? "" : 'id="nextBtn"'} data-act="leave">Zurück</button>
       </div>
     </section>`;
 }
@@ -2130,6 +2184,8 @@ const ICO = {
   coin: '<circle cx="12" cy="12" r="8"/><path d="m8.8 12.2 2.2 2.2 4.2-4.6"/>',
   flag: '<path d="M5.5 21V4M5.5 4.5h11l-2.2 4 2.2 4h-11"/>',
   play: '<path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/>',
+  learn: '<path d="M2.5 9.5 12 5l9.5 4.5L12 14z"/><path d="M6.5 11.8v4.4c0 1.5 2.5 3 5.5 3s5.5-1.5 5.5-3v-4.4"/><path d="M21.5 9.5v5"/>',
+  speaker: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>',
   shuffle: '<path d="M4 7h3.5l9 10H20M4 17h3.5l2.6-2.9M13.9 9.9 16.5 7H20M17.5 4 20.5 7l-3 3M17.5 14l3 3-3 3"/>',
   clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
   alert: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.8v5M12 16.2v.3"/>',
@@ -2140,12 +2196,12 @@ const chip = (k, c) => `<i class="ic-chip" style="--tc:var(--c-${c})">${icon(k)}
 function headerView() {
   const pend = S.invites.length;
   const pendArt = isAdmin() ? S.articles.filter(a => a.status === "pending").length : 0;
-  const NAVC = { home: "blue", vocab: "green", shop: "orange", wiki: "purple", feedback: "pink", settings: "gray", admin: "indigo" };
+  const NAVC = { home: "blue", learn: "indigo", vocab: "green", shop: "orange", wiki: "purple", feedback: "pink", settings: "gray", admin: "indigo" };
   const tab = (v, label, badge) => `<button data-act="nav" data-v="${v}" style="--tc:var(--c-${NAVC[v]})" ${S.view === v ? 'aria-current="page"' : ""}>${icon(v)}<span>${label}</span>${badge ? `<span class="badge">${badge}</span>` : ""}</button>`;
   return `<header class="topbar"><div class="topbar-in">
     <button class="brand" data-act="nav" data-v="home" aria-label="Vocabify Startseite">${LOGO_SVG(false)}Vocabify${TEST_MODE ? ' <span class="status pending" style="font-family:var(--f-body)">Test</span>' : ""}</button>
     <nav class="nav" aria-label="Hauptmenü">
-      ${tab("home", "Startseite")}${tab("vocab", "Vokabeln", pend)}${tab("shop", "Shop")}${tab("wiki", "Wiki")}${tab("feedback", "Feedback", isAdmin() ? S.feedback.filter(f => f.status === "new").length : 0)}${tab("settings", "Einstellungen")}${isAdmin() ? tab("admin", "Admin", pendArt) : ""}
+      ${tab("home", "Startseite")}${tab("learn", "Lernen")}${tab("vocab", "Vokabeln", pend)}${tab("shop", "Shop")}${tab("wiki", "Wiki")}${tab("feedback", "Feedback", isAdmin() ? S.feedback.filter(f => f.status === "new").length : 0)}${tab("settings", "Einstellungen")}${isAdmin() ? tab("admin", "Admin", pendArt) : ""}
     </nav>
     <div class="top-right">
       <span class="coin-pill" title="Deine Münzen">${COIN}<span class="num">${coinsTotal()}</span></span>
@@ -2156,6 +2212,7 @@ function headerView() {
 }
 function viewHtml() {
   switch (S.view) {
+    case "learn": return learnView();
     case "vocab": return vocabView();
     case "shop": return shopView();
     case "wiki": return wikiView();
@@ -2234,7 +2291,14 @@ function homeView() {
       <div class="card-head"><h2 class="hchip">${chip("flag", "teal")}Dein Lernpfad</h2><span class="muted" style="font-size:.88rem">Setzt sich um 00:00 Uhr zurück</span></div>
       ${pathView(c)}
     </section>
-    <section class="card">${S.learn ? quizView() : configView()}</section>`;
+    <section class="card learn-teaser">
+      <div style="min-width:0"><h2 class="hchip">${chip("learn", "indigo")}Bereit zum Lernen?</h2>
+      <p class="muted">Lernmodus, Abschnitte und Rundenlänge wählst du unter „Lernen“.</p></div>
+      <button class="btn primary big" data-act="nav" data-v="learn">Zum Lernen</button>
+    </section>`;
+}
+function learnView() {
+  return `<h1>Lernen</h1><section class="card">${configView()}</section>`;
 }
 function pathView(c) {
   const pct = v => Math.min(100, v) + "%";
@@ -2275,7 +2339,7 @@ function configView() {
   }).join("");
   const n = poolFor(S.cfg.mode, scope).length;
   return `<div class="cfg">
-    <div class="card-head" style="margin:0"><h2 class="hchip">${chip("play", "indigo")}Lernen</h2></div>
+    <div class="card-head" style="margin:0"><h2 class="hchip">${chip("play", "indigo")}Neue Runde</h2></div>
     ${lp ? `<div class="cfg-group"><span class="eyebrow">Sprache</span>${lp}</div>` : ""}
     <div class="cfg-group"><span class="eyebrow">Abschnitte</span><div class="chips">${chips}</div></div>
     <div class="cfg-group"><span class="eyebrow">Richtung</span><div class="seg">${dirs}</div></div>
@@ -2314,9 +2378,9 @@ function quizView() {
     fb = `<div class="fb right" role="status">Richtig!${L.typo ? ` <span>Fast perfekt, achte auf die Schreibweise.</span>` : ""}
       ${L.coin ? `<span class="coin-pop${L.coinAmt > 1 ? " rush" : ""}">${COIN}+${L.coinAmt || 1}${L.coinAmt > 1 ? " Goldrausch!" : ""}</span>` : `<span class="muted" style="font-weight:600">Heute schon belohnt</span>`}
       <span class="spacer"></span><button class="btn small" id="nextBtn" data-act="next">Weiter</button></div>
-      ${allAnswers(L.given, sol)}`;
+      ${allAnswers(L.given, sol, f2d ? "" : spkBtn(v.f, s.lang))}`;
   } else if (L.state === "wrong") {
-    fb = `<div class="fb wrong" role="status"><span>Leider falsch. Richtig ist: <span class="sol">${esc(sol)}</span></span><span class="spacer"></span>
+    fb = `<div class="fb wrong" role="status"><span>Leider falsch. Richtig ist: <span class="sol">${esc(sol)}</span>${f2d ? "" : spkBtn(v.f, s.lang)}</span><span class="spacer"></span>
       <button class="btn small" data-act="override">Ich hatte recht</button>
       <button class="btn small primary" id="nextBtn" data-act="next">Weiter</button></div>`;
   }
@@ -2327,7 +2391,7 @@ function quizView() {
       <span class="spacer"></span>
       <span class="num muted" style="font-weight:700">${L.right} / ${L.n} richtig</span>
     </div>
-    <div><p class="eyebrow">Übersetze ins ${esc(target)}</p><div class="quiz-word">${esc(prompt)}</div></div>
+    <div><p class="eyebrow">Übersetze ins ${esc(target)}</p><div class="quiz-word">${esc(prompt)}${f2d ? spkBtn(v.f, s.lang, "big") : ""}</div></div>
     <form data-form="answer" autocomplete="off">
       <input class="input" id="answer" name="a" placeholder="Deine Antwort" autocapitalize="none" spellcheck="false" ${L.state !== "ask" ? `value="${esc(L.given)}" readonly` : ""} aria-label="Antwort">
       ${L.state === "ask" ? `<button class="btn primary big" type="submit">Prüfen</button>` : ""}
@@ -2397,7 +2461,7 @@ function sectionDetail() {
   if (!s) { S.openSection = null; return sectionsGrid(); }
   const L = LANGS[s.lang];
   const rows = (s.vocab || []).slice().reverse().map(v => `<tr>
-      <td>${esc(v.f)}</td><td>${esc(v.d)}</td>
+      <td>${esc(v.f)}${spkBtn(v.f, s.lang, "sm")}</td><td>${esc(v.d)}</td>
       <td class="n ok">${v.r || 0}</td><td class="n no">${v.w || 0}</td>
       <td class="n">${S.confirm === "v:" + v.id
         ? `<span class="inline-confirm">Löschen? <button class="btn small danger solid" data-act="delVocab" data-id="${v.id}">Ja</button><button class="btn small" data-act="cancelConfirm">Nein</button></span>`
@@ -2804,6 +2868,8 @@ const A = {
   cfgMode(t) { S.cfg.mode = t.dataset.k; render(); },
   start() { startLearning(); },
   next() { nextQuestion(); },
+  speak(t) { speak(t.dataset.t, t.dataset.l); },
+  setSpeak(t) { setSetting("speak", t.dataset.k === "1"); render(); },
   stop() { finishLearning(); },
   leave() { leaveLearning(); },
   again() { S.learn = null; startLearning(); },
@@ -3406,7 +3472,7 @@ setInterval(() => {
   const r = rushInfo();
   const b = document.getElementById("rushBadge");
   if (b) { b.textContent = rushText(r); b.classList.toggle("on", r.on); }
-  if (lastRush !== null && r.on !== lastRush && !document.hidden && (S.view === "home" || S.learn)) {
+  if (lastRush !== null && r.on !== lastRush && !document.hidden) {
     if (r.on) { toast("Goldrausch! 30 Sekunden lang doppelte Münzen."); Pets.rushStart(); }
   }
   if (Pets.el) Pets.el.classList.toggle("rush", r.on && Pets.id === "aurelius");
