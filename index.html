@@ -859,6 +859,16 @@ th{background:var(--surface-2);font-weight:500;color:var(--muted)}
 body.has-pet #main{padding-bottom:130px}
 .learn-teaser{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .learn-teaser h2{margin:0 0 .3rem}
+.rename-row{flex-wrap:nowrap;gap:.4rem;width:100%;max-width:520px}
+.rename-row .input{min-width:0;flex:1 1 260px;padding:.5em .8em;font-size:1rem}
+.quiz form[data-form="vtab"]{display:block}
+.table-wrap table.vt-fill{width:100%;min-width:0}
+.vt-fill td{vertical-align:top;padding:.5rem .6rem;width:50%}
+.vt-cell{display:grid;grid-template-columns:5.6rem minmax(0,1fr);gap:.5rem;align-items:start}
+.vt-cell .pr{font-weight:600;color:var(--muted);padding-top:.6rem;font-size:.9rem}
+.vt-cell .input{width:100%;padding:.5em .7em;font-size:1rem}
+.vt-fix{display:block;font-size:.82rem;color:var(--good);font-weight:600;margin-top:.25rem}
+@media (max-width:640px){.vt-fill thead{display:none}.vt-fill tr{display:flex;flex-direction:column;border-top:1px solid var(--line)}.vt-fill td{border:0;padding:.35rem .4rem}.vt-cell{grid-template-columns:6.5rem minmax(0,1fr)}}
 .zone-tabs{margin-bottom:.2rem}
 .vt-modes{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))!important}
 .vt-modes .mode{grid-column:auto!important}
@@ -1026,7 +1036,7 @@ body.has-pet #main{padding-bottom:130px}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-const APP_VERSION = "1.3.2";
+const APP_VERSION = "1.3.3";
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
   authDomain: "vocabify-8abb9.firebaseapp.com",
@@ -1037,6 +1047,7 @@ const FIREBASE_CONFIG = {
 };
 const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
 const CHANGELOG = [
+  { v: "1.3.3", items: ["Abschnitte umbenennen", "Neuer Modus bei den französischen Verben: Verbtabelle. Erst das Verb übersetzen, dann alle Formen auf Deutsch und Französisch ausfüllen"] },
   { v: "1.3.2", items: ["Aus dem Wiki wird der Lernbereich, für alle gleich", "Französische Verben (1.–3. Lernjahr): Präsens ausfüllen, Passé composé und Übersetzen", "Englisch: alle wichtigen unregelmäßigen Verben üben", "Verbtabellen zum Nachschlagen mit Suche", "Lerntricks der Community findest du jetzt im Lernbereich"] },
   { v: "1.3.1", items: ["Neuer Menüpunkt „Lernen“: Hier startest du jetzt deine Lernrunden", "Vokabeln laut aussprechen (Englisch und Französisch), in den Einstellungen an- und abschaltbar", "Haustiere laufen jetzt in allen Bereichen herum, nur beim Lernen nicht. Aurelius ist überall dabei"] },
   { v: "1.3.0", items: ["Generelles Lernen: Jede Vokabel kommt einmal dran, bevor sich eine wiederholt. Lange nicht gefragte zuerst", "Ältere Vokabeln: seit mehr als 7 Tagen nicht geübt", "Neueste Vokabeln: in den letzten 3 Tagen hinzugefügt", "Fehler-Fokus: zuerst 100 % Fehlerquote, dann absteigend", "Bei richtiger Antwort werden alle Antwortmöglichkeiten angezeigt", "Neuer Modus „Eigene Auswahl“: Vokabeln für die Runde selbst auswählen", "Neue Rundenlänge „Jede einmal“", "10 Fragen als Probe-Vokabeltest mit Note am Ende"] },
@@ -1257,7 +1268,7 @@ const Store = {
 const S = {
   me: null, sections: [], articles: [], invites: [], accounts: [],
   view: "home", vocabTab: "sections", openSection: null, statsFilter: "all", statsLang: "", secLang: "",
-  wikiTab: "list", zone: "fr", vt: { lang: "fr", mode: { fr: "pres", en: "forms" }, year: 3, size: 10, run: null }, openArticle: null, adminTab: "users",
+  wikiTab: "list", zone: "fr", vt: { lang: "fr", mode: { fr: "pres", en: "forms" }, year: 3, size: 10, tsize: 5, run: null }, openArticle: null, adminTab: "users",
   cfg: { secs: [], dir: "f2d", mode: "general", size: 20, lang: "" },
   learn: null, confirm: null, shareOpen: false, draft: null,
   loginErr: "", setup: false,
@@ -2496,7 +2507,9 @@ function sectionDetail() {
   return `<div class="row"><button class="btn small ghost" data-act="closeSec">← Alle Abschnitte</button></div>
   <section class="card">
     <div class="card-head" style="align-items:center">
-      <div style="display:flex;flex-direction:column;gap:.35rem;min-width:0"><span class="lang-tag ${s.lang}">${L.name} – Deutsch</span><h2 style="overflow-wrap:anywhere">${esc(s.name)}</h2></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-start;gap:.35rem;min-width:0;${S.renameSec ? "flex:1 1 360px" : ""}"><span class="lang-tag ${s.lang}">${L.name} – Deutsch</span>
+        ${S.renameSec ? `<form data-form="renameSec" class="row rename-row"><input class="input" id="rn-name" name="name" value="${esc(s.name)}" maxlength="60" required aria-label="Neuer Name"><button class="btn small primary" type="submit">Speichern</button><button class="btn small" type="button" data-act="renameSec" data-k="">Abbrechen</button></form>`
+          : `<h2 style="overflow-wrap:anywhere">${esc(s.name)} <button class="btn small ghost" data-act="renameSec" data-k="1">Umbenennen</button></h2>`}</div>
       <span class="spacer"></span>
       <button class="btn small ${S.shareOpen ? "" : "primary"}" data-act="toggleShare">${S.shareOpen ? "Senden schließen" : "Abschnitt senden"}</button>
       ${S.confirm === "sec" ? `<span class="inline-confirm">Abschnitt mit allen Vokabeln löschen? <button class="btn small danger solid" data-act="delSec">Löschen</button><button class="btn small" data-act="cancelConfirm">Abbrechen</button></span>`
@@ -2791,7 +2804,7 @@ const FR_VERBS = FR_VERB_DATA.map(([inf, de, year, aux, pp, pres]) => {
   } else if (end === "ir") forms = ["is", "is", "it", "issons", "issez", "issent"].map(x => [st + x]);
   else forms = ["s", "s", "", "ons", "ez", "ent"].map(x => [st + x]);
   if (!pp) pp = end === "er" ? st + "é" : end === "ir" ? st + "i" : st + "u";
-  return { id: base, inf, base, de, year, aux: refl ? "e" : aux, pp, refl, forms };
+  return { id: inf, inf, base, de, year, aux: refl ? "e" : aux, pp, refl, forms };
 });
 function frReflPron(p, next) { const r = ["me", "te", "se", "nous", "vous", "se"][p]; return p !== 3 && p !== 4 && VOWEL_RE.test(next) ? r.slice(0, 1) + "'" : r + " "; }
 /* alle richtigen Formen (Präsens) für Person p, ohne Subjektpronomen */
@@ -2934,8 +2947,129 @@ win|won|won|gewinnen
 write|wrote|written|schreiben`;
 const EN_VERBS = EN_IRR_DATA.split("\n").map(l => { const [inf, past, pp, de] = l.split("|"); return { id: inf, inf, past, pp, de }; });
 
+/* Deutsche Präsensformen für die Verbtabelle: [deutscher Infinitiv, Kernverb, unregelmäßige Formen ich|du|er|wir|ihr|sie, Zusatz hinter dem Verb, reflexiv] */
+const DE_VERB_DATA = {
+  "être": ["sein", "sein", "bin|bist|ist|sind|seid|sind"],
+  "avoir": ["haben", "haben", "habe|hast|hat|haben|habt|haben"],
+  "aller": ["gehen", "gehen"],
+  "faire": ["machen", "machen"],
+  "parler": ["sprechen", "sprechen", "spreche|sprichst|spricht|sprechen|sprecht|sprechen"],
+  "aimer": ["mögen", "mögen", "mag|magst|mag|mögen|mögt|mögen"],
+  "adorer": ["lieben", "lieben"],
+  "détester": ["hassen", "hassen"],
+  "habiter": ["wohnen", "wohnen"],
+  "jouer": ["spielen", "spielen"],
+  "regarder": ["anschauen", "schauen", "", "an"],
+  "écouter": ["zuhören", "hören", "", "zu"],
+  "travailler": ["arbeiten", "arbeiten"],
+  "chercher": ["suchen", "suchen"],
+  "trouver": ["finden", "finden"],
+  "donner": ["geben", "geben", "gebe|gibst|gibt|geben|gebt|geben"],
+  "danser": ["tanzen", "tanzen"],
+  "chanter": ["singen", "singen"],
+  "téléphoner": ["telefonieren", "telefonieren"],
+  "inviter": ["einladen", "laden", "lade|lädst|lädt|laden|ladet|laden", "ein"],
+  "demander": ["fragen", "fragen"],
+  "penser": ["denken", "denken"],
+  "préparer": ["vorbereiten", "bereiten", "", "vor"],
+  "rencontrer": ["treffen", "treffen", "treffe|triffst|trifft|treffen|trefft|treffen"],
+  "visiter": ["besichtigen", "besichtigen"],
+  "arriver": ["ankommen", "kommen", "", "an"],
+  "entrer": ["hereinkommen", "kommen", "", "herein"],
+  "rester": ["bleiben", "bleiben"],
+  "rentrer": ["nach Hause gehen", "gehen", "", "nach Hause"],
+  "manger": ["essen", "essen", "esse|isst|isst|essen|esst|essen"],
+  "ranger": ["aufräumen", "räumen", "", "auf"],
+  "commencer": ["anfangen", "fangen", "fange|fängst|fängt|fangen|fangt|fangen", "an"],
+  "acheter": ["kaufen", "kaufen"],
+  "préférer": ["bevorzugen", "bevorzugen"],
+  "s'appeler": ["heißen", "heißen", "heiße|heißt|heißt|heißen|heißt|heißen"],
+  "prendre": ["nehmen", "nehmen", "nehme|nimmst|nimmt|nehmen|nehmt|nehmen"],
+  "venir": ["kommen", "kommen"],
+  "vouloir": ["wollen", "wollen", "will|willst|will|wollen|wollt|wollen"],
+  "pouvoir": ["können", "können", "kann|kannst|kann|können|könnt|können"],
+  "attendre": ["warten", "warten"],
+  "répondre": ["antworten", "antworten"],
+  "descendre": ["hinuntergehen", "gehen", "", "hinunter"],
+  "finir": ["beenden", "beenden"],
+  "choisir": ["wählen", "wählen"],
+  "réussir": ["schaffen", "schaffen"],
+  "réfléchir": ["nachdenken", "denken", "", "nach"],
+  "grandir": ["wachsen", "wachsen", "wachse|wächst|wächst|wachsen|wachst|wachsen"],
+  "entendre": ["hören", "hören"],
+  "perdre": ["verlieren", "verlieren"],
+  "vendre": ["verkaufen", "verkaufen"],
+  "rendre": ["zurückgeben", "geben", "gebe|gibst|gibt|geben|gebt|geben", "zurück"],
+  "mettre": ["legen", "legen"],
+  "dire": ["sagen", "sagen"],
+  "lire": ["lesen", "lesen", "lese|liest|liest|lesen|lest|lesen"],
+  "écrire": ["schreiben", "schreiben"],
+  "voir": ["sehen", "sehen", "sehe|siehst|sieht|sehen|seht|sehen"],
+  "devoir": ["müssen", "müssen", "muss|musst|muss|müssen|müsst|müssen"],
+  "savoir": ["wissen", "wissen", "weiß|weißt|weiß|wissen|wisst|wissen"],
+  "connaître": ["kennen", "kennen"],
+  "comprendre": ["verstehen", "verstehen"],
+  "apprendre": ["lernen", "lernen"],
+  "boire": ["trinken", "trinken"],
+  "partir": ["weggehen", "gehen", "", "weg"],
+  "sortir": ["ausgehen", "gehen", "", "aus"],
+  "dormir": ["schlafen", "schlafen", "schlafe|schläfst|schläft|schlafen|schlaft|schlafen"],
+  "devenir": ["werden", "werden", "werde|wirst|wird|werden|werdet|werden"],
+  "revenir": ["zurückkommen", "kommen", "", "zurück"],
+  "oublier": ["vergessen", "vergessen", "vergesse|vergisst|vergisst|vergessen|vergesst|vergessen"],
+  "tomber": ["fallen", "fallen", "falle|fällst|fällt|fallen|fallt|fallen"],
+  "monter": ["hinaufgehen", "gehen", "", "hinauf"],
+  "passer": ["verbringen", "verbringen"],
+  "nager": ["schwimmen", "schwimmen"],
+  "voyager": ["reisen", "reisen"],
+  "envoyer": ["schicken", "schicken"],
+  "payer": ["bezahlen", "bezahlen"],
+  "essayer": ["versuchen", "versuchen"],
+  "appeler": ["anrufen", "rufen", "", "an"],
+  "se lever": ["aufstehen", "stehen", "", "auf"],
+  "se réveiller": ["aufwachen", "wachen", "", "auf"],
+  "se coucher": ["ins Bett gehen", "gehen", "", "ins Bett"],
+  "se laver": ["sich waschen", "waschen", "wasche|wäschst|wäscht|waschen|wascht|waschen", "", 1],
+  "s'habiller": ["sich anziehen", "ziehen", "", "an", 1],
+  "se dépêcher": ["sich beeilen", "beeilen", "", "", 1],
+  "croire": ["glauben", "glauben"],
+  "recevoir": ["bekommen", "bekommen"],
+  "ouvrir": ["öffnen", "öffnen"],
+  "offrir": ["schenken", "schenken"],
+  "vivre": ["leben", "leben"],
+  "suivre": ["folgen", "folgen"],
+  "rire": ["lachen", "lachen"],
+  "courir": ["laufen", "laufen", "laufe|läufst|läuft|laufen|lauft|laufen"],
+  "conduire": ["fahren", "fahren", "fahre|fährst|fährt|fahren|fahrt|fahren"],
+  "tenir": ["halten", "halten", "halte|hältst|hält|halten|haltet|halten"],
+  "servir": ["servieren", "servieren"],
+  "sentir": ["fühlen", "fühlen"],
+  "jeter": ["werfen", "werfen", "werfe|wirfst|wirft|werfen|werft|werfen"],
+  "décider": ["entscheiden", "entscheiden"],
+  "naître": ["geboren werden", "werden", "werde|wirst|wird|werden|werdet|werden", "geboren"],
+  "mourir": ["sterben", "sterben", "sterbe|stirbst|stirbt|sterben|sterbt|sterben"],
+  "se promener": ["spazieren gehen", "gehen", "", "spazieren"],
+  "s'amuser": ["sich amüsieren", "amüsieren", "", "", 1],
+  "se souvenir": ["sich erinnern", "erinnern", "", "", 1]
+};
+const DE_PRON = [["ich"], ["du"], ["er", "sie", "es", "man"], ["wir"], ["ihr"], ["sie"]];
+const DE_REFL = ["mich", "dich", "sich", "uns", "euch", "sich"];
+function deRegular(inf) {
+  const st = /[^aeiouäöü](ern|eln)$/.test(inf) ? inf.slice(0, -1) : inf.slice(0, -2);
+  const eIns = /[td]$/.test(st) || /[^aeiouäöülrhmn][mn]$/.test(st), sIns = /[sßzx]$/.test(st);
+  return [st.endsWith("e") ? st : st + "e", st + (eIns ? "est" : sIns ? "t" : "st"), st + (eIns ? "et" : "t"), inf, st + (eIns ? "et" : "t"), inf];
+}
+/* deutsche Formen zu einem französischen Verb: {inf, forms[6]} oder null */
+function deVerb(v) {
+  const d = DE_VERB_DATA[v.inf]; if (!d) return null;
+  const [inf, core, irr, rest, refl] = d;
+  const cf = irr ? irr.split("|") : deRegular(core);
+  return { inf, forms: cf.map((f, p) => [f, refl ? DE_REFL[p] : "", rest || ""].filter(Boolean).join(" ")) };
+}
+const FR_ROW = ["je", "tu", "il / elle / on", "nous", "vous", "ils / elles"], FR_ROW_SUBJ = [["je", "j'"], ["tu"], ["il", "elle", "on"], ["nous"], ["vous"], ["ils", "elles"]];
+const DE_ROW = ["ich", "du", "er / sie / es", "wir", "ihr", "sie"];
 const VT_MODES = {
-  fr: { pres: ["Ausfüllen", "Présent: die richtige Form einsetzen"], pc: ["Vergangenheitsform", "Passé composé: Hilfsverb und Partizip"], tr: ["Übersetzen", "Deutsch ↔ Französisch"] },
+  fr: { pres: ["Ausfüllen", "Présent: die richtige Form einsetzen"], pc: ["Vergangenheitsform", "Passé composé: Hilfsverb und Partizip"], tab: ["Verbtabelle", "Verb übersetzen, dann alle Formen auf Deutsch und Französisch"], tr: ["Übersetzen", "Deutsch ↔ Französisch"] },
   en: { forms: ["Formen ausfüllen", "Simple Past und Past Participle"], tr: ["Übersetzen", "Deutsch ↔ Englisch"] }
 };
 function vtNorm(s) { return String(s || "").toLowerCase().normalize("NFC").replace(/[’‘`´]/g, "'").replace(/'\s+/g, "'").replace(/[.!?]+$/g, "").replace(/\s+/g, " ").trim(); }
@@ -2951,6 +3085,7 @@ function vtCheck(given, accepted) {
 function vtPool(lang) { return lang === "fr" ? FR_VERBS.filter(v => v.year <= S.vt.year) : EN_VERBS; }
 /* eine Aufgabe erzeugen */
 function vtTask(lang, mode, v) {
+  if (mode === "tab") return { vid: v.id, tab: true, show: `${v.inf} = ${v.de}`, sol: v.de };
   if (lang === "fr" && (mode === "pres" || mode === "pc")) {
     const si = Math.floor(Math.random() * FR_SUBJ.length), p = FR_SUBJ[si][1];
     const sols = mode === "pres" ? frPresent(v, p) : frPasse(v, si);
@@ -2972,7 +3107,7 @@ function vtTask(lang, mode, v) {
 function vtStart() {
   const lang = S.vt.lang, mode = S.vt.mode[lang], pool = vtPool(lang);
   if (!pool.length) return;
-  S.vt.run = { lang, mode, size: S.vt.size, n: 0, right: 0, queue: shuffle(pool.map(v => v.id)), cur: null, state: "ask", wrongs: [], retry: false, finished: false };
+  S.vt.run = { lang, mode, size: mode === "tab" ? S.vt.tsize : S.vt.size, cells: 0, cellsRight: 0, n: 0, right: 0, queue: shuffle(pool.map(v => v.id)), cur: null, state: "ask", wrongs: [], retry: false, finished: false };
   vtNext();
 }
 function vtFind(lang, id) { return (lang === "fr" ? FR_VERBS : EN_VERBS).find(v => v.id === id); }
@@ -3005,6 +3140,7 @@ function verbCorrect(key) {
 function vtSubmit(a1, a2) {
   const R = S.vt.run; if (!R || R.state !== "ask") return;
   const t = R.cur; let ok, accent = false;
+  if (t.tab) { R.given = a1; R.infOk = checkAnswer(a1, v_de(t)).ok; R.state = "table"; render(); const f = $("#vt-d0"); if (f) f.focus({ preventScroll: true }); return; }
   if (t.two) {
     const c1 = vtCheck(a1, t.acc1), c2 = vtCheck(a2, t.acc2);
     ok = c1.ok && c2.ok; accent = c1.accent || c2.accent; R.ok1 = c1.ok; R.ok2 = c2.ok;
@@ -3026,15 +3162,58 @@ function vtSubmit(a1, a2) {
   if (ok && R.coin) { const nums = [...document.querySelectorAll(".coin-pill .num")]; nums.forEach(e => { e.textContent = coinsTotal() - R.coin; }); flyCoins($(".coin-pop .coin"), R.coin, syncCoins); }
   if (!ok) { const q = $(".vt-quiz"); if (q) { q.classList.add("shake"); setTimeout(() => q.classList.remove("shake"), 400); } }
 }
+function v_de(t) { const v = vtFind("fr", t.vid); return v ? v.de : ""; }
+/* Verbtabelle prüfen: 1 Punkt Infinitiv + je 6 Formen Deutsch und Französisch */
+function vtSubmitTable(f) {
+  const R = S.vt.run; if (!R || R.state !== "table") return;
+  const v = vtFind("fr", R.cur.vid), dv = deVerb(v);
+  const res = [];
+  let right = R.infOk ? 1 : 0, accent = false;
+  for (let p = 0; p < 6; p++) {
+    const gd = (f.querySelector("#vt-d" + p) || {}).value || "", gf = (f.querySelector("#vt-f" + p) || {}).value || "";
+    const dForm = dv.forms[p], fForms = frPresent(v, p);
+    const cd = vtCheck(gd, [dForm, ...DE_PRON[p].map(x => x + " " + dForm)]);
+    const cf = vtCheck(gf, [...fForms, ...FR_ROW_SUBJ[p].flatMap(sj => fForms.map(x => sj.endsWith("'") ? sj + x : sj + " " + x))]);
+    res.push({ d: cd.ok, f: cf.ok, gd, gf }); right += (cd.ok ? 1 : 0) + (cf.ok ? 1 : 0); accent = accent || cd.accent || cf.accent;
+  }
+  R.cellRes = res; R.state = "done"; R.n++; R.cells += 13; R.cellsRight += right; R.accent = accent;
+  const all = right === 13;
+  bumpHist(all);
+  if (all) { R.right++; R.coin = verbCorrect("vb:fr:" + v.id + ":tab"); R.wrongs = R.wrongs.filter(w => w.vid !== v.id); }
+  else { R.coin = 0; if (!R.wrongs.some(w => w.vid === v.id)) R.wrongs.push({ vid: v.id, show: `${v.inf} = ${dv.inf}: ${13 - right} Fehler` }); }
+  markDirty("me"); render();
+  if (all && R.coin) { document.querySelectorAll(".coin-pill .num").forEach(e => { e.textContent = coinsTotal() - R.coin; }); flyCoins($(".coin-pop .coin"), R.coin, syncCoins); }
+  if (!all) { const q = $(".vt-quiz"); if (q) { q.classList.add("shake"); setTimeout(() => q.classList.remove("shake"), 400); } }
+}
+function vtTableView(R) {
+  const v = vtFind("fr", R.cur.vid), dv = deVerb(v), done = R.state === "done";
+  const cell = (id, val, ok, sol, lang) => `<input class="input${done ? (ok ? " is-ok" : " is-no") : ""}" id="${id}" value="${esc(val || "")}" autocapitalize="none" spellcheck="false" ${done ? "readonly" : ""} aria-label="${lang}">${done && !ok ? `<span class="vt-fix">${esc(sol)}</span>` : ""}`;
+  const rows = [0, 1, 2, 3, 4, 5].map(p => {
+    const r = (R.cellRes || [])[p] || {};
+    const fFirst = frPresent(v, p)[0], fr = p === 0 && !v.refl && VOWEL_RE.test(fFirst) ? "j'" : FR_ROW[p];
+    const dSol = DE_ROW[p].split(" / ")[0] + " " + dv.forms[p], fSol = (fr.endsWith("'") ? fr : FR_ROW[p].split(" / ")[0] + " ") + frPresent(v, p).join(" / ");
+    return `<tr><td><div class="vt-cell"><span class="pr">${DE_ROW[p]}</span><div>${cell("vt-d" + p, r.gd, r.d, dSol, "Deutsch " + DE_ROW[p])}</div></div></td>
+      <td><div class="vt-cell"><span class="pr">${fr}</span><div>${cell("vt-f" + p, r.gf, r.f, fSol, "Französisch " + FR_ROW[p])}</div></div></td></tr>`;
+  }).join("");
+  return `<div class="fb ${R.infOk ? "right" : "wrong"}" role="status"><span>${R.infOk ? "Richtig übersetzt!" : "Nicht ganz."} <b>${esc(v.inf)}</b> = ${esc(v.de)}</span></div>
+    <p class="muted" style="margin:0">Konjugiere im Präsens: <b>${esc(dv.inf)}</b> und <b>${esc(v.inf)}</b>${spkBtn(v.inf, "fr")}</p>
+    <form data-form="vtab" autocomplete="off">
+      <div class="table-wrap"><table class="vt-table vt-fill"><thead><tr><th>Deutsch · ${esc(dv.inf)}</th><th>Französisch · ${esc(v.inf)}</th></tr></thead><tbody>${rows}</tbody></table></div>
+      ${done ? "" : `<div class="row end" style="margin-top:.8rem"><button class="btn primary big" type="submit">Tabelle prüfen</button></div>`}
+    </form>
+    ${done ? `<div class="fb ${R.cellRes.every(x => x.d && x.f) && R.infOk ? "right" : "wrong"}" role="status"><span>${R.cellRes.reduce((n, x) => n + x.d + x.f, 0) + (R.infOk ? 1 : 0)} von 13 richtig${R.accent ? " · achte auf Akzente und Umlaute" : ""}</span>
+      ${R.coin ? `<span class="coin-pop">${COIN}+${R.coin}</span>` : ""}<span class="spacer"></span><button class="btn small primary" id="nextBtn" data-act="vtNext">Weiter</button></div>` : ""}`;
+}
 function vtRunView() {
   const R = S.vt.run, lang = R.lang, ln = lang === "fr" ? "fr" : "en";
   const modeName = VT_MODES[lang][R.mode][0];
   if (R.finished) {
-    const pct = R.n ? Math.round(R.right / R.n * 100) : 0;
+    const pct = R.mode === "tab" ? (R.cells ? Math.round(R.cellsRight / R.cells * 100) : 0) : R.n ? Math.round(R.right / R.n * 100) : 0;
     return `<section class="card summary">
       <p class="eyebrow">${lang === "fr" ? "Französische Verben" : "Unregelmäßige Verben"} · ${modeName}</p>
       <h1>${pct >= 90 ? "Hervorragend!" : pct >= 70 ? "Stark gemacht!" : pct >= 50 ? "Gut geübt!" : "Dranbleiben lohnt sich!"}</h1>
-      <div class="score">${R.right} / ${R.n}</div><p class="muted">${pct} % richtig</p>
+      ${R.mode === "tab" ? `<div class="score">${R.cellsRight} / ${R.cells}</div><p class="muted">Felder richtig · ${R.right} von ${R.n} Tabellen komplett fehlerfrei</p>`
+        : `<div class="score">${R.right} / ${R.n}</div><p class="muted">${pct} % richtig</p>`}
       ${R.wrongs.length ? `<div class="wrong-list"><h3 style="margin-bottom:.6rem">Diese Verben solltest du wiederholen</h3><ul class="vt-wrong">${R.wrongs.map(w => `<li>${esc(w.show)}</li>`).join("")}</ul></div>` : (R.n ? `<p class="fb right" style="justify-content:center">Keine Fehler in dieser Runde!</p>` : "")}
       <div class="row" style="justify-content:center">
         ${R.wrongs.length ? `<button class="btn primary big" data-act="vtRetry">Fehler wiederholen (${R.wrongs.length})</button>` : ""}
@@ -3043,10 +3222,14 @@ function vtRunView() {
       </div></section>`;
   }
   const t = R.cur, v = vtFind(lang, t.vid);
-  const label = R.size ? `Frage ${Math.min(R.n + (R.state === "ask" ? 1 : 0), R.size)} von ${R.size}` : `${R.n} beantwortet`;
+  const label = R.size ? `${t.tab ? "Verb" : "Frage"} ${Math.min(R.n + (R.state === "ask" || R.state === "table" ? 1 : 0), R.size)} von ${R.size}` : `${R.n} beantwortet`;
   let ask, fb = "";
   const ro = R.state !== "ask" ? "readonly" : "";
-  if (t.two) {
+  if (t.tab) {
+    ask = `<div class="vt-prompt"><p class="eyebrow">Übersetze das Verb ins Deutsche</p><div class="quiz-word">${esc(v.inf)}${spkBtn(v.inf, "fr", "big")}</div></div>
+      ${R.state === "ask" ? `<form data-form="verb" autocomplete="off"><input class="input" id="vt-a" name="a" placeholder="Deutsche Bedeutung" autocapitalize="none" spellcheck="false">
+        <button class="btn primary big" type="submit">Weiter zur Tabelle</button></form>` : vtTableView(R)}`;
+  } else if (t.two) {
     ask = `<div class="vt-prompt"><p class="eyebrow">Unregelmäßiges Verb</p><div class="quiz-word">${esc(v.inf)}${spkBtn(v.inf, "en", "big")}</div><p class="muted">${esc(v.de)}</p></div>
       <form data-form="verb" class="vt-two" autocomplete="off">
         <div class="field"><label for="vt-a">Simple Past</label><input class="input${R.state !== "ask" ? (R.ok1 ? " is-ok" : " is-no") : ""}" id="vt-a" name="a" autocapitalize="none" spellcheck="false" value="${esc(R.given)}" ${ro}></div>
@@ -3063,16 +3246,16 @@ function vtRunView() {
       <form data-form="verb" autocomplete="off"><input class="input" id="vt-a" name="a" placeholder="Deine Antwort" autocapitalize="none" spellcheck="false" value="${esc(R.given)}" ${ro}>
         ${R.state === "ask" ? `<button class="btn primary big" type="submit">Prüfen</button>` : ""}</form>`;
   }
-  const solSpk = t.de ? "" : spkBtn(t.subj ? t.show : t.two ? `${v.inf}, ${v.past.split("/")[0]}, ${v.pp.split("/")[0]}` : t.sol, ln);
-  if (R.state === "right") fb = `<div class="fb right" role="status">Richtig!${R.accent ? ` <span>Achte auf die Akzente und die Schreibweise.</span>` : ""}
+  const solSpk = t.tab ? "" : t.de ? "" : spkBtn(t.subj ? t.show : t.two ? `${v.inf}, ${v.past.split("/")[0]}, ${v.pp.split("/")[0]}` : t.sol, ln);
+  if (R.state === "right" && !t.tab) fb = `<div class="fb right" role="status">Richtig!${R.accent ? ` <span>Achte auf die Akzente und die Schreibweise.</span>` : ""}
       ${R.coin ? `<span class="coin-pop">${COIN}+${R.coin}</span>` : `<span class="muted" style="font-weight:600">Heute schon belohnt</span>`}
       <span class="spacer"></span><button class="btn small" id="nextBtn" data-act="vtNext">Weiter</button></div>
       <div class="all-sol"><span class="muted">Lösung:</span><span class="sol-chip hit">${esc(t.show)}</span>${solSpk}</div>`;
-  if (R.state === "wrong") fb = `<div class="fb wrong" role="status"><span>Leider falsch. Richtig ist: <span class="sol">${esc(t.show)}</span>${solSpk}</span><span class="spacer"></span>
+  if (R.state === "wrong" && !t.tab) fb = `<div class="fb wrong" role="status"><span>Leider falsch. Richtig ist: <span class="sol">${esc(t.show)}</span>${solSpk}</span><span class="spacer"></span>
       <button class="btn small" data-act="vtOverride">Ich hatte recht</button><button class="btn small primary" id="nextBtn" data-act="vtNext">Weiter</button></div>`;
   return `<section class="card"><div class="quiz vt-quiz">
     <div class="row"><span class="lang-tag ${ln}">${lang === "fr" ? "Französisch" : "Englisch"}</span><span class="muted" style="font-weight:700;font-size:.9rem">${R.retry ? "Fehler wiederholen" : modeName} · ${label}</span>
-      <span class="spacer"></span><span class="num muted" style="font-weight:700">${R.right} / ${R.n} richtig</span><button class="btn small" data-act="vtStop">Beenden</button></div>
+      <span class="spacer"></span><span class="num muted" style="font-weight:700">${t.tab ? `${R.cellsRight} / ${R.cells} Felder` : `${R.right} / ${R.n} richtig`}</span><button class="btn small" data-act="vtStop">Beenden</button></div>
     ${ask}${fb}</div></section>`;
 }
 function vtSetupView(lang) {
@@ -3086,8 +3269,9 @@ function vtSetupView(lang) {
       ${yearSel}
       <div class="cfg-group"><span class="eyebrow">Übung</span><div class="modes vt-modes">${Object.entries(modes).map(([k, [n, d]]) =>
         `<button class="mode" data-act="vtMode" data-k="${k}" aria-pressed="${cur === k}"><b>${n}</b><span>${d}</span></button>`).join("")}</div></div>
-      <div class="cfg-group"><span class="eyebrow">Rundenlänge</span><div class="seg">${[[10, "10 Fragen"], [20, "20 Fragen"], [0, "Endlos"]]
-        .map(([k, l]) => `<button data-act="vtSize" data-k="${k}" aria-pressed="${S.vt.size === k}">${l}</button>`).join("")}</div></div>
+      <div class="cfg-group"><span class="eyebrow">Rundenlänge</span><div class="seg">${cur === "tab"
+        ? [[3, "3 Verben"], [5, "5 Verben"], [10, "10 Verben"], [0, "Endlos"]].map(([k, l]) => `<button data-act="vtTSize" data-k="${k}" aria-pressed="${S.vt.tsize === k}">${l}</button>`).join("")
+        : [[10, "10 Fragen"], [20, "20 Fragen"], [0, "Endlos"]].map(([k, l]) => `<button data-act="vtSize" data-k="${k}" aria-pressed="${S.vt.size === k}">${l}</button>`).join("")}</div></div>
       <div class="row"><button class="btn primary big" data-act="vtStart">Üben starten</button><span class="muted">Richtige Antworten zählen für dein Tagesziel und deine Lernserie.</span></div>
     </div></section>
     <section class="card"><div class="card-head"><h2>Nachschlagen</h2><span class="muted" style="font-size:.88rem">${lang === "fr" ? "Antippen zeigt alle Formen" : "Alle Formen auf einen Blick"}</span></div>
@@ -3377,8 +3561,8 @@ const A = {
   secLang(t) { S.secLang = t.dataset.k; render(); },
   override() { overrideCorrect(); },
   vtab(t) { S.vocabTab = t.dataset.k; S.confirm = null; if (S.vocabTab === "invites") A.nav({ dataset: { v: "vocab" } }); else render(); },
-  openSec(t) { S.openSection = t.dataset.id; S.shareOpen = false; S.confirm = null; render(); window.scrollTo({ top: 0 }); },
-  closeSec() { S.openSection = null; S.shareOpen = false; S.confirm = null; render(); },
+  openSec(t) { S.openSection = t.dataset.id; S.shareOpen = false; S.renameSec = false; S.confirm = null; render(); window.scrollTo({ top: 0 }); },
+  closeSec() { S.openSection = null; S.shareOpen = false; S.renameSec = false; S.confirm = null; render(); },
   askConfirm(t) { S.confirm = t.dataset.k; render(); },
   cancelConfirm() { S.confirm = null; render(); },
   delVocab(t) {
@@ -3455,13 +3639,15 @@ const A = {
   vtMode(t) { S.vt.mode[S.zone] = t.dataset.k; render(); },
   vtYear(t) { S.vt.year = +t.dataset.k; render(); },
   vtSize(t) { S.vt.size = +t.dataset.k; render(); },
+  renameSec(t) { S.renameSec = !!t.dataset.k; render(); if (S.renameSec) { const i = $("#rn-name"); if (i) { i.focus(); i.select(); } } },
+  vtTSize(t) { S.vt.tsize = +t.dataset.k; render(); },
   vtStart() { if (S.zone === "fr" || S.zone === "en") S.vt.lang = S.zone; vtStart(); window.scrollTo({ top: 0 }); },
   vtNext() { vtNext(); },
   vtStop() { const R = S.vt.run; if (!R) return; clearTimeout(R.timer); if (R.n) { R.finished = true; flush(); } else S.vt.run = null; render(); },
   vtLeave() { const R = S.vt.run; if (R) clearTimeout(R.timer); S.vt.run = null; render(); window.scrollTo({ top: 0 }); },
   vtRetry() {
     const R = S.vt.run; if (!R || !R.wrongs.length) return;
-    S.vt.run = { lang: R.lang, mode: R.mode, size: R.wrongs.length, n: 0, right: 0, queue: shuffle(R.wrongs.map(w => w.vid)), cur: null, state: "ask", wrongs: [], retry: true, finished: false };
+    S.vt.run = { lang: R.lang, mode: R.mode, size: R.wrongs.length, cells: 0, cellsRight: 0, n: 0, right: 0, queue: shuffle(R.wrongs.map(w => w.vid)), cur: null, state: "ask", wrongs: [], retry: true, finished: false };
     vtNext(); window.scrollTo({ top: 0 });
   },
   vtOverride() {
@@ -3611,6 +3797,13 @@ function parseVocabText(text) {
 
 /* ---------- forms ---------- */
 const F = {
+  vtab(f) { vtSubmitTable(f); },
+  async renameSec(f) {
+    const s = S.sections.find(x => x.id === S.openSection); if (!s) return;
+    const name = (f.querySelector("#rn-name").value || "").trim().slice(0, 60);
+    if (!name) { toast("Bitte gib einen Namen ein."); return; }
+    s.name = name; S.renameSec = false; markDirty("sec:" + s.id); await flush(); render(); toast("Abschnitt umbenannt.");
+  },
   verb(f) { const a = f.querySelector("#vt-a"), b = f.querySelector("#vt-b"); vtSubmit(a ? a.value : "", b ? b.value : ""); },
   login: f => doLogin(f),
   setup: f => doSetup(f),
