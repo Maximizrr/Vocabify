@@ -1278,6 +1278,17 @@ body.has-pet .startbar{bottom:calc(110px + env(safe-area-inset-bottom,0px))}
 .gq-opt.right{opacity:1;border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--surface));color:var(--good);font-weight:600}
 .gq-opt.wrong{opacity:1;border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--surface));color:var(--bad);text-decoration:line-through}
 .gq-ex{margin:.6rem 0 0;font-size:.9rem;color:var(--muted)}
+.nb-big{font-size:clamp(2.6rem,8vw,4rem);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.nb-big sup,.nb-tables sup,.sol-chip sup,.sol sup,.vt-wrong sup{font-size:.55em}
+.nb-listen .ico{width:20px;height:20px;vertical-align:-4px;margin-right:.3rem}
+.nb-tables{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;align-items:start}
+.nb-tables .table-wrap{max-height:520px;overflow:auto}
+.nb-tables td.num{font-variant-numeric:tabular-nums;width:7rem}
+.prep-btns{display:flex;gap:.8rem}
+.prep-btns .btn{min-width:110px;font-size:1.3rem}
+.vt-prep{font-size:clamp(1.4rem,4vw,2rem)}
+.prep-row{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) auto;gap:.8rem;align-items:center;padding:.6rem .9rem}
+.lb-hero.nb{background:linear-gradient(120deg,color-mix(in srgb,var(--c-teal,#14b8a6) 14%,var(--surface)),var(--surface) 70%)}
 .vt-filter{display:flex;gap:.5rem;flex-wrap:wrap}
 /* Admin */
 .adm-block{border-top:1px solid var(--line);padding-top:1rem;margin-top:1rem}
@@ -1387,7 +1398,7 @@ function buildIntro(kind, el) {
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-const APP_VERSION = "2.0.0";
+const APP_VERSION = "2.0.1";
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
   authDomain: "vocabify-8abb9.firebaseapp.com",
@@ -1398,6 +1409,7 @@ const FIREBASE_CONFIG = {
 };
 const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
 const CHANGELOG = [
+  { v: "2.0.1", items: ["Lernbereich Französisch: genau die Verben aus dem Buch (Seiten 154–157)", "Neue Verbübungen: Impératif und „à oder de?“ (Verben mit indirektem Objekt)", "Verbtabellen zeigen jetzt auch den Impératif", "Neu im Lernbereich: Zahlen lernen auf Französisch und Englisch, mit Zahl → Wort, Wort → Zahl, Hören und Ordnungszahlen"] },
   { v: "2.0.0", items: ["Neues Logo und neue App-Symbole", "Komplett neues Design mit bewegter Menüleiste und neuer Menü-Reihenfolge: Home, Shop, Lernen, Vokabeln, Lernbereich, Einstellungen", "Home: Tagesübersicht mit Fortschrittsring, Truhenpfad und direktem Weg zum Lernen", "Lernen: Auswahl in drei übersichtlichen Schritten mit Startleiste", "Shop: neue Kategorie „Gestaltung“ mit Farben, eckiger oder runder Form und Liquid Glass", "Shop: neue Kategorie „Ladescreen“ mit fünf neuen Ladeanimationen und Vorschau", "Lernbereich: Sprache wählen, Grammatik-Erklärungen mit Übungen, Pronomen für Französisch, unregelmäßige Verben", "Feedback findest du jetzt in den Einstellungen"] },
   { v: "1.3.3", items: ["Abschnitte umbenennen", "Neuer Modus bei den französischen Verben: Verbtabelle. Erst das Verb übersetzen, dann alle Formen auf Deutsch und Französisch ausfüllen"] },
   { v: "1.3.2", items: ["Aus dem Wiki wird der Lernbereich, für alle gleich", "Französische Verben (1.–3. Lernjahr): Präsens ausfüllen, Passé composé und Übersetzen", "Englisch: alle wichtigen unregelmäßigen Verben üben", "Verbtabellen zum Nachschlagen mit Suche", "Lerntricks der Community findest du jetzt im Lernbereich"] },
@@ -1615,7 +1627,7 @@ const Store = {
 const S = {
   me: null, sections: [], articles: [], invites: [], accounts: [],
   view: "home", vocabTab: "sections", openSection: null, statsFilter: "all", statsLang: "", secLang: "",
-  wikiTab: "list", zone: "fr", lb: { page: "home", quiz: null }, setTab: "general", vt: { lang: "fr", mode: { fr: "pres", en: "forms" }, year: 3, irr: true, size: 10, tsize: 5, run: null }, openArticle: null, adminTab: "users",
+  wikiTab: "list", zone: "fr", lb: { page: "home", quiz: null }, setTab: "general", nb: { lang: "fr", mode: "n2w", range: "r20", size: 10, run: null }, vt: { lang: "fr", mode: { fr: "pres", en: "forms" }, year: 3, irr: false, size: 10, tsize: 5, run: null }, openArticle: null, adminTab: "users",
   cfg: { secs: [], dir: "f2d", mode: "general", size: 20, lang: "" },
   learn: null, confirm: null, shareOpen: false, draft: null,
   loginErr: "", setup: false,
@@ -1882,7 +1894,11 @@ function lbHome(lang) {
   const nVerbs = fr ? FR_VERBS.filter(v => v.irr).length : EN_VERBS.length;
   const verbs = `<button class="lb-hero ${lang}" data-act="lbOpen" data-k="verbs">
       <span class="lb-hero-ico" aria-hidden="true">${fr ? "🔤" : "📚"}</span>
-      <span class="lb-t"><b>${fr ? "Unregelmäßige Verben üben" : "Irregular verbs üben"}</b><span>${fr ? `${nVerbs} unregelmäßige Verben (dazu ${FR_VERBS.length - nVerbs} regelmäßige): Präsens ausfüllen, Passé composé, Verbtabelle, Übersetzen und Nachschlagen` : `${nVerbs} Verben: Formen ausfüllen, Übersetzen und Nachschlagen`}</span></span>
+      <span class="lb-t"><b>${fr ? "Verben üben" : "Irregular verbs üben"}</b><span>${fr ? `Alle ${FR_VERBS.length} Verben aus dem Buch (S. 154–157), davon ${nVerbs} unregelmäßige: Präsens, Passé composé, Impératif, Verbtabelle, Übersetzen und Verben mit à/de` : `${nVerbs} Verben: Formen ausfüllen, Übersetzen und Nachschlagen`}</span></span>
+      <span class="btn primary">Üben</span></button>
+    <button class="lb-hero ${lang} nb" data-act="lbOpen" data-k="numbers">
+      <span class="lb-hero-ico" aria-hidden="true">🔢</span>
+      <span class="lb-t"><b>Zahlen lernen</b><span>${fr ? "Von zéro bis deux-millions, dazu die Ordnungszahlen: schreiben, lesen und hören" : "From zero to two million, plus ordinal numbers: schreiben, lesen und hören"}</span></span>
       <span class="btn primary">Üben</span></button>`;
   const gram = (fr ? GRAM_FR : GRAM_EN).map(lbCard).join("");
   const pron = fr ? `<section><div class="card-head"><h2>Pronomen</h2><span class="muted" style="font-size:.88rem">5 Themen mit Übung</span></div><div class="lb-grid">${PRON_FR.map(lbCard).join("")}</div></section>` : "";
@@ -1891,6 +1907,169 @@ function lbHome(lang) {
     ${pron}
     <button class="lb-tricks" data-act="lbOpen" data-k="tricks"><span aria-hidden="true">💡</span><span class="lb-t"><b>Lerntricks der Community</b><span>Artikel lesen oder selbst einen schreiben</span></span><span class="lb-arrow" aria-hidden="true">›</span></button>`;
 }
+/* ---------- Lernbereich: Zahlen lernen ---------- */
+const FR_U = ["zéro", "un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf", "dix", "onze", "douze", "treize", "quatorze", "quinze", "seize", "dix-sept", "dix-huit", "dix-neuf"];
+const FR_T = { 2: "vingt", 3: "trente", 4: "quarante", 5: "cinquante", 6: "soixante" };
+function fr99(n) {
+  if (n < 20) return FR_U[n];
+  if (n < 70) { const t = Math.floor(n / 10), u = n % 10; return FR_T[t] + (u === 0 ? "" : u === 1 ? "-et-un" : "-" + FR_U[u]); }
+  if (n < 80) { const u = n - 60; return "soixante-" + (u === 11 ? "et-onze" : FR_U[u]); }
+  const u = n - 80; return u === 0 ? "quatre-vingts" : "quatre-vingt-" + FR_U[u];
+}
+/* Schreibweise wie im Buch: überall Bindestriche (z. B. deux-cent-un), „un million“ */
+function frNum(n) {
+  if (n < 100) return fr99(n);
+  if (n < 1000) { const h = Math.floor(n / 100), r = n % 100; const s = h === 1 ? "cent" : FR_U[h] + "-cent" + (r === 0 ? "s" : ""); return r ? s + "-" + fr99(r) : s; }
+  if (n < 1e6) { const th = Math.floor(n / 1000), r = n % 1000; const s = th === 1 ? "mille" : frNum(th).replace(/(vingt|cent)s$/, "$1") + "-mille"; return r ? s + "-" + frNum(r) : s; }
+  const m = Math.floor(n / 1e6), r = n % 1e6; const s = m === 1 ? "un million" : frNum(m) + "-millions"; return r ? s + " " + frNum(r) : s;
+}
+function frOrd(n, fem) {
+  if (n === 1) return fem ? "première" : "premier";
+  let w = frNum(n).replace(/(vingt|cent)s$/, "$1");
+  if (/cinq$/.test(w)) return w + "uième";
+  if (/neuf$/.test(w)) return w.slice(0, -1) + "vième";
+  if (/e$/.test(w)) w = w.slice(0, -1);
+  return w + "ième";
+}
+const EN_U = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+const EN_T = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+function en99(n) { return n < 20 ? EN_U[n] : EN_T[Math.floor(n / 10)] + (n % 10 ? "-" + EN_U[n % 10] : ""); }
+function enNum(n) {
+  if (n < 100) return en99(n);
+  if (n < 1000) { const h = Math.floor(n / 100), r = n % 100; return EN_U[h] + " hundred" + (r ? " and " + en99(r) : ""); }
+  const big = n < 1e6 ? [1000, "thousand"] : [1e6, "million"];
+  const q = Math.floor(n / big[0]), r = n % big[0];
+  return enNum(q) + " " + big[1] + (r ? (r < 100 ? " and " : " ") + enNum(r) : "");
+}
+const EN_ORD = { one: "first", two: "second", three: "third", five: "fifth", eight: "eighth", nine: "ninth", twelve: "twelfth" };
+function enOrd(n) {
+  const w = enNum(n), m = w.match(/^(.*?)([a-z]+)$/), last = m[2];
+  const o = EN_ORD[last] || (last.endsWith("y") ? last.slice(0, -1) + "ieth" : last + "th");
+  return m[1] + o;
+}
+function ordSuffix(lang, n, fem) {
+  if (lang === "fr") return n === 1 ? (fem ? "1<sup>re</sup>" : "1<sup>er</sup>") : n + "<sup>e</sup>";
+  const s = n % 100 >= 11 && n % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] || "th";
+  return n + "<sup>" + s + "</sup>";
+}
+/* Vergleich: Bindestriche, Leerzeichen, „and“, „a hundred“ und „une“ egal */
+function nbCompact(s, lang) {
+  let t = vtNorm(s).replace(/^(le|la|l'|the)\s*/, "");
+  if (lang === "fr") t = t.replace(/\bune\b/g, "un").replace(/\bpremière\b/g, "premier").replace(/\bunième\b/g, "unième");
+  else t = t.replace(/\band\b/g, " ").replace(/\ba (hundred|thousand|million)/g, "one $1");
+  return t.replace(/[\s\-‐–]+/g, "");
+}
+function nbParse(s) { const t = String(s || "").replace(/[\s.,'’]/g, ""); return /^\d+$/.test(t) ? +t : NaN; }
+const NB_RANGES = {
+  r20: ["0 bis 20", 0, 20], r69: ["21 bis 69", 21, 69], r99: ["70 bis 99", 70, 99], r100: ["0 bis 100", 0, 100],
+  r1000: ["100 bis 1000", 100, 1000], big: ["Große Zahlen", 1000, 2000000]
+};
+const NB_MODES = {
+  n2w: ["Zahl → Wort", "Schreib die Zahl aus"], w2n: ["Wort → Zahl", "Lies das Zahlwort und tippe die Ziffern"],
+  hear: ["Hören", "Hör dir die Zahl an und tippe sie"], ord: ["Ordnungszahlen", "1er → premier, 3e → troisième …"]
+};
+function nbWord(lang, n) { return lang === "fr" ? frNum(n) : enNum(n); }
+function nbPickBig() {
+  const r = Math.random();
+  if (r < .2) return [1000, 2000, 1000000, 2000000, 10000, 100000][Math.floor(Math.random() * 6)];
+  if (r < .55) return (1 + Math.floor(Math.random() * 99)) * 1000;
+  if (r < .8) return 1000 + Math.floor(Math.random() * 9000);
+  return 10000 + Math.floor(Math.random() * 990000);
+}
+function nbDeck(range, mode) {
+  if (mode === "ord") return shuffle([...Array(21).keys()].map(i => i + 1).concat([30, 31, 50, 100]));
+  if (range === "big") return Array.from({ length: 40 }, nbPickBig);
+  const [, a, b] = NB_RANGES[range];
+  if (b - a > 120) return shuffle(Array.from({ length: 40 }, () => a + Math.floor(Math.random() * (b - a + 1))).concat([100, 101, 110, 200, 201, 1000]).filter(n => n >= a && n <= b));
+  return shuffle([...Array(b - a + 1).keys()].map(i => i + a));
+}
+function nbStart() {
+  const lang = S.nb.lang, mode = S.nb.mode, range = S.nb.range;
+  if (mode === "hear" && !("speechSynthesis" in window)) { toast("Dein Browser kann leider nicht vorlesen."); return; }
+  S.nb.run = { lang, mode, range, size: S.nb.size, n: 0, right: 0, queue: nbDeck(range, mode), cur: null, state: "ask", wrongs: [], finished: false };
+  nbNext();
+}
+function nbNext() {
+  const R = S.nb.run; if (!R) return;
+  clearTimeout(R.timer);
+  if (R.size && R.n >= R.size) { R.finished = true; flush(); render(); return; }
+  if (!R.queue.length) R.queue = nbDeck(R.range, R.mode);
+  const n = R.queue.shift(), fem = R.mode === "ord" && n === 1 && Math.random() < .5;
+  const word = R.mode === "ord" ? (R.lang === "fr" ? frOrd(n, fem) : enOrd(n)) : nbWord(R.lang, n);
+  R.cur = { n, fem, word }; R.state = "ask"; R.given = ""; R.coin = 0;
+  render();
+  const i = $("#nb-a"); if (i) i.focus({ preventScroll: true });
+  if (R.mode === "hear") setTimeout(() => speak(String(n), R.lang), 250);
+}
+function nbSubmit(given) {
+  const R = S.nb.run; if (!R || R.state !== "ask") return;
+  const t = R.cur;
+  const ok = R.mode === "w2n" || R.mode === "hear" ? nbParse(given) === t.n : !!vtNorm(given) && nbCompact(given, R.lang) === nbCompact(t.word, R.lang);
+  R.given = given; R.n++; bumpHist(ok);
+  if (ok) {
+    R.right++; R.state = "right";
+    R.coin = verbCorrect("nb:" + R.lang + ":" + R.mode + ":" + t.n);
+    R.timer = setTimeout(() => { if (S.nb.run === R && R.state === "right") nbNext(); }, 1500);
+  } else { R.state = "wrong"; R.wrongs.push(t); }
+  markDirty("me"); render();
+  if (ok && R.coin) { document.querySelectorAll(".coin-pill .num").forEach(e => { e.textContent = coinsTotal() - R.coin; }); flyCoins($(".coin-pop .coin"), R.coin, syncCoins); }
+  if (!ok) { const q = $(".vt-quiz"); if (q) { q.classList.add("shake"); setTimeout(() => q.classList.remove("shake"), 400); } }
+}
+function nbShow(R, t) { return R.mode === "ord" ? `${(R.lang === "fr" ? (t.fem ? "la " : "le ") : "the ")}${ordSuffix(R.lang, t.n, t.fem)} = ${esc(t.word)}` : `${t.n.toLocaleString("de-DE")} = ${esc(t.word)}`; }
+function nbRunView() {
+  const R = S.nb.run, ln = R.lang, lname = ln === "fr" ? "Französisch" : "Englisch";
+  if (R.finished) {
+    const pct = R.n ? Math.round(R.right / R.n * 100) : 0;
+    return `<section class="card summary"><p class="eyebrow">Zahlen · ${NB_MODES[R.mode][0]}</p>
+      <h1>${pct >= 90 ? "Hervorragend!" : pct >= 70 ? "Stark gemacht!" : pct >= 50 ? "Gut geübt!" : "Dranbleiben lohnt sich!"}</h1>
+      <div class="score">${R.right} / ${R.n}</div><p class="muted">${pct} % richtig</p>
+      ${R.wrongs.length ? `<div class="wrong-list"><h3 style="margin-bottom:.6rem">Diese Zahlen solltest du wiederholen</h3><ul class="vt-wrong">${R.wrongs.map(w => `<li>${nbShow(R, w)}</li>`).join("")}</ul></div>` : (R.n ? `<p class="fb right" style="justify-content:center">Keine Fehler in dieser Runde!</p>` : "")}
+      <div class="row" style="justify-content:center"><button class="btn primary big" data-act="nbStart">Neue Runde</button><button class="btn big" data-act="nbLeave">Zurück</button></div></section>`;
+  }
+  const t = R.cur, ro = R.state !== "ask" ? "readonly" : "";
+  const label = R.size ? `Frage ${Math.min(R.n + (R.state === "ask" ? 1 : 0), R.size)} von ${R.size}` : `${R.n} beantwortet`;
+  let prompt, ph;
+  if (R.mode === "n2w") { prompt = `<p class="eyebrow">Schreib die Zahl auf ${lname}</p><div class="quiz-word nb-big">${t.n.toLocaleString("de-DE")}</div>`; ph = ln === "fr" ? "z. B. soixante-quatorze" : "z. B. seventy-four"; }
+  else if (R.mode === "w2n") { prompt = `<p class="eyebrow">Welche Zahl ist das?</p><div class="quiz-word">${esc(t.word)}${spkBtn(String(t.n), ln, "big")}</div>`; ph = "Zahl in Ziffern"; }
+  else if (R.mode === "hear") { prompt = `<p class="eyebrow">Hör genau hin und tippe die Zahl</p><div class="quiz-word"><button class="btn primary big nb-listen" data-act="nbSay">${icon("speaker")} Nochmal anhören</button></div>`; ph = "Zahl in Ziffern"; }
+  else { prompt = `<p class="eyebrow">Schreib die Ordnungszahl aus</p><div class="quiz-word nb-big">${ln === "fr" ? (t.fem ? "la " : "le ") : "the "}${ordSuffix(ln, t.n, t.fem)}</div>`; ph = ln === "fr" ? "z. B. troisième" : "z. B. third"; }
+  const num = R.mode === "w2n" || R.mode === "hear";
+  let fb = "";
+  const sol = `${nbShow(R, t)}${spkBtn(R.mode === "ord" ? t.word : String(t.n), ln)}`;
+  if (R.state === "right") fb = `<div class="fb right" role="status">Richtig!${R.coin ? `<span class="coin-pop">${COIN}+${R.coin}</span>` : `<span class="muted" style="font-weight:600">Heute schon belohnt</span>`}
+      <span class="spacer"></span><button class="btn small" id="nextBtn" data-act="nbNext">Weiter</button></div><div class="all-sol"><span class="muted">Lösung:</span><span class="sol-chip hit">${sol}</span></div>`;
+  if (R.state === "wrong") fb = `<div class="fb wrong" role="status"><span>Leider falsch. Richtig ist: <span class="sol">${sol}</span></span><span class="spacer"></span><button class="btn small primary" id="nextBtn" data-act="nbNext">Weiter</button></div>`;
+  return `<section class="card"><div class="quiz vt-quiz">
+    <div class="row"><span class="lang-tag ${ln}">${lname}</span><span class="muted" style="font-weight:700;font-size:.9rem">Zahlen · ${NB_MODES[R.mode][0]} · ${label}</span>
+      <span class="spacer"></span><span class="num muted" style="font-weight:700">${R.right} / ${R.n} richtig</span><button class="btn small" data-act="nbStop">Beenden</button></div>
+    <div class="vt-prompt">${prompt}</div>
+    <form data-form="nb" autocomplete="off"><input class="input" id="nb-a" placeholder="${ph}" ${num ? 'inputmode="numeric"' : 'autocapitalize="none" spellcheck="false"'} value="${esc(R.given || "")}" ${ro}>
+      ${R.state === "ask" ? `<button class="btn primary big" type="submit">Prüfen</button>` : ""}</form>
+    ${fb}</div></section>`;
+}
+function nbTable(lang) {
+  const card = [...Array(23).keys()].concat([30, 40, 50, 60, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 90, 91, 100, 101, 102, 110, 200, 201, 1000, 2000, 1000000, 2000000]);
+  const ord = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 21];
+  const w = n => lang === "fr" && (n === 1 || n === 21 || n === 81) ? nbWord(lang, n) + " / " + nbWord(lang, n).replace(/un$/, "une") : nbWord(lang, n);
+  return `<div class="nb-tables"><div class="table-wrap"><table class="vt-table"><thead><tr><th>Zahl</th><th>${lang === "fr" ? "Les nombres cardinaux" : "Cardinal numbers"}</th></tr></thead><tbody>
+      ${card.map(n => `<tr><td class="num"><b>${n.toLocaleString("de-DE")}</b></td><td>${esc(w(n))}${spkBtn(String(n), lang, "sm")}</td></tr>`).join("")}</tbody></table></div>
+    <div class="table-wrap"><table class="vt-table"><thead><tr><th></th><th>${lang === "fr" ? "Les nombres ordinaux" : "Ordinal numbers"}</th></tr></thead><tbody>
+      ${(lang === "fr" ? [[1, false], [1, true], ...ord.slice(1).map(n => [n, false])] : ord.map(n => [n, false])).map(([n, f]) => `<tr><td><b>${lang === "fr" ? (f ? "la " : n === 1 ? "le " : "le/la ") : "the "}${ordSuffix(lang, n, f)}</b></td><td>${esc(lang === "fr" ? (n === 1 ? "" : "le/la ") + (n === 1 ? (f ? "la première" : "le premier") : frOrd(n)) : enOrd(n))}</td></tr>`).join("")}</tbody></table></div></div>
+    ${lang === "fr" ? `<div class="gtip"><b>Merke:</b> 70 = soixante-dix (60 + 10), 80 = quatre-vingts (4 × 20), 90 = quatre-vingt-dix (4 × 20 + 10). Bei 21, 31, 41, 51, 61 und 71 steht „et“: vingt-et-un, soixante-et-onze, aber quatre-vingt-un. Quatre-vingts und deux-cents bekommen nur ein -s, wenn nichts mehr folgt. Mille bleibt immer ohne -s. Die Schreibung mit Bindestrichen überall ist erlaubt, ohne (vingt et un, deux cents) zählt aber auch.</div>` : `<div class="gtip"><b>Merke:</b> Zwischen Zehner und Einer steht ein Bindestrich: twenty-one. Nach hundred sagt man im britischen Englisch „and“: one hundred and five. Hundred, thousand und million bekommen nach einer Zahl kein -s: two hundred, three thousand.</div>`}`;
+}
+function nbSetupView(lang) {
+  const hasSpeech = "speechSynthesis" in window;
+  const modes = Object.entries(NB_MODES).filter(([k]) => k !== "hear" || hasSpeech).map(([k, [n, d]]) => [k, n, k === "ord" && lang === "en" ? "1st → first, 3rd → third …" : d]);
+  return `${lbBack()}<section class="card"><div class="cfg">
+      <div class="card-head" style="margin:0"><h2>Zahlen lernen</h2><span class="muted" style="font-size:.88rem">${lang === "fr" ? "Französisch" : "Englisch"}</span></div>
+      <div class="cfg-group"><span class="eyebrow">Übung</span><div class="modes vt-modes">${modes.map(([k, n, d]) => `<button class="mode" data-act="nbMode" data-k="${k}" aria-pressed="${S.nb.mode === k}"><b>${n}</b><span>${d}</span></button>`).join("")}</div></div>
+      ${S.nb.mode === "ord" ? "" : `<div class="cfg-group"><span class="eyebrow">Zahlenbereich</span><div class="seg">${Object.entries(NB_RANGES).map(([k, [l]]) => `<button data-act="nbRange" data-k="${k}" aria-pressed="${S.nb.range === k}">${l}</button>`).join("")}</div></div>`}
+      <div class="cfg-group"><span class="eyebrow">Rundenlänge</span><div class="seg">${[[10, "10 Fragen"], [20, "20 Fragen"], [0, "Endlos"]].map(([k, l]) => `<button data-act="nbSize" data-k="${k}" aria-pressed="${S.nb.size === k}">${l}</button>`).join("")}</div></div>
+      <div class="row"><button class="btn primary big" data-act="nbStart">Üben starten</button><span class="muted">Richtige Antworten zählen für dein Tagesziel und deine Lernserie.</span></div>
+    </div></section>
+    <section class="card"><div class="card-head"><h2>Nachschlagen</h2><span class="muted" style="font-size:.88rem">${lang === "fr" ? "Wie im Buch auf Seite 158" : "Die wichtigsten Zahlen"}</span></div>${nbTable(lang)}</section>`;
+}
+
 function lbBack(label) { return `<div class="row"><button class="btn small ghost" data-act="lbOpen" data-k="home">← ${label || "Lernbereich"}</button></div>`; }
 function lbTopicView(t) {
   const q = S.lb.quiz && S.lb.quiz.id === t.id ? S.lb.quiz : (S.lb.quiz = { id: t.id, ans: {}, order: t.quiz.map((_, i) => i) });
@@ -1933,6 +2112,11 @@ function wikiView() {
   if (page === "tricks") return tricksView();
   if (!lang) return lbLangPicker();
   S.zone = lang;
+  if (page === "numbers") {
+    if (S.nb.run && S.nb.run.lang === lang) return lbHead() + nbRunView();
+    S.nb.run = null; S.nb.lang = lang; if (lang === "en" && S.nb.mode === "hear" && !("speechSynthesis" in window)) S.nb.mode = "n2w";
+    return nbSetupView(lang);
+  }
   if (page === "verbs") {
     if (S.vt.run) return lbHead() + vtRunView();
     return `${lbBack()}${vtSetupView(lang)}`;
@@ -3529,116 +3713,110 @@ const FONTS = { sans: "Standard", serif: "Buch", hand: "Handschrift", round: "Ru
 /* ---------- Lernbereich: Verbtrainer (für alle gleich) ---------- */
 /* Französisch: [Infinitiv, Deutsch, Lernjahr, Hilfsverb a/e, Partizip (leer = regelmäßig), Präsens je|tu|il|nous|vous|ils (leer = regelmäßig)] */
 const FR_VERB_DATA = [
-  ["être", "sein", 1, "a", "été", "suis|es|est|sommes|êtes|sont"],
+  /* Hilfsverben (S. 154) */
   ["avoir", "haben", 1, "a", "eu", "ai|as|a|avons|avez|ont"],
-  ["aller", "gehen, fahren", 1, "e", "allé", "vais|vas|va|allons|allez|vont"],
-  ["faire", "machen, tun", 1, "a", "fait", "fais|fais|fait|faisons|faites|font"],
-  ["parler", "sprechen, reden", 1, "a"],
-  ["aimer", "mögen, lieben", 1, "a"],
-  ["adorer", "sehr gern mögen, lieben", 1, "a"],
-  ["détester", "hassen, nicht mögen", 1, "a"],
-  ["habiter", "wohnen", 1, "a"],
-  ["jouer", "spielen", 1, "a"],
+  ["être", "sein", 1, "a", "été", "suis|es|est|sommes|êtes|sont"],
+  /* regelmäßige Verben auf -er (S. 154) */
   ["regarder", "ansehen, anschauen", 1, "a"],
-  ["écouter", "zuhören, anhören, hören", 1, "a"],
-  ["travailler", "arbeiten", 1, "a"],
-  ["chercher", "suchen", 1, "a"],
-  ["trouver", "finden", 1, "a"],
-  ["donner", "geben", 1, "a"],
-  ["danser", "tanzen", 1, "a"],
-  ["chanter", "singen", 1, "a"],
-  ["téléphoner", "telefonieren", 1, "a"],
-  ["inviter", "einladen", 1, "a"],
-  ["demander", "fragen", 1, "a"],
-  ["penser", "denken", 1, "a"],
-  ["préparer", "vorbereiten", 1, "a"],
-  ["rencontrer", "treffen, begegnen", 1, "a"],
-  ["visiter", "besichtigen, besuchen", 1, "a"],
+  ["acheter", "kaufen", 1, "a", "", "achète|achètes|achète|achetons|achetez|achètent"],
+  ["mener", "führen", 1, "a", "", "mène|mènes|mène|menons|menez|mènent"],
+  ["appeler", "anrufen, rufen", 1, "a", "", "appelle|appelles|appelle|appelons|appelez|appellent"],
+  ["commencer", "anfangen, beginnen", 1, "a"],
+  ["manger", "essen", 1, "a"],
+  ["corriger", "korrigieren, verbessern", 1, "a"],
+  ["échanger", "tauschen, austauschen", 1, "a"],
+  ["encourager", "ermutigen, anfeuern", 1, "a"],
+  ["nager", "schwimmen", 1, "a"],
+  ["partager", "teilen", 1, "a"],
+  ["ranger", "aufräumen", 1, "a"],
+  ["télécharger", "herunterladen", 1, "a"],
+  ["voyager", "reisen", 1, "a"],
+  ["préférer", "lieber mögen, bevorzugen", 1, "a", "", "préfère|préfères|préfère|préférons|préférez|préfèrent"],
+  ["exagérer", "übertreiben", 1, "a", "", "exagère|exagères|exagère|exagérons|exagérez|exagèrent"],
+  ["répéter", "wiederholen", 1, "a", "", "répète|répètes|répète|répétons|répétez|répètent"],
   ["arriver", "ankommen", 1, "e"],
   ["entrer", "hereinkommen, eintreten", 1, "e"],
-  ["rester", "bleiben", 1, "e"],
+  ["monter", "hinaufgehen, einsteigen", 1, "e"],
   ["rentrer", "nach Hause gehen, zurückkommen", 1, "e"],
-  ["manger", "essen", 1, "a"],
-  ["ranger", "aufräumen", 1, "a"],
-  ["commencer", "anfangen, beginnen", 1, "a"],
-  ["acheter", "kaufen", 1, "a", "", "achète|achètes|achète|achetons|achetez|achètent"],
-  ["préférer", "lieber mögen, bevorzugen", 1, "a", "", "préfère|préfères|préfère|préférons|préférez|préfèrent"],
-  ["s'appeler", "heißen", 1, "e", "", "appelle|appelles|appelle|appelons|appelez|appellent"],
-  ["prendre", "nehmen", 1, "a", "pris", "prends|prends|prend|prenons|prenez|prennent"],
-  ["venir", "kommen", 1, "e", "venu", "viens|viens|vient|venons|venez|viennent"],
-  ["vouloir", "wollen", 1, "a", "voulu", "veux|veux|veut|voulons|voulez|veulent"],
-  ["pouvoir", "können", 1, "a", "pu", "peux|peux|peut|pouvons|pouvez|peuvent"],
+  ["rester", "bleiben", 1, "e"],
+  ["retourner", "zurückkehren", 1, "e"],
+  ["tomber", "fallen, hinfallen", 1, "e"],
+  ["passer", "verbringen, vorbeikommen", 1, "a"],
+  /* Verben mit indirektem Objekt (S. 157) */
+  ["apporter", "mitbringen", 1, "a"],
+  ["demander", "fragen", 1, "a"],
+  ["donner", "geben", 1, "a"],
+  ["expliquer", "erklären", 1, "a"],
+  ["jouer", "spielen", 1, "a"],
+  ["parler", "sprechen, reden", 1, "a"],
+  ["participer", "teilnehmen", 1, "a"],
+  ["penser", "denken", 1, "a"],
+  ["poser", "stellen", 1, "a"],
+  ["prêter", "leihen", 1, "a"],
+  ["téléphoner", "anrufen, telefonieren", 1, "a"],
+  ["discuter", "reden, diskutieren", 1, "a"],
+  /* regelmäßige Verben auf -re (S. 155) */
   ["attendre", "warten, erwarten", 1, "a"],
-  ["répondre", "antworten", 1, "a"],
+  ["défendre", "verteidigen, verbieten", 1, "a"],
   ["descendre", "hinuntergehen, aussteigen", 1, "e"],
-  ["finir", "beenden, aufhören", 2, "a"],
-  ["choisir", "wählen, aussuchen", 2, "a"],
-  ["réussir", "schaffen, gelingen", 2, "a"],
-  ["réfléchir", "nachdenken, überlegen", 2, "a"],
-  ["grandir", "wachsen, groß werden", 2, "a"],
-  ["entendre", "hören", 2, "a"],
-  ["perdre", "verlieren", 2, "a"],
-  ["vendre", "verkaufen", 2, "a"],
-  ["rendre", "zurückgeben", 2, "a"],
-  ["mettre", "legen, stellen, setzen", 2, "a", "mis", "mets|mets|met|mettons|mettez|mettent"],
-  ["dire", "sagen", 2, "a", "dit", "dis|dis|dit|disons|dites|disent"],
-  ["lire", "lesen", 2, "a", "lu", "lis|lis|lit|lisons|lisez|lisent"],
-  ["écrire", "schreiben", 2, "a", "écrit", "écris|écris|écrit|écrivons|écrivez|écrivent"],
-  ["voir", "sehen", 2, "a", "vu", "vois|vois|voit|voyons|voyez|voient"],
-  ["devoir", "müssen", 2, "a", "dû", "dois|dois|doit|devons|devez|doivent"],
-  ["savoir", "wissen", 2, "a", "su", "sais|sais|sait|savons|savez|savent"],
-  ["connaître", "kennen", 2, "a", "connu", "connais|connais|connaît|connaissons|connaissez|connaissent"],
-  ["comprendre", "verstehen", 2, "a", "compris", "comprends|comprends|comprend|comprenons|comprenez|comprennent"],
-  ["apprendre", "lernen", 2, "a", "appris", "apprends|apprends|apprend|apprenons|apprenez|apprennent"],
-  ["boire", "trinken", 2, "a", "bu", "bois|bois|boit|buvons|buvez|boivent"],
-  ["partir", "weggehen, abfahren", 2, "e", "parti", "pars|pars|part|partons|partez|partent"],
-  ["sortir", "ausgehen, hinausgehen", 2, "e", "sorti", "sors|sors|sort|sortons|sortez|sortent"],
-  ["dormir", "schlafen", 2, "a", "dormi", "dors|dors|dort|dormons|dormez|dorment"],
-  ["devenir", "werden", 2, "e", "devenu", "deviens|deviens|devient|devenons|devenez|deviennent"],
-  ["revenir", "zurückkommen", 2, "e", "revenu", "reviens|reviens|revient|revenons|revenez|reviennent"],
-  ["oublier", "vergessen", 2, "a"],
-  ["tomber", "fallen, hinfallen", 2, "e"],
-  ["monter", "hinaufgehen, einsteigen", 2, "e"],
-  ["passer", "verbringen, vorbeigehen", 2, "a"],
-  ["nager", "schwimmen", 2, "a"],
-  ["voyager", "reisen", 2, "a"],
-  ["envoyer", "schicken, senden", 2, "a", "", "envoie|envoies|envoie|envoyons|envoyez|envoient"],
-  ["payer", "bezahlen", 2, "a", "", "paie/paye|paies/payes|paie/paye|payons|payez|paient/payent"],
-  ["essayer", "versuchen, anprobieren", 2, "a", "", "essaie/essaye|essaies/essayes|essaie/essaye|essayons|essayez|essaient/essayent"],
-  ["appeler", "anrufen, rufen", 2, "a", "", "appelle|appelles|appelle|appelons|appelez|appellent"],
-  ["se lever", "aufstehen", 2, "e", "", "lève|lèves|lève|levons|levez|lèvent"],
-  ["se réveiller", "aufwachen", 2, "e"],
-  ["se coucher", "ins Bett gehen, sich hinlegen", 2, "e"],
-  ["se laver", "sich waschen", 2, "e"],
-  ["s'habiller", "sich anziehen", 2, "e"],
-  ["se dépêcher", "sich beeilen", 2, "e"],
-  ["croire", "glauben", 3, "a", "cru", "crois|crois|croit|croyons|croyez|croient"],
-  ["recevoir", "bekommen, erhalten", 3, "a", "reçu", "reçois|reçois|reçoit|recevons|recevez|reçoivent"],
-  ["ouvrir", "öffnen", 3, "a", "ouvert", "ouvre|ouvres|ouvre|ouvrons|ouvrez|ouvrent"],
-  ["offrir", "schenken, anbieten", 3, "a", "offert", "offre|offres|offre|offrons|offrez|offrent"],
-  ["vivre", "leben", 3, "a", "vécu", "vis|vis|vit|vivons|vivez|vivent"],
-  ["suivre", "folgen", 3, "a", "suivi", "suis|suis|suit|suivons|suivez|suivent"],
-  ["rire", "lachen", 3, "a", "ri", "ris|ris|rit|rions|riez|rient"],
-  ["courir", "laufen, rennen", 3, "a", "couru", "cours|cours|court|courons|courez|courent"],
-  ["conduire", "fahren (Auto), lenken", 3, "a", "conduit", "conduis|conduis|conduit|conduisons|conduisez|conduisent"],
-  ["tenir", "halten", 3, "a", "tenu", "tiens|tiens|tient|tenons|tenez|tiennent"],
-  ["servir", "servieren, dienen", 3, "a", "servi", "sers|sers|sert|servons|servez|servent"],
-  ["sentir", "fühlen, riechen", 3, "a", "senti", "sens|sens|sent|sentons|sentez|sentent"],
-  ["jeter", "werfen, wegwerfen", 3, "a", "", "jette|jettes|jette|jetons|jetez|jettent"],
-  ["décider", "entscheiden, beschließen", 3, "a"],
-  ["naître", "geboren werden", 3, "e", "né", "nais|nais|naît|naissons|naissez|naissent"],
-  ["mourir", "sterben", 3, "e", "mort", "meurs|meurs|meurt|mourons|mourez|meurent"],
-  ["se promener", "spazieren gehen", 3, "e", "", "promène|promènes|promène|promenons|promenez|promènent"],
-  ["s'amuser", "sich amüsieren, Spaß haben", 3, "e"],
-  ["se souvenir", "sich erinnern", 3, "e", "souvenu", "souviens|souviens|souvient|souvenons|souvenez|souviennent"]
+  ["entendre", "hören", 1, "a"],
+  ["perdre", "verlieren", 1, "a"],
+  ["rendre", "zurückgeben", 1, "a"],
+  ["répondre", "antworten", 1, "a"],
+  ["vendre", "verkaufen", 1, "a"],
+  /* regelmäßige Verben auf -ir (S. 155) */
+  ["sortir", "ausgehen, hinausgehen", 1, "e", "sorti", "sors|sors|sort|sortons|sortez|sortent"],
+  ["partir", "weggehen, abfahren", 1, "e", "parti", "pars|pars|part|partons|partez|partent"],
+  ["finir", "beenden, aufhören", 1, "a"],
+  ["choisir", "wählen, aussuchen", 1, "a"],
+  ["grandir", "wachsen, groß werden", 1, "a"],
+  ["réussir", "schaffen, gelingen", 1, "a"],
+  /* unregelmäßige Verben (S. 155–156) */
+  ["aller", "gehen, fahren", 1, "e", "allé", "vais|vas|va|allons|allez|vont"],
+  ["devoir", "müssen", 1, "a", "dû", "dois|dois|doit|devons|devez|doivent"],
+  ["dire", "sagen", 1, "a", "dit", "dis|dis|dit|disons|dites|disent"],
+  ["écrire", "schreiben", 1, "a", "écrit", "écris|écris|écrit|écrivons|écrivez|écrivent"],
+  ["faire", "machen, tun", 1, "a", "fait", "fais|fais|fait|faisons|faites|font"],
+  ["lire", "lesen", 1, "a", "lu", "lis|lis|lit|lisons|lisez|lisent"],
+  ["mettre", "legen, stellen, setzen", 1, "a", "mis", "mets|mets|met|mettons|mettez|mettent"],
+  ["pouvoir", "können", 1, "a", "pu", "peux|peux|peut|pouvons|pouvez|peuvent"],
+  ["prendre", "nehmen", 1, "a", "pris", "prends|prends|prend|prenons|prenez|prennent"],
+  ["apprendre", "lernen", 1, "a", "appris", "apprends|apprends|apprend|apprenons|apprenez|apprennent"],
+  ["comprendre", "verstehen", 1, "a", "compris", "comprends|comprends|comprend|comprenons|comprenez|comprennent"],
+  ["venir", "kommen", 1, "e", "venu", "viens|viens|vient|venons|venez|viennent"],
+  ["devenir", "werden", 1, "e", "devenu", "deviens|deviens|devient|devenons|devenez|deviennent"],
+  ["voir", "sehen", 1, "a", "vu", "vois|vois|voit|voyons|voyez|voient"],
+  ["vouloir", "wollen", 1, "a", "voulu", "veux|veux|veut|voulons|voulez|veulent"]
 ];
+/* im Buch als unregelmäßig geführt (dazu die Hilfsverben) */
+const FR_IRR = new Set(["avoir", "être", "aller", "devoir", "dire", "écrire", "faire", "lire", "mettre", "pouvoir", "prendre", "apprendre", "comprendre", "venir", "devenir", "voir", "vouloir"]);
+/* Impératif: Sonderformen; devoir, pouvoir und vouloir werden ohne Befehlsform geübt */
+const FR_IMP_SPECIAL = { avoir: ["aie", "ayons", "ayez"], être: ["sois", "soyons", "soyez"], aller: ["va", "allons", "allez"], devoir: null, pouvoir: null, vouloir: null };
+function frImp(v) {
+  if (v.inf in FR_IMP_SPECIAL) return FR_IMP_SPECIAL[v.inf];
+  if (v.refl) return null;
+  const tu = v.forms[1][0];
+  return [tu.endsWith("es") ? tu.slice(0, -1) : tu, v.forms[3][0], v.forms[4][0]];
+}
+/* Verben mit indirektem Objekt (S. 157): {} markiert die Präposition */
+const FR_PREP_DATA = [
+  ["apporter qc {à} qn", "jdm etw. mitbringen"], ["demander qc {à} qn", "jdn etw. fragen"], ["dire qc {à} qn", "jdm etw. sagen"],
+  ["donner qc {à} qn", "jdm etw. geben"], ["écrire qc {à} qn", "jdm etw. schreiben"], ["expliquer qc {à} qn", "jdm etw. erklären"],
+  ["faire confiance {à} qn", "jdm vertrauen"], ["jouer {à} qc", "(ein Spiel) spielen"], ["mettre la pression {à} qn", "jdn unter Druck setzen"],
+  ["parler {à} qn", "mit jdm sprechen"], ["participer {à} qc", "an etw. teilnehmen"], ["passer le ballon {à} qn", "jdm den Ball zuspielen"],
+  ["penser {à} qn/qc", "an jdn/etw. denken"], ["poser une question {à} qn", "jdm eine Frage stellen"], ["prendre qc {à} qn", "jdm etw. wegnehmen"],
+  ["prêter qc {à} qn", "jdm etw. leihen"], ["répondre {à} qn", "jdm antworten"], ["rendre qc {à} qn", "jdm etw. zurückgeben"],
+  ["téléphoner {à} qn", "jdn anrufen"], ["vendre qc {à} qn", "jdm etw. verkaufen"],
+  ["discuter {de} qc", "über etw. reden"], ["jouer {de} qc", "(ein Instrument) spielen"], ["parler {de} qn/qc", "über jdn/etw. sprechen"], ["sortir {de} qc", "aus etw. herauskommen"]
+];
+const FR_PREP = FR_PREP_DATA.map(([e, de], i) => ({ id: "prep:" + i, expr: e, de, prep: e.match(/\{(.+?)\}/)[1], full: e.replace(/[{}]/g, ""), gap: e.replace(/\{.+?\}/, "___") }));
 const FR_SUBJ = [["je", 0], ["tu", 1], ["il", 2], ["elle", 2], ["nous", 3], ["vous", 4], ["ils", 5], ["elles", 5]];
 const FR_AUX = { a: ["ai", "as", "a", "avons", "avez", "ont"], e: ["suis", "es", "est", "sommes", "êtes", "sont"] };
 const VOWEL_RE = /^[aeiouyhâàéèêëîïôûœ]/i;
 const FR_VERBS = FR_VERB_DATA.map(([inf, de, year, aux, pp, pres]) => {
   const refl = /^(se |s')/.test(inf), base = inf.replace(/^(se |s')/, "");
   const st = base.slice(0, -2), end = base.slice(-2);
-  const irr = !!pp || (!!pres && end !== "er");
+  const irr = FR_IRR.has(inf);
   let forms;
   if (pres) forms = pres.split("|").map(x => x.split("/"));
   else if (end === "er") {
@@ -3672,7 +3850,9 @@ function frTable(v) {
     const sj = (w) => p === 0 && !v.refl && VOWEL_RE.test(w) ? "j'" : subj + " ";
     return `<tr><td>${esc(sj(pr) + v.forms[p].map(f => v.refl ? frReflPron(p, f) + f : f).join(" / "))}</td><td>${esc(sj(pc) + pcShow)}</td></tr>`;
   }).join("");
-  return `<table class="vt-table"><thead><tr><th>Présent</th><th>Passé composé</th></tr></thead><tbody>${rows}</tbody></table>`;
+  const imp = frImp(v);
+  return `<table class="vt-table"><thead><tr><th>Présent</th><th>Passé composé</th></tr></thead><tbody>${rows}
+    ${imp ? `<tr><td colspan="2"><span class="muted">Impératif:</span> ${imp.map(f => esc(f[0].toUpperCase() + f.slice(1)) + " !").join(" · ")}</td></tr>` : ""}</tbody></table>`;
 }
 
 /* Englisch: Infinitiv | Simple Past | Past Participle | Deutsch */
@@ -3792,6 +3972,22 @@ const EN_VERBS = EN_IRR_DATA.split("\n").map(l => { const [inf, past, pp, de] = 
 
 /* Deutsche Präsensformen für die Verbtabelle: [deutscher Infinitiv, Kernverb, unregelmäßige Formen ich|du|er|wir|ihr|sie, Zusatz hinter dem Verb, reflexiv] */
 const DE_VERB_DATA = {
+  "mener": ["führen", "führen"],
+  "corriger": ["korrigieren", "korrigieren"],
+  "échanger": ["tauschen", "tauschen"],
+  "encourager": ["ermutigen", "ermutigen"],
+  "partager": ["teilen", "teilen"],
+  "télécharger": ["herunterladen", "laden", "lade|lädst|lädt|laden|ladet|laden", "herunter"],
+  "exagérer": ["übertreiben", "übertreiben"],
+  "répéter": ["wiederholen", "wiederholen"],
+  "retourner": ["zurückkehren", "kehren", "", "zurück"],
+  "apporter": ["mitbringen", "bringen", "", "mit"],
+  "expliquer": ["erklären", "erklären"],
+  "participer": ["teilnehmen", "nehmen", "nehme|nimmst|nimmt|nehmen|nehmt|nehmen", "teil"],
+  "poser": ["stellen", "stellen"],
+  "prêter": ["leihen", "leihen"],
+  "discuter": ["diskutieren", "diskutieren"],
+  "défendre": ["verteidigen", "verteidigen"],
   "être": ["sein", "sein", "bin|bist|ist|sind|seid|sind"],
   "avoir": ["haben", "haben", "habe|hast|hat|haben|habt|haben"],
   "aller": ["gehen", "gehen"],
@@ -3912,7 +4108,7 @@ function deVerb(v) {
 const FR_ROW = ["je", "tu", "il / elle / on", "nous", "vous", "ils / elles"], FR_ROW_SUBJ = [["je", "j'"], ["tu"], ["il", "elle", "on"], ["nous"], ["vous"], ["ils", "elles"]];
 const DE_ROW = ["ich", "du", "er / sie / es", "wir", "ihr", "sie"];
 const VT_MODES = {
-  fr: { pres: ["Ausfüllen", "Présent: die richtige Form einsetzen"], pc: ["Vergangenheitsform", "Passé composé: Hilfsverb und Partizip"], tab: ["Verbtabelle", "Verb übersetzen, dann alle Formen auf Deutsch und Französisch"], tr: ["Übersetzen", "Deutsch ↔ Französisch"] },
+  fr: { pres: ["Ausfüllen", "Présent: die richtige Form einsetzen"], pc: ["Vergangenheitsform", "Passé composé: Hilfsverb und Partizip"], imp: ["Impératif", "Befehlsform: Regarde ! Regardons ! Regardez !"], tab: ["Verbtabelle", "Verb übersetzen, dann alle Formen auf Deutsch und Französisch"], tr: ["Übersetzen", "Deutsch ↔ Französisch"], prep: ["à oder de?", "Verben mit indirektem Objekt (S. 157)"] },
   en: { forms: ["Formen ausfüllen", "Simple Past und Past Participle"], tr: ["Übersetzen", "Deutsch ↔ Englisch"] }
 };
 function vtNorm(s) { return String(s || "").toLowerCase().normalize("NFC").replace(/[’‘`´]/g, "'").replace(/'\s+/g, "'").replace(/[.!?]+$/g, "").replace(/\s+/g, " ").trim(); }
@@ -3925,10 +4121,20 @@ function vtCheck(given, accepted) {
   if (acc.some(a => vtPlain(a) === vtPlain(g))) return { ok: true, accent: true };
   return { ok: false };
 }
-function vtPool(lang) { return lang === "fr" ? FR_VERBS.filter(v => v.year <= S.vt.year && (!S.vt.irr || v.irr)) : EN_VERBS; }
+function vtPool(lang) {
+  if (lang !== "fr") return EN_VERBS;
+  const mode = S.vt.run ? S.vt.run.mode : S.vt.mode.fr;
+  if (mode === "prep") return FR_PREP;
+  return FR_VERBS.filter(v => (!S.vt.irr || v.irr) && (mode !== "imp" || frImp(v)));
+}
 /* eine Aufgabe erzeugen */
 function vtTask(lang, mode, v) {
   if (mode === "tab") return { vid: v.id, tab: true, show: `${v.inf} = ${v.de}`, sol: v.de };
+  if (mode === "prep") return { vid: v.id, prepQ: true, sol: v.prep, accepted: [v.prep], show: `${v.full} (${v.de})` };
+  if (mode === "imp") {
+    const imp = frImp(v), k = Math.floor(Math.random() * 3), who = ["tu", "nous", "vous"][k], f = imp[k];
+    return { vid: v.id, imp: true, who, hint: v.inf, sol: f, accepted: [f, f + " !"], show: `(${who}) ${f[0].toUpperCase() + f.slice(1)} !` };
+  }
   if (lang === "fr" && (mode === "pres" || mode === "pc")) {
     const si = Math.floor(Math.random() * FR_SUBJ.length), p = FR_SUBJ[si][1];
     const sols = mode === "pres" ? frPresent(v, p) : frPasse(v, si);
@@ -3953,7 +4159,7 @@ function vtStart() {
   S.vt.run = { lang, mode, size: mode === "tab" ? S.vt.tsize : S.vt.size, cells: 0, cellsRight: 0, n: 0, right: 0, queue: shuffle(pool.map(v => v.id)), cur: null, state: "ask", wrongs: [], retry: false, finished: false };
   vtNext();
 }
-function vtFind(lang, id) { return (lang === "fr" ? FR_VERBS : EN_VERBS).find(v => v.id === id); }
+function vtFind(lang, id) { return String(id).startsWith("prep:") ? FR_PREP.find(v => v.id === id) : (lang === "fr" ? FR_VERBS : EN_VERBS).find(v => v.id === id); }
 function vtNext() {
   const R = S.vt.run; if (!R) return;
   clearTimeout(R.timer);
@@ -4079,6 +4285,14 @@ function vtRunView() {
         <div class="field"><label for="vt-b">Past Participle</label><input class="input${R.state !== "ask" ? (R.ok2 ? " is-ok" : " is-no") : ""}" id="vt-b" name="b" autocapitalize="none" spellcheck="false" value="${esc(R.given2)}" ${ro}></div>
         ${R.state === "ask" ? `<button class="btn primary big" type="submit">Prüfen</button>` : ""}
       </form>`;
+  } else if (t.prepQ) {
+    ask = `<div class="vt-prompt"><p class="eyebrow">Welche Präposition fehlt?</p><div class="quiz-word vt-prep">${esc(v.gap)}</div><p class="muted">${esc(v.de)}</p></div>
+      ${R.state === "ask" ? `<div class="prep-btns"><button class="btn big" data-act="vtPrep" data-k="à">à</button><button class="btn big" data-act="vtPrep" data-k="de">de</button></div>` : ""}`;
+  } else if (t.imp) {
+    ask = `<div class="vt-prompt"><p class="eyebrow">Bilde den Impératif (Befehlsform) für <b>${t.who}</b></p>
+      <div class="quiz-word vt-gap"><span class="muted vt-inf">(${t.who})</span><span class="gap">…</span><span>!</span><span class="muted vt-inf">(${esc(t.hint)})</span>${spkBtn(t.hint, "fr", "big")}</div></div>
+      <form data-form="verb" autocomplete="off"><input class="input" id="vt-a" name="a" placeholder="z. B. regarde" autocapitalize="none" spellcheck="false" value="${esc(R.given)}" ${ro}>
+        ${R.state === "ask" ? `<button class="btn primary big" type="submit">Prüfen</button>` : ""}</form>`;
   } else if (t.subj) {
     ask = `<div class="vt-prompt"><p class="eyebrow">${R.mode === "pres" ? "Setze die Präsens-Form ein" : "Setze das Passé composé ein"}</p>
       <div class="quiz-word vt-gap"><span>${esc(t.subj)}</span><span class="gap">…</span><span class="muted vt-inf">(${esc(t.hint)})</span>${spkBtn(t.hint, "fr", "big")}</div></div>
@@ -4089,7 +4303,7 @@ function vtRunView() {
       <form data-form="verb" autocomplete="off"><input class="input" id="vt-a" name="a" placeholder="Deine Antwort" autocapitalize="none" spellcheck="false" value="${esc(R.given)}" ${ro}>
         ${R.state === "ask" ? `<button class="btn primary big" type="submit">Prüfen</button>` : ""}</form>`;
   }
-  const solSpk = t.tab ? "" : t.de ? "" : spkBtn(t.subj ? t.show : t.two ? `${v.inf}, ${v.past.split("/")[0]}, ${v.pp.split("/")[0]}` : t.sol, ln);
+  const solSpk = t.tab ? "" : t.de ? "" : spkBtn(t.prepQ ? v.full.replace(/\b(qc|qn)\b/g, "") : t.imp ? t.sol : t.subj ? t.show : t.two ? `${v.inf}, ${v.past.split("/")[0]}, ${v.pp.split("/")[0]}` : t.sol, ln);
   if (R.state === "right" && !t.tab) fb = `<div class="fb right" role="status">Richtig!${R.accent ? ` <span>Achte auf die Akzente und die Schreibweise.</span>` : ""}
       ${R.coin ? `<span class="coin-pop">${COIN}+${R.coin}</span>` : `<span class="muted" style="font-weight:600">Heute schon belohnt</span>`}
       <span class="spacer"></span><button class="btn small" id="nextBtn" data-act="vtNext">Weiter</button></div>
@@ -4103,13 +4317,12 @@ function vtRunView() {
 }
 function vtSetupView(lang) {
   const modes = VT_MODES[lang], cur = S.vt.mode[lang], pool = vtPool(lang);
-  const yearSel = lang === "fr" ? `<div class="cfg-group"><span class="eyebrow">Lernjahr</span><div class="seg">${[[1, "1. Lernjahr"], [2, "1.–2. Lernjahr"], [3, "1.–3. Lernjahr"]]
-    .map(([k, l]) => `<button data-act="vtYear" data-k="${k}" aria-pressed="${S.vt.year === k}">${l}</button>`).join("")}</div></div>
-    <div class="cfg-group"><span class="eyebrow">Verben</span><div class="seg">${[["1", "Nur unregelmäßige"], ["0", "Alle Verben"]].map(([k, l]) => `<button data-act="vtIrr" data-k="${k}" aria-pressed="${S.vt.irr === (k === "1")}">${l}</button>`).join("")}</div></div>` : "";
-  const list = lang === "fr" ? pool.map(v => `<details class="vt-item" data-s="${esc(vtPlain(vtNorm(v.inf + " " + v.de)))}"><summary><b>${esc(v.inf)}</b><span class="muted">${esc(v.de)}</span><span class="vt-year">${v.year}. Lj.</span></summary>${frTable(v)}</details>`).join("")
+  const yearSel = lang === "fr" && cur !== "prep" ? `<div class="cfg-group"><span class="eyebrow">Verben</span><div class="seg">${[["0", "Alle Verben aus dem Buch"], ["1", "Nur unregelmäßige"]].map(([k, l]) => `<button data-act="vtIrr" data-k="${k}" aria-pressed="${S.vt.irr === (k === "1")}">${l}</button>`).join("")}</div></div>` : "";
+  const list = lang === "fr" ? (cur === "prep" ? FR_PREP.map(v => `<div class="vt-item prep-row" data-s="${esc(vtPlain(vtNorm(v.full + " " + v.de)))}"><b>${esc(v.expr.replace(/[{}]/g, ""))}</b><span class="muted">${esc(v.de)}</span><span class="vt-year">mit ${v.prep}</span></div>`).join("")
+    : pool.map(v => `<details class="vt-item" data-s="${esc(vtPlain(vtNorm(v.inf + " " + v.de)))}"><summary><b>${esc(v.inf)}</b><span class="muted">${esc(v.de)}</span><span class="vt-year">${v.irr ? "unregelmäßig" : v.aux === "e" ? "mit être" : ""}</span></summary>${frTable(v)}</details>`).join(""))
     : `<table class="vt-table en"><thead><tr><th>Infinitive</th><th>Simple Past</th><th>Past Participle</th><th>Deutsch</th></tr></thead><tbody>${pool.map(v => `<tr data-s="${esc(vtPlain(vtNorm([v.inf, v.past, v.pp, v.de].join(" "))))}"><td><b>${esc(v.inf)}</b>${spkBtn(v.inf, "en", "sm")}</td><td>${esc(v.past)}</td><td>${esc(v.pp)}</td><td class="muted">${esc(v.de)}</td></tr>`).join("")}</tbody></table>`;
   return `<section class="card"><div class="cfg">
-      <div class="card-head" style="margin:0"><h2>${lang === "fr" ? (S.vt.irr ? "Unregelmäßige französische Verben" : "Französische Verben") : "Irregular verbs"}</h2><span class="muted" style="font-size:.88rem">${pool.length} Verben</span></div>
+      <div class="card-head" style="margin:0"><h2>${lang === "fr" ? (cur === "prep" ? "Verben mit indirektem Objekt" : S.vt.irr ? "Unregelmäßige französische Verben" : "Französische Verben") : "Irregular verbs"}</h2><span class="muted" style="font-size:.88rem">${cur === "prep" ? pool.length + " Ausdrücke" : pool.length + " Verben"}${lang === "fr" ? " · Seiten 154–157" : ""}</span></div>
       ${yearSel}
       <div class="cfg-group"><span class="eyebrow">Übung</span><div class="modes vt-modes">${Object.entries(modes).map(([k, [n, d]]) =>
         `<button class="mode" data-act="vtMode" data-k="${k}" aria-pressed="${cur === k}"><b>${n}</b><span>${d}</span></button>`).join("")}</div></div>
@@ -4312,6 +4525,7 @@ const A = {
     if (S.view === "wiki" && !S.vt.run) { S.lb.page = "home"; S.lb.quiz = null; }
     if (S.view === "settings" && S.setTab === "feedback") { await loadFeedback(); announceRewards(); }
     if (S.vt.run) clearTimeout(S.vt.run.timer);
+    if (S.nb.run) clearTimeout(S.nb.run.timer);
     if (S.view !== "home") { const L = S.learn; if (L) clearTimeout(L.timer); }
     if (S.view === "wiki" || S.view === "admin") {
       try { S.articles = await loadArticles(); } catch {}
@@ -4477,6 +4691,15 @@ const A = {
   },
   lbReset() { const tp = lbTopic((S.lb.page || "").slice(6)); if (!tp) return; S.lb.quiz = { id: tp.id, ans: {}, order: shuffle(tp.quiz.map((_, i) => i)) }; render(); },
   vtIrr(t) { S.vt.irr = t.dataset.k === "1"; render(); },
+  vtPrep(t) { vtSubmit(t.dataset.k, ""); },
+  nbMode(t) { S.nb.mode = t.dataset.k; render(); },
+  nbRange(t) { S.nb.range = t.dataset.k; render(); },
+  nbSize(t) { S.nb.size = +t.dataset.k; render(); },
+  nbStart() { S.nb.lang = lbLang() || "fr"; nbStart(); window.scrollTo({ top: 0 }); },
+  nbNext() { nbNext(); },
+  nbSay() { const R = S.nb.run; if (R && R.cur) speak(String(R.cur.n), R.lang); },
+  nbStop() { const R = S.nb.run; if (!R) return; clearTimeout(R.timer); if (R.n) { R.finished = true; flush(); } else S.nb.run = null; render(); },
+  nbLeave() { const R = S.nb.run; if (R) clearTimeout(R.timer); S.nb.run = null; render(); window.scrollTo({ top: 0 }); },
   async buyAcc(t) {
     const f = accFind(t.dataset.id); if (!f) return;
     const { pet, a } = f, id = pet + "." + a.k;
@@ -4665,6 +4888,7 @@ const F = {
     if (!name) { toast("Bitte gib einen Namen ein."); return; }
     s.name = name; S.renameSec = false; markDirty("sec:" + s.id); await flush(); render(); toast("Abschnitt umbenannt.");
   },
+  nb(f) { const a = f.querySelector("#nb-a"); nbSubmit(a ? a.value : ""); },
   verb(f) { const a = f.querySelector("#vt-a"), b = f.querySelector("#vt-b"); vtSubmit(a ? a.value : "", b ? b.value : ""); },
   login: f => doLogin(f),
   setup: f => doSetup(f),
