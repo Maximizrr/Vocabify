@@ -1,0 +1,131 @@
+rules_version = '2';
+
+// Vocabify – Sicherheitsregeln für Cloud Firestore
+// Nur Nutzer mit Konto (vom Admin angelegt) dürfen etwas lesen oder schreiben.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function roleRef() { return /databases/$(database)/documents/vf_roles/$(request.auth.uid); }
+    function isMember() { return signedIn() && exists(roleRef()); }
+    function me() { return get(roleRef()).data; }
+    function myName() { return me().username; }
+    function isAdmin() { return isMember() && me().role == 'admin'; }
+
+    // Freunde: Dokument-ID ist "anfragender__angefragter"
+    function friendDoc(a, b) { return /databases/$(database)/documents/vf_friends/$(a + '__' + b); }
+    function acceptedFriend(a, b) { return exists(friendDoc(a, b)) && get(friendDoc(a, b)).data.status == 'accepted'; }
+    function areFriends(a, b) { return acceptedFriend(a, b) || acceptedFriend(b, a); }
+
+    // Ersteinrichtung: nur solange noch kein Admin existiert
+    function configRef() { return /databases/$(database)/documents/vf_meta/config; }
+    function inSetup() { return signedIn() && !exists(configRef()) && existsAfter(configRef()); }
+
+    match /vf_meta/config {
+      allow read: if true;
+      allow create: if signedIn() && !exists(configRef())
+                    && existsAfter(roleRef()) && getAfter(roleRef()).data.role == 'admin';
+      allow update, delete: if false;
+    }
+
+    // Verknüpfung Login -> Benutzername + Rolle
+    match /vf_roles/{userId} {
+      allow read: if signedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if isAdmin()
+                    || (inSetup() && userId == request.auth.uid && request.resource.data.role == 'admin');
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+
+    // Benutzername -> interne Login-Adresse (für die Anmeldung, enthält keine Passwörter)
+    match /vf_logins/{username} {
+      allow read: if true;
+      allow create: if isAdmin() || inSetup();
+      allow update, delete: if isAdmin();
+    }
+
+    match /vf_accounts/{username} {
+      allow read: if isMember();
+      allow create: if isAdmin()
+                    || (inSetup() && request.resource.data.role == 'admin' && request.resource.data.uid == request.auth.uid);
+      allow update: if isAdmin()
+                    || (isMember() && myName() == username
+                        && request.resource.data.diff(resource.data).affectedKeys()
+                             .hasOnly(['coins', 'pets', 'activePet', 'daily', 'settings', 'hist', 'totalCorrect', 'totalAnswered', 'lastSeen']));
+      allow delete: if isAdmin();
+    }
+
+    match /vf_sections/{id} {
+      allow read: if isMember() && (resource.data.owner == myName() || isAdmin());
+      allow create: if isMember() && request.resource.data.owner == myName();
+      allow update: if isAdmin()
+                    || (isMember() && resource.data.owner == myName() && request.resource.data.owner == myName());
+      allow delete: if isMember() && (resource.data.owner == myName() || isAdmin());
+    }
+
+    match /vf_invites/{id} {
+      allow read: if isMember() && (resource.data.to == myName() || resource.data.from == myName() || isAdmin());
+      allow create: if isMember() && request.resource.data.from == myName();
+      allow update: if false;
+      allow delete: if isMember() && (resource.data.to == myName() || resource.data.from == myName() || isAdmin());
+    }
+
+    // Feedback: jeder schreibt eigenes, nur Admins lesen alles und vergeben Münzen
+    match /vf_feedback/{id} {
+      allow read: if isMember() && (resource.data.author == myName() || isAdmin());
+      allow create: if isMember() && request.resource.data.author == myName()
+                    && request.resource.data.reward == 0 && request.resource.data.status == 'new'
+                    && request.resource.data.text is string && request.resource.data.text.size() <= 1500;
+      allow update: if isAdmin()
+                    && (!('reward' in request.resource.data) || (request.resource.data.reward is int && request.resource.data.reward >= 0 && request.resource.data.reward <= 1000));
+      allow delete: if isAdmin();
+    }
+
+    match /vf_articles/{id} {
+      allow read: if isMember() && (resource.data.status == 'approved' || resource.data.author == myName() || isAdmin());
+      allow create: if isAdmin()
+                    || (isMember() && request.resource.data.author == myName()
+                        && request.resource.data.status == 'pending' && request.resource.data.likes.size() == 0);
+      // Admin: freigeben/ablehnen. Andere: genau ein eigenes Like hinzufügen.
+      allow update: if isAdmin()
+                    || (isMember() && resource.data.status == 'approved' && resource.data.author != myName()
+                        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes'])
+                        && request.resource.data.likes.size() == resource.data.likes.size() + 1
+                        && request.resource.data.likes.hasAll(resource.data.likes)
+                        && request.resource.data.likes.hasAny([myName()])
+                        && !resource.data.likes.hasAny([myName()]));
+      allow delete: if isAdmin();
+    }
+
+    // Freundesliste (2.1.0): Anfrage senden, annehmen, ablehnen oder entfernen
+    match /vf_friends/{id} {
+      allow read: if isMember() && (resource.data.from == myName() || resource.data.to == myName() || isAdmin());
+      allow create: if isMember() && request.resource.data.from == myName()
+                    && request.resource.data.to is string && request.resource.data.to != myName()
+                    && id == myName() + '__' + request.resource.data.to
+                    && request.resource.data.status == 'pending'
+                    && exists(/databases/$(database)/documents/vf_accounts/$(request.resource.data.to));
+      allow update: if isMember() && resource.data.to == myName() && resource.data.status == 'pending'
+                    && request.resource.data.status == 'accepted'
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'acceptedAt']);
+      allow delete: if isMember() && (resource.data.from == myName() || resource.data.to == myName() || isAdmin());
+    }
+
+    // Vokabel-Battle (2.1.0): nur unter Freunden. Jeder schreibt nur sein eigenes Ergebnis.
+    match /vf_battles/{id} {
+      allow read: if isMember() && (resource.data.from == myName() || resource.data.to == myName() || isAdmin());
+      allow create: if isMember() && request.resource.data.from == myName()
+                    && request.resource.data.to is string && request.resource.data.to != myName()
+                    && request.resource.data.status == 'open' && request.resource.data.r2 == null
+                    && request.resource.data.claim1 == false && request.resource.data.claim2 == false
+                    && areFriends(myName(), request.resource.data.to);
+      allow update: if isMember() && (
+                       (resource.data.to == myName() && resource.data.status == 'open'
+                        && request.resource.data.status in ['done', 'declined']
+                        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['r2', 'status', 'claim2', 'doneAt']))
+                    || (resource.data.from == myName() && resource.data.status == 'done'
+                        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['claim1', 'seen1'])));
+      allow delete: if isMember() && (resource.data.from == myName() || resource.data.to == myName() || isAdmin());
+    }
+  }
+}
