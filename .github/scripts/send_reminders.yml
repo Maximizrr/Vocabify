@@ -1,0 +1,141 @@
+"""Vocabify: Erinnerungen verschicken (läuft alle 15 Minuten über GitHub Actions).
+
+- Tägliche Erinnerung zur Uhrzeit, zu der der Nutzer meistens lernt (settings.notify.at,
+  von der App aus den Online-Zeiten berechnet). Entfällt, wenn das Tagesziel schon erreicht ist.
+- Flammen-Warnung am Abend, wenn die Lernserie heute noch nicht verlängert wurde.
+
+Benötigt das GitHub-Secret FIREBASE_SERVICE_ACCOUNT (JSON des Firebase-Dienstkontos).
+Wann zuletzt gesendet wurde, steht in der Sammlung vf_notify (nur für dieses Skript).
+"""
+import datetime as dt
+import json
+import os
+import random
+from zoneinfo import ZoneInfo
+
+GOAL_DEFAULT = 100
+WINDOW_MIN = 90  # so lange nach der Zielzeit darf noch gesendet werden (Actions starten manchmal verspätet)
+
+
+def hm_to_min(s, default):
+    try:
+        h, m = str(s).split(":")
+        v = int(h) * 60 + int(m)
+        return v if 0 <= v < 24 * 60 else default
+    except Exception:
+        return default
+
+
+def streak_minutes(daily_at):
+    """Uhrzeit der Flammen-Warnung: 20:00, bei später Lernzeit 2 Stunden danach (höchstens 21:30)."""
+    return 20 * 60 if daily_at <= 18 * 60 else min(daily_at + 120, 21 * 60 + 30)
+
+
+def tz_of(nt):
+    try:
+        return ZoneInfo(nt.get("tz") or "Europe/Berlin")
+    except Exception:
+        return ZoneInfo("Europe/Berlin")
+
+
+def decide(acc, sent, now_utc):
+    """Gibt (Art, Titel, Text) zurück oder None. Art: 'streak' oder 'daily'."""
+    st = acc.get("settings") or {}
+    nt = st.get("notify") or {}
+    tokens = [t for t in (nt.get("tokens") or []) if isinstance(t, str) and t]
+    if not tokens:
+        return None
+    local = now_utc.astimezone(tz_of(nt))
+    today = local.strftime("%Y-%m-%d")
+    yesterday = (local - dt.timedelta(days=1)).strftime("%Y-%m-%d")
+    now_min = local.hour * 60 + local.minute
+    name = str(st.get("displayName") or acc.get("username") or "").strip()
+    name = name[:1].upper() + name[1:] if name else ""
+
+    daily = acc.get("daily") or {}
+    count = int(daily.get("count") or 0) if daily.get("date") == today else 0
+    try:
+        goal = int(st.get("goal") or GOAL_DEFAULT)
+    except Exception:
+        goal = GOAL_DEFAULT
+    streak = st.get("streak") or {}
+    s_count = int(streak.get("count") or 0)
+    at = hm_to_min(nt.get("at"), 17 * 60)
+
+    # Flamme droht zu erlöschen: Serie lief bis gestern, heute noch nichts gelernt
+    s_at = streak_minutes(at)
+    if (nt.get("streak", True) and s_count >= 1 and streak.get("last") == yesterday
+            and s_at <= now_min < 24 * 60 - 5 and sent.get("streak") != today):
+        days = f"{s_count} {'Tag' if s_count == 1 else 'Tagen'}"
+        return ("streak", "🔥 Deine Flamme erlischt bald!",
+                f"{name + ', d' if name else 'D'}eine Lernserie von {days} endet um Mitternacht. "
+                "Lerne jetzt eine Vokabel, um sie zu retten.")
+
+    # Tägliche Erinnerung
+    if (nt.get("daily", True) and at <= now_min < at + WINDOW_MIN and sent.get("daily") != today
+            and count < goal):
+        if count > 0:
+            body = f"Du hast heute schon {count} Vokabeln gelernt. Noch {goal - count} bis zu deinem Tagesziel!"
+        else:
+            body = random.choice([
+                "Zeit für ein paar Vokabeln! Schon 5 Minuten bringen dich weiter.",
+                "Dein Haustier wartet auf dich. Lust auf eine kurze Runde?",
+                "Eine kleine Lernrunde, und dein Tagesziel rückt näher.",
+                "Kurz Vokabeln üben? Jede richtige Antwort bringt Münzen.",
+            ])
+        return ("daily", f"Hallo {name}! 📚" if name else "Zeit zum Lernen! 📚", body)
+    return None
+
+
+def main():
+    import firebase_admin
+    from firebase_admin import credentials, firestore, messaging
+
+    cred = credentials.Certificate(json.loads(os.environ["FIREBASE_SERVICE_ACCOUNT"]))
+    firebase_admin.initialize_app(cred)
+    db = firestore.client()
+    now = dt.datetime.now(dt.timezone.utc)
+    sent_count = 0
+    for doc in db.collection("vf_accounts").stream():
+        acc = doc.to_dict() or {}
+        nt = (acc.get("settings") or {}).get("notify") or {}
+        tokens = [t for t in (nt.get("tokens") or []) if isinstance(t, str) and t]
+        if not tokens:
+            continue
+        sent_ref = db.collection("vf_notify").document(doc.id)
+        sent = (sent_ref.get().to_dict() or {})
+        res = decide(acc, sent, now)
+        if not res:
+            continue
+        kind, title, body = res
+        url = str(nt.get("url") or "").strip() or os.environ.get("APP_URL", "")
+        if not url.startswith("https://"):
+            url = os.environ.get("APP_URL", "https://github.com")
+        icon = url.rstrip("/") + "/icon-192.png"
+        msg = messaging.MulticastMessage(
+            tokens=tokens,
+            notification=messaging.Notification(title=title, body=body),
+            data={"kind": kind},
+            webpush=messaging.WebpushConfig(
+                notification=messaging.WebpushNotification(title=title, body=body, icon=icon, badge=icon,
+                                                           tag="vocabify-" + kind, renotify=True),
+                fcm_options=messaging.WebpushFCMOptions(link=url),
+            ),
+        )
+        resp = messaging.send_each_for_multicast(msg)
+        bad = [tokens[i] for i, r in enumerate(resp.responses)
+               if not r.success and isinstance(r.exception, (messaging.UnregisteredError, messaging.SenderIdMismatchError))]
+        if bad:
+            doc.reference.update({"settings.notify.tokens": firestore.ArrayRemove(bad)})
+        today = now.astimezone(tz_of(nt)).strftime("%Y-%m-%d")
+        upd = {kind: today, "at": now}
+        if kind == "streak":
+            upd["daily"] = today  # nicht zweimal am selben Abend stören
+        sent_ref.set(upd, merge=True)
+        sent_count += resp.success_count
+        print(f"{doc.id}: {kind} an {resp.success_count}/{len(tokens)} Geräte")
+    print(f"Fertig, {sent_count} Benachrichtigungen verschickt.")
+
+
+if __name__ == "__main__":
+    main()
