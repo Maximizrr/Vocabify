@@ -1624,6 +1624,105 @@ html[data-shape="square"] :is(.game-tile,.gt-art,.mem-card,.mc-back,.mc-front,.o
 @media (max-width:560px){.game-tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}.game-tile{grid-template-columns:1fr;gap:.5rem;padding:.75rem}.gt-art{width:40px;height:40px;border-radius:12px}.gt-art .g-ico{width:21px;height:21px}.gt-txt>span{display:none}.gt-txt b{font-size:.92rem}.gt-tag{margin-top:.15rem}}
 .bt-table td:nth-child(n+3){white-space:nowrap}
 @media (hover:none){.game-tile:not([aria-pressed="true"]):hover{transform:none;border-color:var(--line);box-shadow:none}.game-tile:not([aria-pressed="true"]):hover::after{opacity:0}}
+/* ===== 2.1.1 Nachholen: Lernstraße ===== */
+.ny-hero{display:flex;align-items:center;gap:1.4rem;flex-wrap:wrap}
+.ny-hero .ring-wrap{flex:none}
+.nh-main{flex:1 1 260px;min-width:0;display:flex;flex-direction:column;gap:.35rem}
+.nh-main h2{margin:0}
+.ny-legend{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;color:var(--muted);font-size:.85rem;margin:.4rem 0 .2rem}
+.ny-legend span{display:inline-flex;align-items:center;gap:.4rem}
+.ny-legend .lg{width:14px;height:14px;border-radius:50%;display:inline-block}
+.lg.v{background:linear-gradient(135deg,#3b82f6,#06b6d4)}.lg.g{background:linear-gradient(135deg,#f59e0b,#f97316)}.lg.c{background:linear-gradient(135deg,#a16207,#ca8a04)}
+.ny-road{display:flex;flex-direction:column;gap:1.4rem;margin-top:.6rem}
+.ny-unit{position:relative}
+.ny-banner{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.6rem 1rem;align-items:center;padding:1rem 1.2rem;border-radius:20px;color:#fff;background:linear-gradient(135deg,var(--u1),var(--u2));box-shadow:0 14px 30px -18px var(--u1),inset 0 -4px 0 rgba(0,0,0,.12)}
+.ny-unit.locked .ny-banner{filter:saturate(.35) brightness(.95)}
+.nb-txt small{opacity:.85;font-weight:700;font-size:.78rem;letter-spacing:.03em;text-transform:uppercase}
+.nb-txt h2{color:#fff;margin:.1rem 0 .1rem;font-size:1.45rem}
+.nb-txt p{margin:0;opacity:.92;font-size:.92rem}
+.nb-side{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;justify-content:flex-end}
+.nb-prog{display:flex;flex-direction:column;align-items:center;line-height:1.1}
+.nb-prog b{font-family:var(--f-display);font-size:1.3rem}
+.nb-prog span{font-size:.72rem;opacity:.85}
+.nb-skip{background:rgba(255,255,255,.18)!important;border-color:rgba(255,255,255,.45)!important;color:#fff!important}
+.nb-done{font-weight:800;background:rgba(255,255,255,.22);padding:.3rem .8rem;border-radius:99px}
+.nb-bar{grid-column:1/-1;height:7px;border-radius:99px;background:rgba(255,255,255,.28);overflow:hidden}
+.nb-bar i{display:block;height:100%;background:#fff;border-radius:inherit}
+.ny-path{position:relative;margin-top:.6rem}
+.ny-svg{position:absolute;left:50%;top:0;transform:translateX(-50%);pointer-events:none;overflow:visible}
+.np-base{fill:none;stroke:var(--line);stroke-width:10;stroke-linecap:round;stroke-dasharray:2 18}
+.np-done{fill:none;stroke:var(--u1);stroke-width:10;stroke-linecap:round;opacity:.55}
+.ny-label{position:absolute;left:0;right:0;display:flex;justify-content:center;pointer-events:none}
+.ny-label span{background:var(--bg);color:var(--muted);font-weight:700;font-size:.8rem;padding:.25rem .8rem;border-radius:99px;border:1px solid var(--line);max-width:90%;text-align:center}
+.ny-node{position:absolute;transform:translateX(-50%);width:76px;height:76px;border:0;padding:0;background:none;cursor:pointer;font:inherit;display:flex;flex-direction:column;align-items:center}
+.nn-in{width:76px;height:70px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:1.9rem;transition:transform .15s;position:relative}
+.nn-in .ico{width:32px;height:32px;stroke-width:2.1}
+.nn-emo{font-size:1.85rem;line-height:1;filter:drop-shadow(0 2px 0 rgba(0,0,0,.15))}
+.ny-node.t-v .nn-in{background:linear-gradient(160deg,#60a5fa,#2563eb);box-shadow:0 7px 0 #1d4ed8}
+.ny-node.t-g .nn-in{background:linear-gradient(160deg,#fbbf24,#f97316);box-shadow:0 7px 0 #c2410c}
+.ny-node.s-done.t-v .nn-in{background:linear-gradient(160deg,#4ade80,#16a34a);box-shadow:0 7px 0 #15803d}
+.ny-node.s-done.t-g .nn-in{background:linear-gradient(160deg,#facc15,#eab308);box-shadow:0 7px 0 #a16207}
+.ny-node.s-lock .nn-in{background:var(--surface-2);color:var(--muted);box-shadow:0 7px 0 var(--line)}
+.ny-node.s-lock .nn-emo{filter:grayscale(1);opacity:.5}
+.ny-node:hover:not(.s-lock) .nn-in{transform:translateY(-2px)}
+.ny-node:active .nn-in{transform:translateY(5px);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.ny-node.s-cur .nn-in{animation:nyPulse 1.8s ease-in-out infinite}
+.ny-node.s-cur .nn-in::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:4px solid color-mix(in srgb,var(--u1) 45%,transparent);animation:nyRing 1.8s ease-out infinite}
+@keyframes nyPulse{50%{transform:translateY(-3px) scale(1.04)}}
+@keyframes nyRing{0%{opacity:.9;transform:scale(.92)}100%{opacity:0;transform:scale(1.25)}}
+.nn-start{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--surface);color:var(--u1);font-weight:800;font-size:.85rem;text-transform:uppercase;letter-spacing:.04em;padding:.35rem .8rem;border-radius:12px;border:2px solid var(--line);white-space:nowrap;animation:bob 1.6s ease-in-out infinite}
+.nn-start::after{content:"";position:absolute;top:100%;left:50%;margin-left:-7px;border:7px solid transparent;border-top-color:var(--line)}
+.ny-node.t-c{width:96px;height:90px}
+.ny-node.t-c .nn-in{width:96px;height:86px;border-radius:24px;background:none;box-shadow:none}
+.ny-node.t-c .nn-in svg{width:84px;height:70px}
+.ny-node.t-c.s-lock .nn-in svg,.ny-node.t-c.s-open .nn-in svg{filter:grayscale(.85);opacity:.55}
+.ny-node.t-c.s-ready .nn-in{animation:nyPulse 1.4s ease-in-out infinite}
+.ny-node.t-c.s-done .nn-in svg .lid{transform:translateY(-6px) rotate(-12deg);transform-origin:8px 16px}
+.nn-stars{display:flex;gap:1px;margin-top:4px;font-size:.95rem;line-height:1}
+.nn-stars i{font-style:normal;color:var(--line)}.nn-stars i.on{color:#f59e0b;text-shadow:0 1px 0 #b45309}
+.ny-cta .ico-big{background:linear-gradient(135deg,#0d9488,#22c55e)!important}
+/* Modal */
+.ny-mhead{display:flex;gap:1rem;align-items:center;text-align:left;margin-bottom:.8rem}
+.ny-mhead .nn-in{flex:none;width:58px;height:58px;background:linear-gradient(135deg,var(--u1),var(--u2));font-size:1.5rem}
+.ny-mhead h2{margin:.1rem 0}
+.ny-wlist{display:flex;flex-wrap:wrap;gap:.35rem;text-align:left;max-height:180px;overflow:auto}
+.ny-wlist span{background:var(--surface-2);border-radius:8px;padding:.25rem .55rem;font-size:.85rem;color:var(--muted)}
+.ny-wlist b{color:var(--ink)}
+.ny-mstars{display:flex;align-items:center;gap:.5rem;justify-content:center;color:var(--muted);margin:.6rem 0 0}
+.ny-mstars .nn-stars{font-size:1.3rem}
+/* Lektion */
+.ny-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.6rem;margin-top:1rem}
+.ny-card{display:grid;grid-template-columns:1fr auto;align-items:center;gap:.1rem .4rem;padding:.75rem .9rem;border-radius:14px;background:var(--fr-soft);border:1.5px solid color-mix(in srgb,var(--fr) 30%,transparent)}
+.ny-card b{font-size:1.08rem}
+.ny-card span{grid-column:1/-1;color:var(--muted);font-size:.9rem}
+.ny-task{display:flex;flex-direction:column;gap:.9rem;min-height:260px}
+.ny-ask{font-weight:800;font-size:1.15rem;margin:0}
+.ny-q{font-family:var(--f-display);font-weight:800;font-size:clamp(1.5rem,5vw,2.2rem);display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;overflow-wrap:anywhere}
+.lsn-btn.sm{width:64px;height:64px}.lsn-btn.sm .ico{width:28px;height:28px}
+.ny-match{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.ny-match>div{display:flex;flex-direction:column;gap:.5rem}
+.mt{font:inherit;font-weight:700;font-size:1rem;padding:.8rem .9rem;border-radius:14px;border:1.5px solid var(--line);border-bottom-width:4px;background:var(--surface);color:var(--ink);cursor:pointer;text-align:center;transition:transform .1s,background .2s,border-color .2s,opacity .3s;overflow-wrap:anywhere}
+.mt.sel{border-color:var(--g2);background:color-mix(in srgb,var(--g2) 14%,var(--surface));color:var(--g2)}
+.mt.ok{border-color:var(--good);background:var(--la-soft);color:var(--good);opacity:.45;cursor:default}
+.ny-match.shake{animation:shake .35s}
+.ny-acc{display:flex;flex-wrap:wrap;gap:.35rem}
+.ny-acc button{min-width:2.4rem;height:2.4rem;border-radius:9px;border:1px solid var(--line);background:var(--surface-2);font:inherit;font-weight:700;font-size:1.05rem;color:var(--ink);cursor:pointer}
+.ny-fb{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;margin-top:1.1rem;padding:1rem 1.1rem;border-radius:16px;animation:fbUp .3s var(--ease)}
+.ny-fb>div{display:flex;flex-direction:column;gap:.1rem;min-width:0}
+.ny-fb.right{background:var(--la-soft);color:var(--good)}
+.ny-fb.wrong{background:var(--en-soft);color:var(--bad)}
+.ny-fb .muted{font-size:.88rem}
+.nf-ico{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;flex:none;font-weight:900;font-size:1.3rem;color:#fff;background:var(--good)}
+.ny-fb.wrong .nf-ico{background:var(--bad)}
+@keyframes fbUp{from{opacity:0;transform:translateY(12px)}}
+.ny-bigstars{display:flex;justify-content:center;gap:.4rem;font-size:3.2rem;line-height:1;margin-bottom:.4rem}
+.ny-bigstars i{font-style:normal;color:var(--line);transform:scale(0);animation:starIn .5s cubic-bezier(.3,1.6,.5,1) forwards;animation-delay:calc(var(--d) * .18s)}
+.ny-bigstars i.on{color:#f59e0b;text-shadow:0 3px 0 #b45309}
+.ny-bigstars i:nth-child(2){font-size:3.9rem;margin-top:-.4rem}
+@keyframes starIn{to{transform:scale(1)}}
+.g-ny .gt-art.big,.ny-sum .gt-art.big{font-size:2rem;color:#fff}
+@media (max-width:560px){.nb-txt h2{font-size:1.2rem}.ny-match .mt{font-size:.92rem;padding:.7rem .5rem}}
+html[data-shape="square"] :is(.ny-banner,.mt,.ny-card,.ny-fb,.ny-node.t-c .nn-in){border-radius:4px}
 </style>
 
 <div id="intro" aria-hidden="true"></div>
@@ -1693,7 +1792,7 @@ function buildIntro(kind, el) {
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js"></script>
 <script>
 "use strict";
-const APP_VERSION = "2.1.0";
+const APP_VERSION = "2.1.1";
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
   authDomain: "vocabify-8abb9.firebaseapp.com",
@@ -1704,6 +1803,7 @@ const FIREBASE_CONFIG = {
 };
 const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
 const CHANGELOG = [
+  { v: "2.1.1", items: ["Neuer Menüpunkt „Nachholen“ mit dem Unterpunkt „Lernjahr 1“", "Lernstraße wie bei Duolingo: alle Vokabeln aus À plus ! 1 (C'est parti, Unités 1–5, Modules 1–6), aufgeteilt nach Unités und Volets", "Dazu 36 Grammatikthemen mit Erklärung und Übung, jeweils an der passenden Stelle der Straße", "Lektionen mit Wortkarten, Paare finden, Auswahl- und Schreibaufgaben. Sterne für wenige Fehler, am Ende jedes Abschnitts eine Truhe mit 20 Münzen", "Abschnitte, die du schon kannst, überspringst du mit einem kurzen Test", "Jeder Vokabelteil lässt sich mit einem Tipp zu deinen eigenen Vokabeln hinzufügen"] },
   { v: "2.1.0", items: ["Sechs neue Lernmodi unter „Lernen“: Vokabel-Memory, Vokabel-Detektiv, Lückentext, Escape Game, Hör-Quiz und Vokabel-Battle. Der bisherige Modus heißt jetzt „Klassisch“", "Vokabel-Memory: Finde alle Paare, bevor die Zeit abläuft", "Vokabel-Detektiv: Errate das Wort aus bis zu fünf Spuren, je früher, desto mehr Punkte", "Lückentext: Setze deine Vokabeln in kleine Geschichten ein, mit Wortkasten oder selbst geschrieben", "Escape Game: Knacke drei Räume mit je drei Schlössern und gib am Ende den Türcode ein", "Hör-Quiz: Hör ein Wort und wähle die Bedeutung, erkenne die Schreibweise oder schreib es als Diktat", "Freundesliste: Schick Mitschüler:innen eine Freundschaftsanfrage und sieh ihre Lernserie", "Vokabel-Battle: Fordere Freunde mit 10 Fragen heraus. Der Sieger bekommt 10 Münzen"] },
   { v: "2.0.3", items: ["Black Friday: Am Freitag nach dem vierten Donnerstag im November ist alles im Shop 50 % günstiger", "Eine Woche vorher kündigt der Shop den Black Friday an, am Tag selbst gibt es einen Hinweis auf der Startseite"] },
   { v: "2.0.2", items: ["Neu: Erinnerungen. Einmal am Tag zu der Uhrzeit, zu der du meistens lernst", "Neu: Warnung, wenn deine Flamme abends zu erlöschen droht", "Erinnerungen schaltest du unter Einstellungen → Allgemein ein und aus"] },
@@ -3481,6 +3581,9 @@ function render() {
   if (ans && S.learn && S.learn.state === "ask") ans.focus({ preventScroll: true });
   const nextBtn = $("#nextBtn"); if (nextBtn) nextBtn.focus({ preventScroll: true });
   if (S.game) gameFocus();
+  else if (S.view === "catchup" && S.nyScroll) nyScrollTo();
+  const navEl = $(".topbar .nav"), curTab = navEl && navEl.querySelector('[aria-current="page"]');
+  if (curTab && navEl.scrollWidth > navEl.clientWidth) { const r = curTab.offsetLeft + curTab.offsetWidth - navEl.clientWidth; if (curTab.offsetLeft < navEl.scrollLeft || r > navEl.scrollLeft) navEl.scrollLeft = Math.max(0, curTab.offsetLeft - 24); }
   const learning = !!S.learn || !!S.game || S.view === "learn";
   const wantPet = S.me.activePet && S.me.pets.includes(S.me.activePet) && (S.me.activePet === "aurelius" || !learning);
   document.body.classList.toggle("has-pet", !!wantPet);
@@ -3693,12 +3796,12 @@ const chip = (k, c) => `<i class="ic-chip" style="--tc:var(--c-${c})">${icon(k)}
 function headerView() {
   const pend = S.invites.length;
   const pendArt = isAdmin() ? S.articles.filter(a => a.status === "pending").length : 0;
-  const NAVC = { home: "blue", learn: "indigo", vocab: "green", shop: "orange", wiki: "purple", feedback: "pink", settings: "gray", admin: "indigo" };
+  const NAVC = { home: "blue", learn: "indigo", vocab: "green", shop: "orange", wiki: "purple", catchup: "teal", feedback: "pink", settings: "gray", admin: "indigo" };
   const tab = (v, label, badge) => `<button data-act="nav" data-v="${v}" style="--tc:var(--c-${NAVC[v]})" ${S.view === v ? 'aria-current="page"' : ""}>${icon(v)}<span>${label}</span>${badge ? `<span class="badge">${badge}</span>` : ""}</button>`;
   return `<header class="topbar"><div class="topbar-in">
     <button class="brand" data-act="nav" data-v="home" aria-label="Vocabify Home">${LOGO_SVG(false, true)}Vocabify${TEST_MODE ? ' <span class="status pending" style="font-family:var(--f-body)">Test</span>' : ""}</button>
     <nav class="nav" aria-label="Hauptmenü">
-      ${tab("home", "Home")}${tab("shop", "Shop")}${tab("learn", "Lernen", socialBadge())}${tab("vocab", "Vokabeln", pend)}${tab("wiki", "Lernbereich")}${tab("settings", "Einstellungen", isAdmin() ? S.feedback.filter(f => f.status === "new").length : 0)}${isAdmin() ? tab("admin", "Admin", pendArt) : ""}
+      ${tab("home", "Home")}${tab("shop", "Shop")}${tab("learn", "Lernen", socialBadge())}${tab("vocab", "Vokabeln", pend)}${tab("wiki", "Lernbereich")}${tab("catchup", "Nachholen")}${tab("settings", "Einstellungen", isAdmin() ? S.feedback.filter(f => f.status === "new").length : 0)}${isAdmin() ? tab("admin", "Admin", pendArt) : ""}
     </nav>
     <div class="top-right">
       <span class="coin-pill" title="Deine Münzen">${COIN}<span class="num">${coinsTotal()}</span></span>
@@ -3713,6 +3816,7 @@ function viewHtml() {
     case "vocab": return vocabView();
     case "shop": return shopView();
     case "wiki": return wikiView();
+    case "catchup": return catchupView();
     case "admin": return isAdmin() ? adminView() : homeView();
     case "settings": return settingsView();
     case "feedback": S.view = "settings"; S.setTab = "feedback"; return settingsView();
@@ -3798,7 +3902,8 @@ function homeView() {
       <div class="card-head"><h2 class="hchip">${chip("flag", "teal")}Truhenpfad</h2><span class="muted" style="font-size:.88rem">Setzt sich um 00:00 Uhr zurück</span></div>
       ${pathView(c)}
     </section>
-    <button class="cta-learn" data-act="nav" data-v="learn"><span class="ico-big">${icon("learn")}</span><span><b>Zum Lernen</b><span>Abschnitte, Lernmodus und Rundenlänge wählen</span></span><span class="go" aria-hidden="true">→</span></button>`;
+    <button class="cta-learn" data-act="nav" data-v="learn"><span class="ico-big">${icon("learn")}</span><span><b>Zum Lernen</b><span>Abschnitte, Lernmodus und Rundenlänge wählen</span></span><span class="go" aria-hidden="true">→</span></button>
+    ${nyHomeCard()}`;
 }
 function learnView() {
   return `<h1>Lernen</h1><p class="muted" style="margin-top:-.4rem">${curGame() === "battle" ? "Fordere deine Freunde heraus oder nimm eine Herausforderung an." : "Lernmodus wählen, Vokabeln aussuchen, loslegen."}</p>${configView()}`;
@@ -4989,6 +5094,7 @@ const A = {
     if (S.vt.run) clearTimeout(S.vt.run.timer);
     if (S.nb.run) clearTimeout(S.nb.run.timer);
     if (S.game) { gStopTimers(S.game); S.game = null; }
+    if (S.view === "catchup") S.nyScroll = true;
     if (S.view === "learn" && S.me) loadSocial().then(ch => { if (ch && S.view === "learn" && !S.game && !S.learn) render(); }).catch(() => {});
     if (S.view !== "home") { const L = S.learn; if (L) clearTimeout(L.timer); }
     if (S.view === "wiki" || S.view === "admin") {
@@ -5600,9 +5706,9 @@ function leaveGame() {
   S.game = null; closeModal(true); flush(); render(); window.scrollTo({ top: 0 });
 }
 function gameView() {
-  const G = S.game, m = GAMES[G.kind];
-  const inner = { memory: memoryView, detective: detectiveView, cloze: clozeView, escape: escapeView, listen: listenView, battle: battleView }[G.kind](G);
-  return `<section class="card game-card g-${G.kind}" style="--g1:${m.c1};--g2:${m.c2}">${inner}</section>`;
+  const G = S.game, m = G.kind === "ny" ? nyBuild().units[G.node.ui] : GAMES[G.kind], c1 = m.c1 || m.u1, c2 = m.c2 || m.u2;
+  const inner = { memory: memoryView, detective: detectiveView, cloze: clozeView, escape: escapeView, listen: listenView, battle: battleView, ny: nyView }[G.kind](G);
+  return `<section class="card game-card g-${G.kind}" style="--g1:${c1};--g2:${c2}">${inner}</section>`;
 }
 function gameProgress(G) {
   if (G.finished) return ["Spiel beendet", 1];
@@ -5613,12 +5719,13 @@ function gameProgress(G) {
     case "escape": return [`Raum ${G.room + 1} von 3`, (G.room * 4 + G.lock + (G.state === "code" || G.state === "open" ? 1 : 0)) / 12];
     case "listen": return [`Wort ${G.i + 1} von ${G.items.length}`, (G.i + (G.state !== "ask" ? 1 : 0)) / G.items.length];
     case "battle": return [`Frage ${Math.min(G.i + 1, G.qs.length)} von ${G.qs.length}`, G.ans.length / G.qs.length];
+    case "ny": return [G.state === "intro" ? (G.node.type === "g" ? "Erklärung" : "Neue Wörter") : `Aufgabe ${Math.min(G.i + 1, G.tasks.length)} von ${G.tasks.length}`, G.state === "intro" ? 0 : (G.i + (G.state === "ask" ? 0 : 1)) / G.tasks.length];
   }
   return ["", 0];
 }
 function heartsHTML(n, max) { return `<span class="hearts" aria-label="${n} von ${max} Herzen">${Array.from({ length: max }, (_, i) => `<i class="${i < n ? "on" : ""}">♥</i>`).join("")}</span>`; }
 function gameHeader() {
-  const G = S.game, m = GAMES[G.kind], [label, pct] = gameProgress(G);
+  const G = S.game, m = GAMES[G.kind] || NY_GAME, [label, pct] = gameProgress(G);
   const extra = G.kind === "escape" && !G.finished ? heartsHTML(G.hearts, G.maxHearts) : "";
   return `<header class="topbar learnbar game-bar" style="--g1:${m.c1};--g2:${m.c2}"><div class="topbar-in">
     <span class="brand" aria-label="Vocabify">${LOGO_SVG(false, true)}<span class="word">Vocabify</span></span>
@@ -5631,6 +5738,7 @@ function gameHeader() {
 }
 function gameFocus() {
   const G = S.game; if (!G || G.finished) return;
+  if (G.kind === "ny") { nyFocus(); return; }
   const sel = { detective: G.c && G.c.state === "ask" ? "#det-in" : "", escape: G.state === "ask" ? "#esc-in" : "", listen: G.state === "ask" ? "#lsn-in" : "", cloze: "" }[G.kind];
   if (G.kind === "cloze") { const T = G.texts[G.t]; if (!T.checked) { const e = [...document.querySelectorAll(".clz-input")].find(x => !x.value); if (e && !document.activeElement.classList.contains("clz-input")) e.focus({ preventScroll: true }); } return; }
   const el = sel && $(sel); if (el) el.focus({ preventScroll: true });
@@ -5642,6 +5750,7 @@ function wrongTable(G) {
 }
 function gameSummary() {
   const G = S.game, m = GAMES[G.kind];
+  if (G.kind === "ny") return nySummary(G);
   if (G.kind === "battle") return battleSummary(G);
   const secs = Math.max(1, Math.round(((G.endedAt || Date.now()) - G.startedAt) / 1000));
   let title = "Spiel beendet", sub = "", eyebrow = m.name;
@@ -6373,11 +6482,12 @@ Object.assign(A, {
         <div class="row end" style="margin-top:1rem"><button class="btn" data-act="closeModal">Weiterspielen</button><button class="btn danger solid" data-act="btQuit">Aufgeben</button></div>`);
       return;
     }
+    if (G.kind === "ny") { leaveGame(); return; }
     if (G.n > 0 && !G.finished) finishGame(G, { stopped: true }); else leaveGame();
   },
-  gameAgain() { const k = S.game && S.game.kind; leaveGame(); if (k) startGame(k); },
+  gameAgain() { const k = S.game && S.game.kind; if (k === "ny") { const n = S.game.node; leaveGame(); if (n.type === "t") A.nySkip({ dataset: { u: n.ui } }); else nyStart(n.id); return; } leaveGame(); if (k) startGame(k); },
   gameLeave() {
-    const k = S.game && S.game.kind; leaveGame();
+    const k = S.game && S.game.kind; if (k === "ny") { S.nyScroll = true; S.view = "catchup"; } leaveGame();
     if (k === "battle") { S.cfg.game = "battle"; loadSocial().then(() => render()); }
   },
   memFlip(t) { memFlip(+t.dataset.i); },
@@ -6497,6 +6607,608 @@ document.addEventListener("keydown", e => {
   else if (G.kind === "escape" && G.state === "ask" && G.q.type === "mc") { e.preventDefault(); A.escMc({ dataset: { i: k - 1 } }); }
 });
 /* ---------- Ende 2.1.0 ---------- */
+
+/* Vokabelliste À plus ! 1 (Neubearbeitung): [Unité, Teil, [[fr, de], …]] */
+const NY1_VOCAB = [["C'est parti !","Tu t'appelles comment ?",[["C'est parti !","Los geht's!"],["Salut !","Hallo!, Tschüss!"],["Tu t'appelles comment ?","Wie heißt du?"],["je m'appelle","ich heiße"],["Et toi ?","Und du?"],["et","und"],["toi","du"],["À plus !","Bis später!"]]],["C'est parti !","Ça va ?",[["Ça va ?","Wie geht's?"],["bof","Na ja., Es geht so."],["Ça va.","Es geht mir gut."],["super","super, toll"],["ah","ach, ach so"],["Ça sonne !","Es klingelt!"],["À demain !","Bis morgen!"],["Bonjour !","Guten Tag!, Guten Morgen!"],["la classe","die Klasse"],["Madame","Frau"],["Monsieur","Herr"],["Au revoir !","Auf Wiedersehen!"]]],["C'est parti !","Tu as quel âge ?",[["Tu as quel âge ?","Wie alt bist du?"],["j'ai … ans","ich bin … Jahre alt"],["zéro","null"],["un","eins"],["deux","zwei"],["trois","drei"],["quatre","vier"],["cinq","fünf"],["six","sechs"],["sept","sieben"],["huit","acht"],["neuf","neun"],["dix","zehn"],["onze","elf"],["douze","zwölf"],["treize","dreizehn"],["quatorze","vierzehn"],["quinze","fünfzehn"],["seize","sechzehn"],["dix-sept","siebzehn"],["dix-huit","achtzehn"],["dix-neuf","neunzehn"],["vingt","zwanzig"]]],["C'est parti !","Tu habites où ?",[["Tu habites où ?","Wo wohnst du?"],["j'habite","ich wohne"],["en","in (bei Ländern)"],["à","in (bei Städten)"],["l'Allemagne","Deutschland"],["la France","Frankreich"]]],["C'est parti !","J'aime les jeux vidéo et le chocolat !",[["moi","ich (betont)"],["j'aime","ich mag"],["je n'aime pas","ich mag … nicht"],["mais","aber"],["les jeux vidéo","die Videospiele"],["le shopping","das Einkaufen, das Shoppen"],["le sport","der Sport"],["la musique","die Musik"],["la nature","die Natur"],["le chocolat","die Schokolade"],["les spaghettis","die Spaghetti"],["la pizza","die Pizza"],["les tomates","die Tomaten"],["la salade","der Salat"],["le jaune","Gelb"],["le rouge","Rot"],["le bleu","Blau"],["le vert","Grün"],["le noir","Schwarz"],["les chats","die Katzen"],["les chiens","die Hunde"],["les rats","die Ratten"],["les poissons","die Fische"],["les tortues","die Schildkröten"]]],["C'est parti !","Tu aimes les tomates ?",[["Tu aimes … ?","Magst du …?"],["oui","ja"],["non","nein"],["ou","oder"]]],["Unité 1","Vocabulaire thématique",[["Bienvenue !","Willkommen!"],["la ville","die Stadt"],["le cinéma","das Kino"],["le parc","der Park"],["le théâtre","das Theater"],["le café","das Café, der Kaffee"],["le restaurant","das Restaurant"],["l'hôtel","das Hotel"],["le musée","das Museum"],["le métro","die U-Bahn, die Metro"],["la tour","der Turm"],["le supermarché","der Supermarkt"],["le collège","die Schule (Klasse 6–9)"],["le stade","das Stadion"],["pardon","Verzeihung, Entschuldigung"],["Où est … ?","Wo ist …?"],["où","wo, wohin"],["c'est","das ist"],["là","da, hier"],["merci","danke"]]],["Unité 1","Volet 1",[["ce sont","das sind"],["C'est qui ?","Wer ist das?"],["moi, c'est …","ich heiße …"],["Comment … ?","Wie …?"],["voilà","hier ist, hier sind"],["la fille","das Mädchen"],["le garçon","der Junge"],["l'ami","der Freund"],["l'amie","die Freundin"],["de","von"],["mon ami","mein Freund"],["il s'appelle","er heißt"],["elle s'appelle","sie heißt"],["avec","mit"],["d'accord","einverstanden, okay"],["Je ne sais pas.","Ich weiß es nicht."],["ici","hier"],["depuis","seit, seitdem"],["samedi","Samstag, am Samstag"],["cool","cool"],["alors","also"],["dans","in"],["le quartier","das Viertel"]]],["Unité 1","Volet 2",[["coucou","hi"],["c'est nous","das sind wir"],["c'est moi","das bin ich"],["être","sein"],["je suis","ich bin"],["tu es","du bist"],["il est","er ist"],["nous sommes","wir sind"],["vous êtes","ihr seid, Sie sind"],["ils sont","sie sind"],["de","aus"],["la rue","die Straße"],["la Tunisie","Tunesien"],["sympa","nett, sympathisch"],["dans la même classe","in derselben Klasse"],["aussi","auch"],["ensemble","zusammen"],["le club","die AG, der Verein, der Klub"],["le drone","die Drohne"],["le club de drones","die Drohnen-AG"],["la sixième","die sechste Klasse"],["la cinquième","die siebte Klasse"],["le basket","Basketball"],["la série","die Serie"],["la danse","der Tanz, das Tanzen"],["souvent","oft"],["en retard","zu spät, mit Verspätung"],["c'est un peu compliqué","das ist etwas kompliziert"],["Tu es d'où ?","Woher kommst du?"]]],["Unité 1","Volet 3",[["Qu'est-ce qu'il y a … ?","Was gibt es …?"],["il y a","es gibt"],["la question","die Frage"],["la réponse","die Antwort"],["la cathédrale","die Kathedrale, der Dom"],["comme","wie, wie z. B."],["la gare","der Bahnhof"],["par exemple","zum Beispiel"],["pour","für"],["le fan","der Fan"],["la science","die Wissenschaft"],["le fan de sciences","der Wissenschaftsfan"],["le magasin","das Geschäft, der Laden"],["le centre commercial","das Einkaufszentrum"],["la boulangerie","die Bäckerei"],["en plus","außerdem"],["entre","zwischen"]]],["Module 1","En classe",[["en cours","im Unterricht"],["le français","Französisch"],["Qu'est-ce que c'est ?","Was ist das?"],["un alphabet","ein Alphabet"],["C'est terminé !","Das war's!"],["Comment on dit … ?","Wie sagt man …?"],["On dit …","Man sagt …"],["Comment on écrit … ?","Wie schreibt man …?"],["On écrit …","Man schreibt …"],["en français","auf Französisch"],["en allemand","auf Deutsch"],["l'allemand","Deutsch"],["le cahier","das Heft"],["le stylo","der Stift, der Kugelschreiber"],["la feuille","das Blatt"]]],["Unité 2","Vocabulaire thématique",[["mon, ma, mes","mein, meine"],["la famille","die Familie"],["les parents","die Eltern"],["le père","der Vater"],["la mère","die Mutter"],["les grands-parents","die Großeltern"],["le grand-père","der Großvater"],["la grand-mère","die Großmutter"],["les frères et sœurs","die Geschwister"],["le frère","der Bruder"],["la sœur","die Schwester"],["le demi-frère","der Halbbruder"],["la demi-sœur","die Halbschwester"],["un oncle","ein Onkel"],["la tante","die Tante"],["le cousin","der Cousin"],["la cousine","die Cousine"],["un enfant","ein Kind"],["le fils","der Sohn"],["la fille","die Tochter"],["le copain","der Freund, der Kumpel"],["la copine","die Freundin"],["un animal","ein (Haus-)Tier"],["les animaux","die Tiere"],["le lapin","das Kaninchen"]]],["Unité 2","Volet 1",[["avoir","haben"],["j'ai","ich habe"],["tu as","du hast"],["il a","er hat"],["nous avons","wir haben"],["vous avez","ihr habt, Sie haben"],["ils ont","sie haben"],["avoir … ans","… Jahre alt sein"],["Je n'ai pas de frères et sœurs.","Ich habe keine Geschwister."],["la moto","das Motorrad"],["être fan de","Fan von jdm./etw. sein"],["comme moi","wie ich"],["à la maison","zu Hause, daheim"],["ils s'appellent","sie heißen"],["c'est vrai","das stimmt, das ist wahr"],["c'est drôle","das ist lustig"],["chez","bei"],["moi aussi","ich auch"],["je voudrais","ich möchte"],["le beau-père","der Stiefvater"],["la belle-mère","die Stiefmutter"],["être contre","dagegen sein, gegen jdn./etw. sein"],["une allergie","eine Allergie"],["c'est nul","das ist doof"],["oui et non","ja und nein, teils teils"],["Je n'ai pas d'animal.","Ich habe kein Haustier."],["chou","süß"],["encore","noch, wieder"],["c'est dommage","das ist schade"]]],["Unité 2","Volet 2",[["Qui … ?","Wer …?"],["ton, ta, tes","dein, deine"],["son, sa, ses","sein, seine, ihr, ihre"],["le week-end","das Wochenende, am Wochenende"],["il m'énerve","er nervt mich"],["une arrière-grand-mère","eine Urgroßmutter"],["un arrière-grand-père","ein Urgroßvater"],["il habite","er wohnt"],["ils habitent","sie wohnen"],["près","nah, in der Nähe"],["près de","bei, in der Nähe von"],["la pâtisserie","die Konditorei, das Gebäck"],["Mes parents sont séparés.","Meine Eltern sind getrennt."],["parfois","manchmal"],["un peu","ein bisschen"],["quand même","trotzdem, dennoch"],["la chambre","das Zimmer, das Schlafzimmer"],["un week-end sur deux","jedes zweite Wochenende"],["le problème","das Problem"],["C'est l'horreur !","Das ist der Horror!"],["pour moi","für mich"],["pendant","während"],["les vacances","die Ferien"],["la Bretagne","die Bretagne"]]],["Unité 2","Volet 3",[["Qu'est-ce que tu fais ?","Was machst du?"],["Qu'est-ce que … ?","Was …?"],["travailler","arbeiten, lernen"],["écouter","zuhören, (an)hören"],["écouter de la musique","Musik hören"],["regarder","ansehen, anschauen"],["la vidéo","das Video"],["raconter","erzählen"],["dessiner","zeichnen"],["le manga","der Manga"],["rigoler","lachen"],["aimer","mögen, lieben"],["le foot","Fußball"],["jouer","spielen"],["jouer à","etw. spielen (Spiel)"],["parler","sprechen"],["parler de tout et de rien","über alles Mögliche sprechen"],["chatter","chatten"],["Internet","das Internet"],["sur Internet","im Internet"],["une école","eine Schule"],["toujours","immer"],["la semaine","die Woche"],["beaucoup","sehr, viel"],["habiter","wohnen"],["loin","weit (weg)"]]],["Module 2","En classe",[["le prof","der Lehrer, die Lehrerin"],["le professeur","der Lehrer"],["un élève","ein Schüler"],["une élève","eine Schülerin"],["bien","gut"],["Répétez !","Wiederholt!, Wiederholen Sie!"],["Vous comprenez ?","Versteht ihr?, Verstehen Sie?"],["la phrase","der Satz"],["plus fort","lauter"],["s'il te plaît","bitte (beim Duzen)"],["s'il vous plaît","bitte (beim Siezen)"],["encore une fois","noch einmal"],["bravo","bravo"],["continuer","weitermachen, fortführen"],["Je ne comprends pas.","Ich verstehe nicht."],["Vous pouvez répéter ?","Könnt ihr wiederholen?, Können Sie wiederholen?"],["Prenez !","Nehmt!, Nehmen Sie!"],["Lisez !","Lest!, Lesen Sie!"],["le texte","der Text"],["Répondez !","Antwortet!, Antworten Sie!"],["chercher","suchen"],["le mot","das Wort"],["trouver","finden"],["Écrivez !","Schreibt!, Schreiben Sie!"],["fermer","schließen, zumachen"],["le livre","das Buch"],["maintenant","jetzt"],["les devoirs","die Hausaufgaben"],["la fenêtre","das Fenster"],["la porte","die Tür"],["la table","der Tisch"],["la chaise","der Stuhl"],["le tableau","die Tafel"]]],["Unité 3","Vocabulaire thématique",[["le bureau","der Schreibtisch"],["une étagère","ein Regal"],["une armoire","ein Schrank"],["le lit","das Bett"],["le coin","die Ecke"],["la photo","das Foto"],["le coin photo","die Fotoecke"],["le mur","die Mauer, die Wand"],["un ordinateur","ein Computer"],["la plante","die Pflanze"],["la guitare","die Gitarre"],["la console","die Konsole"],["une enceinte","eine Lautsprecherbox"],["le poster","das Poster"],["sur","auf, an"],["sous","unter"],["devant","vor"],["derrière","hinter"],["à gauche","links"],["à droite","rechts"]]],["Unité 3","Volet 1",[["aujourd'hui","heute"],["visiter","besichtigen"],["un appartement","eine Wohnung"],["une entrée","ein Eingang, eine Diele"],["le couloir","der Flur"],["la salle de bains","das Badezimmer"],["les toilettes","die Toilette"],["la cuisine","die Küche"],["le salon","das Wohnzimmer"],["chez moi","bei mir (zu Hause)"],["bien sûr","natürlich, selbstverständlich"],["le bazar","das Durcheinander"],["un endroit","ein Ort, eine Stelle"],["un endroit préféré","ein Lieblingsort"],["pour","um etw. zu tun"],["rêver","träumen"],["la vue","die Aussicht"],["la télé","der Fernseher"],["Chut !","Pst!"],["ce n'est pas mon truc","das ist nicht mein Ding"],["adorer","sehr lieben"],["ça","das"],["en face de","gegenüber von"],["à côté de","neben"],["la douche","die Dusche"],["très","sehr"],["design","stylish"]]],["Unité 3","Volet 2",[["le truc","das Ding, die Sache"],["aimer bien","gern mögen"],["détester","hassen"],["le joueur","der Spieler"],["la joueuse","die Spielerin"],["la joueuse préférée","die Lieblingsspielerin"],["le chanteur","der Sänger"],["la chanteuse","die Sängerin"],["le chanteur préféré","der Lieblingssänger"],["le groupe","die Gruppe, die Band"],["le groupe préféré","die Lieblingsband"],["faire","machen, tun"],["je fais","ich mache"],["nous faisons","wir machen"],["vous faites","ihr macht"],["ils font","sie machen"],["faire du piano","Klavier spielen"],["le piano","das Klavier"],["la BD","der Comic"],["les arts martiaux","der Kampfsport"],["moi non","ich nicht"],["moi non plus","ich auch nicht"],["moi si","doch, ich schon"],["l'escalade","das Klettern"],["parce que","weil"],["une activité","eine Freizeitaktivität"],["le rap","der Rap"],["le look","der Look, das Outfit"]]],["Unité 3","Volet 3",[["la vie","das Leben"],["petit, petite","klein"],["grand, grande","groß"],["un instrument","ein Instrument"],["la star","der Star"],["préféré, préférée","Lieblings-"],["joli, jolie","hübsch"],["moche","hässlich"],["bleu, bleue","blau"],["noir, noire","schwarz"],["blanc, blanche","weiß"],["jaune","gelb"],["rouge","rot"],["vert, verte","grün"],["ne … pas","nicht"],["ne … plus","nicht mehr"],["les affaires","die Sachen"],["trop","zu, zu sehr"],["vraiment","wirklich"],["drôle","lustig, spaßig"],["faire les devoirs","Hausaufgaben machen"],["surfer sur Internet","im Internet surfen"],["la pancarte","das Schild"],["entrer","hineingehen, hereinkommen"]]],["Module 3","L'heure",[["une heure","eine Stunde, eine Uhrzeit"],["Il est quelle heure ?","Wie viel Uhr ist es?"],["et quart","Viertel nach"],["le quart","die Viertelstunde"],["et demie","halb"],["moins le quart","Viertel vor"],["moins","weniger, minus"],["midi","12 Uhr mittags"],["minuit","Mitternacht"],["Allô ?","Hallo? (am Telefon)"],["passer chez qn","bei jdm. vorbeikommen"],["demain","morgen"],["À quelle heure ?","Um wie viel Uhr?"],["à … heures","um … Uhr"],["on pourrait","wir könnten, man könnte"],["Ça marche !","Geht klar!, Das klappt!"]]],["Unité 4","Vocabulaire thématique",[["lundi","Montag"],["mardi","Dienstag"],["mercredi","Mittwoch"],["jeudi","Donnerstag"],["vendredi","Freitag"],["samedi","Samstag"],["dimanche","Sonntag"],["le matin","der Morgen, der Vormittag"],["l'après-midi","der Nachmittag"],["un emploi du temps","ein Stundenplan"],["l'histoire-géo","Geschichte und Erdkunde"],["l'histoire","Geschichte"],["la géographie","Geografie, Erdkunde"],["la récré","die Pause (in der Schule)"],["l'anglais","Englisch"],["l'EPS","Sport (Schulfach)"],["les maths","Mathe"],["les SVT","Biologie und Geologie"],["la techno","Technik"],["les sciences physiques","Physik"],["le latin","Latein"],["les arts plastiques","Kunst (Schulfach)"],["la cantine","die Kantine, der Speisesaal"],["la permanence","beaufsichtigte Freiarbeit"],["je ne peux pas","ich kann nicht"],["Mais non !","Aber nein!, Nicht doch!"]]],["Unité 4","Volet 1",[["la salle","der (Unterrichts-)Raum"],["la salle des profs","das Lehrerzimmer"],["le bureau","das Büro"],["le CDI","die Schulbibliothek"],["une info","eine Info"],["le CPE","der Schulbetreuer"],["la mission","die Mission"],["le papier","das Papier, das Dokument"],["aller","gehen"],["je vais","ich gehe"],["tu vas","du gehst"],["il va","er geht"],["nous allons","wir gehen"],["vous allez","ihr geht"],["ils vont","sie gehen"],["le billet de retard","Nachweis über das Zuspätkommen"],["la solution","die Lösung"],["le point faible","der Schwachpunkt"],["sévère","streng"],["le principal","der Schulleiter"],["la principale","die Schulleiterin"],["organiser","organisieren"],["être pressé","in Eile sein, es eilig haben"],["le documentaliste","der Bibliothekar"],["ranger","aufräumen"],["nous rangeons","wir räumen auf"],["préparer","vorbereiten"],["un exposé","ein Vortrag"],["oublier","vergessen"],["tout","alles"],["le surveillant","die Aufsichtsperson"],["surveiller","überwachen, beaufsichtigen"],["Attention !","Achtung!"],["téléphoner","telefonieren"],["manger","essen"],["nous mangeons","wir essen"],["même","sogar"],["partout","überall"]]],["Unité 4","Volet 2",[["notre, nos","unser, unsere"],["votre, vos","euer, eure, Ihr, Ihre"],["leur, leurs","ihr, ihre (Plural)"],["Pourquoi … ?","Warum …?"],["la carte","die Karte"],["allemand, allemande","deutsch"],["le correspondant","der Brieffreund, der Austauschpartner"],["la correspondante","die Brieffreundin, die Austauschpartnerin"],["déjà","schon, bereits"],["la journée","der Tag (in seinem Ablauf)"],["ensuite","dann"],["la matière","das Schulfach"],["trop","total, voll (fam.)"],["bizarre","merkwürdig"],["le cauchemar","der Albtraum"],["la cour","der Schulhof, der Hof"],["le terrain","der Platz"],["Ça dépend.","Es kommt darauf an."],["avoir de la chance","Glück haben"],["expliquer","erklären"],["raconter sa vie","seine Lebensgeschichte erzählen"],["râler","meckern, motzen"],["terminer","beenden, aufhören"],["commencer","beginnen"],["nous commençons","wir beginnen"],["la fois","das Mal"],["Ça suffit !","Es reicht!"],["Quand … ?","Wann …?"],["Est-ce que … ?","Fragepartikel (wird nicht übersetzt)"],["avoir cours","Unterricht haben"],["le cours","der Unterricht, die Unterrichtsstunde"]]],["Unité 4","Volet 3",[["donner son avis","seine Meinung äußern"],["donner","geben, aufgeben"],["le commentaire","der Kommentar"],["un an","ein Jahr"],["une ambiance","eine Stimmung, eine Atmosphäre"],["beaucoup de","viel, viele"],["trop de","zu viel, zu viele"],["assez de","genug"],["ne … pas assez de","nicht genug"],["ne … pas de","kein, keine"],["ne … plus de","kein … mehr"],["je trouve que","ich finde, dass"],["la rentrée","der Schuljahresbeginn"],["un ascenseur","ein Aufzug"],["le bruit","der Lärm, das Geräusch"],["gaspiller","verschwenden"],["le pain","das Brot"],["le plat","das Hauptgericht, das Gericht"],["propre","sauber"],["vite","schnell"],["Au secours !","Zu Hilfe!"],["nul, nulle","miserabel, doof, schlecht"],["bon, bonne","gut, lecker"],["être nul en","in etw. schlecht sein"],["être bon en","in etw. gut sein"]]],["Module 4","À la cantine",[["le menu","das Menü"],["une entrée","eine Vorspeise"],["la soupe","die Suppe"],["la carotte","die Karotte, die Möhre"],["le riz","der Reis"],["les légumes","das Gemüse"],["le steak","das Steak"],["le gratin","der Auflauf"],["le potiron","der Kürbis"],["le dessert","die Nachspeise, das Dessert"],["le gâteau aux pommes","der Apfelkuchen"],["le gâteau","der Kuchen"],["la pomme","der Apfel"],["le fruit","die Frucht, das Obst"],["avoir faim","Hunger haben"],["avoir soif","Durst haben"],["prendre","nehmen"],["je prends","ich nehme"],["nous prenons","wir nehmen"],["ils prennent","sie nehmen"],["orange","orange"],["comme ça","so"],["sans","ohne"],["la viande","das Fleisch"],["végétarien, végétarienne","vegetarisch"],["Bon appétit !","Guten Appetit!"],["Tu me passes … ?","Reichst du mir …?"],["l'eau","das Wasser"],["beurk","bäh"],["le sel","das Salz"]]],["Unité 5","Vocabulaire thématique",[["le pique-nique","das Picknick"],["au bord de","am Ufer von"],["le festival","das Festival"],["le marché","der Markt"],["la liste","die Liste"],["les courses","die Einkäufe"],["il faut","man braucht, wir brauchen"],["la farine","das Mehl"],["le lait","die Milch"],["les chips","die Kartoffelchips"],["un œuf","ein Ei"],["la pomme de terre","die Kartoffel"],["la fraise","die Erdbeere"],["le beurre","die Butter"],["la banane","die Banane"],["le fromage","der Käse"],["le jambon","der Schinken"],["le miel","der Honig"],["le coca","die Cola"],["le biscuit","der Keks"],["le poivre","der Pfeffer"],["la crème","die Sahne, die Crème fraîche"],["le jus","der Saft"],["le sucre","der Zucker"],["une orange","eine Orange"],["la boisson","das Getränk"],["miam","mmh (lecker)"]]],["Unité 5","Volet 1",[["on se retrouve à","wir treffen uns (Ort/Zeit)"],["je voudrais + inf.","ich möchte gerne etw. tun"],["Ça te dit ?","Sagt dir das zu?"],["passer","verbringen"],["apporter","mitbringen"],["une idée","eine Idee"],["Bonne idée !","Gute Idee!"],["ce week-end","an diesem Wochenende"],["vouloir","wollen"],["je veux","ich will"],["nous voulons","wir wollen"],["ils veulent","sie wollen"],["pouvoir","können"],["je peux","ich kann"],["nous pouvons","wir können"],["ils peuvent","sie können"],["préférer","bevorzugen"],["je préfère","ich bevorzuge"],["nous préférons","wir bevorzugen"],["le film","der Film"],["un atelier","ein Workshop"],["le jardin","der Garten"],["cher, chère","teuer"],["gratuit, gratuite","kostenlos, gratis"],["le spectacle","die Vorstellung, die Show"],["ne … pas trop","nicht so sehr, nicht so gern"],["quelque chose","etwas"],["quelqu'un","jemand"],["appeler","anrufen"],["j'appelle","ich rufe an"],["nous appelons","wir rufen an"],["tout le monde","alle"],["le hip-hop","der Hip-Hop"],["l'électro","die Elektromusik"],["Attends !","Warte!"],["maman","Mama"],["papa","Papa"]]],["Unité 5","Volet 2",[["faire les courses","einkaufen (Lebensmittel)"],["acheter","kaufen"],["j'achète","ich kaufe"],["nous achetons","wir kaufen"],["Combien de … ?","Wie viel(e) …?"],["Combien … ?","Wie viel …?"],["la bouteille","die Flasche"],["la madeleine","die Madeleine (Gebäck)"],["le paquet","das Paket, die Packung"],["le sandwich","das Sandwich"],["l'argent","das Geld"],["un euro","ein Euro"],["le kilo","das Kilo"],["Et avec ça ?","Darf es sonst noch etwas sein?"],["C'est tout.","Das ist alles."],["ça fait","das macht (Preis)"],["ça coûte","das kostet (Preis)"],["la baguette","das Baguette"],["C'est quoi ?","Was ist das?"],["sucré, sucrée","süß, gezuckert"],["salé, salée","salzig, gesalzen"],["la quiche","die Quiche"],["un sandwich au jambon","ein Schinkensandwich"],["un gâteau à la crème","ein Sahnekuchen"],["la chouquette","die Chouquette (Gebäck)"]]],["Unité 5","Volet 3",[["le secret","das Geheimnis"],["le site web","die Webseite"],["la cuisine","das Kochen"],["la chimie","die Chemie"],["un exemple","ein Beispiel"],["la forme","die Form"],["la bosse","die Beule"],["la température","die Temperatur"],["le four","der Backofen"],["chaud, chaude","warm, heiß"],["froid, froide","kalt"],["la pâte","der Teig"],["le choc","der Schock"],["intéressant, intéressante","interessant"],["la recette","das (Koch-)Rezept"],["le gramme","das Gramm"],["la levure","das Backpulver, die Hefe"]]],["Module 5","C'est la fête !",[["Joyeux anniversaire !","Herzlichen Glückwunsch zum Geburtstag!"],["un anniversaire","ein Geburtstag"],["premier, première","erster, erste, erstes"],["janvier","Januar"],["février","Februar"],["mars","März"],["avril","April"],["mai","Mai"],["juin","Juni"],["juillet","Juli"],["août","August"],["septembre","September"],["octobre","Oktober"],["novembre","November"],["décembre","Dezember"],["la fête","die Feier"],["fêter","feiern"],["inviter","einladen"],["une invitation","eine Einladung"],["le skate","das Skateboard"],["la soirée","der Abend (in seinem Verlauf)"],["le camping","das Zelten"],["le sac de couchage","der Schlafsack"],["le cadeau","das Geschenk"],["Je compte sur toi.","Ich zähle auf dich."]]],["Module 6","Les vacances",[["la carte postale","die Postkarte"],["la balade","der Spaziergang"],["le VTT","das Mountainbike"],["la montagne","der Berg, das Gebirge"],["il pleut","es regnet"],["il fait beau","es ist schön (Wetter)"],["il fait froid","es ist kalt"],["il fait chaud","es ist warm"],["le soleil","die Sonne"],["rester","bleiben"],["j'espère que","ich hoffe, dass"],["arriver","ankommen"],["bientôt","bald"],["À bientôt !","Bis bald!"],["cher, chère (Anrede)","lieber, liebe"],["le rêve","der Traum"],["d'abord","zuerst"],["la plage","der Strand"]]]];
+/* Lernjahr 1: Grammatik, eingeordnet hinter den jeweiligen Vokabelteil (Unité|Teil) */
+const NY1_GRAM = [
+  { id: "aime", at: "C'est parti !|J'aime les jeux vidéo et le chocolat !", ico: "❤️", title: "j'aime und je n'aime pas", sub: "Sagen, was man mag, mit dem bestimmten Artikel",
+    body: `<p>Mit <b>j'aime</b> sagst du, was du magst, mit <b>je n'aime pas</b>, was du nicht magst. Danach steht im Französischen <b>immer der bestimmte Artikel</b>, auch wenn wir im Deutschen keinen sagen.</p>
+      ${ex([["J'aime <b>le</b> chocolat.", "Ich mag Schokolade."], ["J'aime <b>la</b> musique.", "Ich mag Musik."], ["Je n'aime pas <b>les</b> tomates.", "Ich mag keine Tomaten."]])}
+      ${gt(["Artikel", "steht vor", "Beispiel"], [["le", "männlichen Nomen", "le sport"], ["la", "weiblichen Nomen", "la pizza"], ["les", "Nomen im Plural", "les chats"]])}
+      ${tip("<b>Merke:</b> Bei <i>je n'aime pas</i> bleibt der Artikel stehen: Je n'aime pas <b>le</b> sport.")}`,
+    quiz: [["J'aime ___ musique.", ["le", "la", "les"], 1, "musique ist weiblich: la musique."], ["Je n'aime pas ___ tomates.", ["le", "la", "les"], 2, "Plural: les tomates."],
+      ["J'aime ___ chocolat.", ["le", "la", "les"], 0, "le chocolat ist männlich."], ["Ich mag keine Katzen.", ["Je n'aime pas les chats.", "Je n'aime pas chats.", "Je aime pas les chats."], 0, "Der Artikel bleibt: je n'aime pas les chats."],
+      ["Ich mag Pizza.", ["J'aime pizza.", "J'aime la pizza.", "J'aime une pizza."], 1, "Nach aimer steht der bestimmte Artikel."], ["Moi, j'aime ___ sport.", ["le", "la", "les"], 0, "le sport ist männlich."]] },
+  { id: "inton", at: "C'est parti !|Tu aimes les tomates ?", ico: "❓", title: "Die Intonationsfrage", sub: "Fragen nur mit der Stimme",
+    body: `<p>Die einfachste Frage im Französischen ist ein ganz normaler Aussagesatz. Nur die <b>Stimme geht am Ende nach oben</b>, und schriftlich steht ein Fragezeichen.</p>
+      ${ex([["Tu aimes le sport.", "Du magst Sport. (Aussage)"], ["Tu aimes le sport ?", "Magst du Sport? (Frage)"]])}
+      <p>Antworten kannst du mit <b>oui</b> (ja) oder <b>non</b> (nein). Mit <b>ou</b> (oder) fragst du nach einer Wahl.</p>
+      ${ex([["Tu aimes le rouge <b>ou</b> le vert ?", "Magst du Rot oder Grün?"]])}
+      ${tip("<b>Achtung:</b> Vor dem Fragezeichen steht im Französischen ein Leerzeichen: <i>Ça va ?</i>")}`,
+    quiz: [["Wie wird „Tu aimes les chiens“ zur Frage?", ["Die Stimme geht am Ende nach oben.", "Das Verb kommt an den Anfang.", "Man hängt „non“ an."], 0, "Bei der Intonationsfrage ändert sich nur die Satzmelodie."],
+      ["Magst du Musik?", ["Tu aimes la musique ?", "Aimes la musique tu ?", "La musique tu aimes ?"], 0, "Gleiche Wortstellung wie im Aussagesatz."], ["Was heißt „ou“?", ["oder", "wo", "und"], 0, "ou = oder, où (mit Akzent) = wo."],
+      ["– Tu aimes la pizza ? – ___, j'aime la pizza.", ["Oui", "Non", "Ou"], 0, "Zustimmung: oui."], ["Welche Schreibweise ist richtig?", ["Ça va ?", "Ça va?", "Ça va ¿"], 0, "Im Französischen steht vor ? ein Leerzeichen."]] },
+
+  { id: "cest", at: "Unité 1|Volet 1", ico: "👉", title: "C'est, ce sont und C'est qui ?", sub: "Personen und Dinge vorstellen",
+    body: `<p>Mit <b>c'est</b> (das ist) und <b>ce sont</b> (das sind) stellst du Personen oder Dinge vor.</p>
+      ${gt(["Singular", "Plural"], [["<b>C'est</b> Léo.", "<b>Ce sont</b> Léo et Marine."], ["<b>C'est</b> le stade.", "<b>Ce sont</b> les chats de Jeanne."]])}
+      <p>Nach einer Person fragst du mit <b>C'est qui ?</b> (Wer ist das?). Mit <b>Moi, c'est …</b> stellst du dich selbst vor.</p>
+      ${ex([["– C'est qui ? – C'est Idriss.", "Wer ist das? – Das ist Idriss."], ["Salut ! Moi, c'est Noé.", "Hallo! Ich heiße Noé."]])}`,
+    quiz: [["___ Noé et Max.", ["C'est", "Ce sont"], 1, "Zwei Personen: ce sont."], ["___ le collège.", ["C'est", "Ce sont"], 0, "Ein Ding: c'est."], ["Wer ist das?", ["C'est qui ?", "Qui c'est sont ?", "Ce sont qui ?"], 0, "C'est qui ?"],
+      ["___ les amis de Gabin.", ["C'est", "Ce sont"], 1, "Plural: ce sont."], ["Salut ! Moi, ___ Léa.", ["c'est", "ce sont", "je suis c'est"], 0, "Moi, c'est Léa = Ich heiße Léa."]] },
+  { id: "art", at: "Unité 1|Volet 1", ico: "🔤", title: "Der bestimmte Artikel und der Plural", sub: "le, la, l', les",
+    body: `<p>Im Französischen gibt es nur zwei Geschlechter: <b>männlich</b> und <b>weiblich</b>. Lerne den Artikel deshalb immer mit.</p>
+      ${gt(["", "Singular", "Plural"], [["männlich", "<b>le</b> garçon", "<b>les</b> garçons"], ["weiblich", "<b>la</b> fille", "<b>les</b> filles"], ["vor Vokal oder stummem h", "<b>l'</b>ami, <b>l'</b>hôtel", "<b>les</b> amis, <b>les</b> hôtels"]])}
+      <p>Den Plural bildest du meist mit <b>-s</b>. Man hört es aber nicht, nur am Artikel <b>les</b> erkennst du den Plural.</p>
+      ${tip("Nomen auf <b>-eau</b> und <b>-al</b> haben oft ein <b>-x</b>: le tableau → les tableau<b>x</b>, un animal → les anima<b>ux</b>.")}`,
+    quiz: [["___ ami de Gabin", ["le", "la", "l'"], 2, "Vor Vokal wird le/la zu l'."], ["___ fille", ["le", "la", "l'"], 1, "fille ist weiblich."], ["Plural von „le garçon“", ["les garçons", "les garçon", "le garçons"], 0, "les + -s."],
+      ["Plural von „le tableau“", ["les tableaus", "les tableaux", "les tableau"], 1, "-eau → -eaux."], ["___ hôtel", ["le", "la", "l'"], 2, "Stummes h: l'hôtel."], ["Plural von „l'animal“", ["les animals", "les animaux", "les animales"], 1, "-al → -aux."]] },
+  { id: "etre", at: "Unité 1|Volet 2", ico: "🧍", title: "Das Verb être und die Personalpronomen", sub: "je suis, tu es, il est …",
+    body: `<p><b>être</b> (sein) ist unregelmäßig. Lerne die Formen auswendig:</p>
+      ${gt(["Singular", "", "Plural", ""], [["je <b>suis</b>", "ich bin", "nous <b>sommes</b>", "wir sind"], ["tu <b>es</b>", "du bist", "vous <b>êtes</b>", "ihr seid / Sie sind"], ["il / elle / on <b>est</b>", "er / sie / man ist", "ils / elles <b>sont</b>", "sie sind"]])}
+      <p><b>on</b> heißt „man“, in der Umgangssprache meist „wir“. Das Verb steht dann wie bei il/elle: <i>On est en retard.</i></p>
+      <p><b>vous</b> verwendest du für mehrere Personen (ihr) und als Höflichkeitsform (Sie).</p>
+      ${tip("<b>ils</b> steht für eine Gruppe mit mindestens einem Jungen oder Mann, <b>elles</b> nur für Mädchen oder Frauen.")}`,
+    quiz: [["Nous ___ en sixième.", ["sommes", "sont", "êtes"], 0, "nous sommes"], ["Tu ___ de Paris ?", ["es", "est", "suis"], 0, "tu es"], ["Vous ___ en retard !", ["êtes", "sommes", "est"], 0, "vous êtes"],
+      ["Léa et Gabin ___ ensemble.", ["est", "sont", "sommes"], 1, "Léa et Gabin = ils → sont"], ["On ___ dans la même classe.", ["est", "sont", "sommes"], 0, "on steht wie il/elle: on est"],
+      ["Lina et Jeanne sind zwei Mädchen. ___ sont sympa.", ["Ils", "Elles", "On"], 1, "Nur Mädchen: elles."]] },
+  { id: "ilya", at: "Unité 1|Volet 3", ico: "📍", title: "il y a und der unbestimmte Artikel", sub: "Es gibt … un, une, des",
+    body: `<p>Mit <b>il y a</b> (es gibt) beschreibst du, was es an einem Ort gibt. Mit <b>Qu'est-ce qu'il y a … ?</b> fragst du danach.</p>
+      ${ex([["Qu'est-ce qu'il y a dans le quartier ?", "Was gibt es im Viertel?"], ["<b>Il y a</b> un parc et des magasins.", "Es gibt einen Park und Geschäfte."]])}
+      ${gt(["", "Singular", "Plural"], [["männlich", "<b>un</b> parc", "<b>des</b> parcs"], ["weiblich", "<b>une</b> gare", "<b>des</b> gares"]])}
+      ${tip("<b>des</b> wird im Deutschen nicht übersetzt: <i>Il y a des cafés.</i> = Es gibt Cafés.")}`,
+    quiz: [["Il y a ___ gare.", ["un", "une", "des"], 1, "la gare ist weiblich → une."], ["Il y a ___ magasins.", ["un", "une", "des"], 2, "Plural → des."], ["Es gibt einen Park.", ["Il y a un parc.", "Il est un parc.", "C'est un parc il y a."], 0, "il y a = es gibt"],
+      ["Was gibt es hier?", ["Qu'est-ce qu'il y a ici ?", "Qui il y a ici ?", "Où il y a ici ?"], 0, "Qu'est-ce qu'il y a … ?"], ["Il y a ___ cinéma.", ["un", "une", "des"], 0, "le cinéma → un cinéma."], ["Wie übersetzt du „des“ in „Il y a des cafés“?", ["gar nicht", "die", "einige von"], 0, "des bleibt im Deutschen meist unübersetzt."]] },
+  { id: "accents", at: "Module 1|En classe", ico: "✍️", title: "Alphabet, Akzente und Zeichen", sub: "é, è, ê, ç und Co.",
+    body: `<p>Französische Wörter haben oft <b>Akzente</b>. Sie gehören zur Schreibweise dazu.</p>
+      ${gt(["Zeichen", "Name", "Beispiel"], [["é", "accent aigu", "le café, le musée"], ["è", "accent grave", "la mère, très"], ["ê", "accent circonflexe", "être, la fenêtre"], ["ç", "cédille (wird wie s gesprochen)", "le français, ça va"], ["ë / ï", "tréma", "Noël, naïf"]])}
+      <p>So fragst du nach einem Wort: <b>Comment on dit … en français ?</b> (Wie sagt man …?) und <b>Comment on écrit … ?</b> (Wie schreibt man …?)</p>`,
+    quiz: [["Welches Wort ist richtig geschrieben?", ["le francais", "le français", "le françáis"], 1, "français mit cédille."], ["Welcher Akzent steht in „la mère“?", ["accent aigu", "accent grave", "accent circonflexe"], 1, "è = accent grave."],
+      ["Wie fragst du „Wie sagt man …?“", ["Comment on dit … ?", "Comment on écrit … ?", "Qu'est-ce que c'est ?"], 0, "dire = sagen."], ["Wie wird ç ausgesprochen?", ["wie s", "wie k", "wie tsch"], 0, "ç klingt immer wie s."], ["Richtig geschrieben:", ["la fenêtre", "la fenetre", "la fenétre"], 0, "fenêtre mit accent circonflexe."]] },
+
+  { id: "avoir", at: "Unité 2|Volet 1", ico: "🎒", title: "Das Verb avoir", sub: "haben und das Alter angeben",
+    body: `${gt(["Singular", "", "Plural", ""], [["j'<b>ai</b>", "ich habe", "nous <b>avons</b>", "wir haben"], ["tu <b>as</b>", "du hast", "vous <b>avez</b>", "ihr habt / Sie haben"], ["il / elle / on <b>a</b>", "er / sie / man hat", "ils / elles <b>ont</b>", "sie haben"]])}
+      <p>Das Alter gibst du im Französischen mit <b>avoir</b> an: Man „hat“ die Jahre.</p>
+      ${ex([["J'<b>ai</b> douze ans.", "Ich bin zwölf Jahre alt."], ["Tu <b>as</b> quel âge ?", "Wie alt bist du?"]])}
+      ${tip("Achte auf die Bindung: nous‿avons, vous‿avez, ils‿ont [ilzɔ̃]. Nicht verwechseln: ils <b>ont</b> (haben) und ils <b>sont</b> (sind).")}`,
+    quiz: [["Nous ___ un chat.", ["avons", "avez", "ont"], 0, "nous avons"], ["Mes parents ___ une moto.", ["a", "ont", "sont"], 1, "ils ont"], ["Ich bin 12 Jahre alt.", ["Je suis douze ans.", "J'ai douze ans.", "J'ai douze années."], 1, "Alter mit avoir."],
+      ["Tu ___ un frère ?", ["as", "a", "es"], 0, "tu as"], ["Vous ___ des animaux ?", ["avez", "avons", "êtes"], 0, "vous avez"], ["Ma sœur ___ quinze ans.", ["a", "as", "est"], 0, "elle a"]] },
+  { id: "neg1", at: "Unité 2|Volet 1", ico: "🚫", title: "Die Verneinung ne … pas", sub: "und kein, keine: ne … pas de",
+    body: `<p><b>ne … pas</b> umschließt das Verb. Vor Vokal wird <b>ne</b> zu <b>n'</b>.</p>
+      ${ex([["Je <b>ne</b> suis <b>pas</b> en retard.", "Ich bin nicht zu spät."], ["Je <b>n'</b>aime <b>pas</b> le sport.", "Ich mag keinen Sport."]])}
+      <p>Nach der Verneinung werden <b>un, une, des</b> zu <b>de</b> (vor Vokal <b>d'</b>). Auf Deutsch heißt das „kein, keine“.</p>
+      ${ex([["J'ai <b>un</b> frère. → Je n'ai <b>pas de</b> frère.", "Ich habe keinen Bruder."], ["J'ai <b>un</b> animal. → Je n'ai <b>pas d'</b>animal.", "Ich habe kein Haustier."]])}
+      ${tip("Der bestimmte Artikel bleibt: Je n'aime pas <b>les</b> chats.")}`,
+    quiz: [["Je ___ suis ___ de Paris.", ["ne … pas", "pas … ne", "n' … pas de"], 0, "ne vor dem Verb, pas danach."], ["Ich habe keine Geschwister.", ["Je n'ai pas des frères et sœurs.", "Je n'ai pas de frères et sœurs.", "Je ne pas ai frères et sœurs."], 1, "des → de nach der Verneinung."],
+      ["Il ___ habite pas ici.", ["ne", "n'", "pas"], 1, "Vor Vokal: n'."], ["Ich habe kein Haustier.", ["Je n'ai pas d'animal.", "Je n'ai pas un animal.", "Je n'ai pas de animal."], 0, "de wird vor Vokal zu d'."],
+      ["Ich mag keine Tomaten.", ["Je n'aime pas de tomates.", "Je n'aime pas les tomates.", "Je n'aime les tomates pas."], 1, "Bei aimer bleibt der bestimmte Artikel."]] },
+  { id: "poss1", at: "Unité 2|Volet 2", ico: "👪", title: "Possessivbegleiter mon, ton, son", sub: "mein, dein, sein, ihr",
+    body: `${gt(["", "männlich", "weiblich", "Plural"], [["mein", "<b>mon</b> frère", "<b>ma</b> sœur", "<b>mes</b> parents"], ["dein", "<b>ton</b> frère", "<b>ta</b> sœur", "<b>tes</b> parents"], ["sein / ihr", "<b>son</b> frère", "<b>sa</b> sœur", "<b>ses</b> parents"]])}
+      <p>Der Begleiter richtet sich nach dem <b>Nomen</b>, nicht nach dem Besitzer. <b>sa</b> mère heißt also „seine Mutter“ <i>oder</i> „ihre Mutter“.</p>
+      ${tip("Vor weiblichen Nomen mit Vokal steht <b>mon, ton, son</b>: <b>mon</b> amie, <b>ton</b> école.")}`,
+    quiz: [["Voilà ___ mère. (meine)", ["mon", "ma", "mes"], 1, "mère ist weiblich."], ["Ce sont ___ parents ? (deine)", ["ton", "ta", "tes"], 2, "Plural → tes."], ["Max et ___ père (sein Vater)", ["son", "sa", "ses"], 0, "père ist männlich → son."],
+      ["Clara et ___ père (ihr Vater)", ["son", "sa", "ses"], 0, "Es zählt das Nomen: le père → son."], ["C'est ___ amie Léa. (meine)", ["ma", "mon", "mes"], 1, "Vor Vokal: mon amie."], ["Noé et ___ grands-parents", ["son", "sa", "ses"], 2, "Plural → ses."]] },
+  { id: "er", at: "Unité 2|Volet 3", ico: "⚙️", title: "Die Verben auf -er", sub: "travailler, jouer, aimer …",
+    body: `<p>Die meisten französischen Verben enden auf <b>-er</b> und werden gleich konjugiert. Du nimmst den Stamm und hängst die Endungen an:</p>
+      ${gt(["", "travailler", "Endung"], [["je", "travaill<b>e</b>", "-e"], ["tu", "travaill<b>es</b>", "-es"], ["il / elle / on", "travaill<b>e</b>", "-e"], ["nous", "travaill<b>ons</b>", "-ons"], ["vous", "travaill<b>ez</b>", "-ez"], ["ils / elles", "travaill<b>ent</b>", "-ent"]])}
+      ${tip("Die Endungen -e, -es und -ent hört man nicht: je joue, tu joues, ils jouent klingen gleich. Vor Vokal wird je zu j': j'aime, j'écoute.")}`,
+    quiz: [["Nous ___ au foot. (jouer)", ["jouons", "jouez", "jouent"], 0, "nous → -ons"], ["Ils ___ de la musique. (écouter)", ["écoute", "écoutent", "écoutez"], 1, "ils → -ent"], ["Tu ___ souvent ? (dessiner)", ["dessines", "dessine", "dessinez"], 0, "tu → -es"],
+      ["Vous ___ français ? (parler)", ["parlons", "parlez", "parlent"], 1, "vous → -ez"], ["___ aime les mangas.", ["Je", "J'", "Jé"], 1, "Vor Vokal: j'aime."], ["Léa ___ sur Internet. (chatter)", ["chatte", "chattes", "chattent"], 0, "elle → -e"]] },
+  { id: "quest1", at: "Unité 2|Volet 3", ico: "💬", title: "Fragen mit Qu'est-ce que … ?", sub: "Was …?",
+    body: `<p>Mit <b>Qu'est-ce que</b> fragst du nach Dingen oder Tätigkeiten: Was …? Danach kommt ein ganz normaler Aussagesatz.</p>
+      ${ex([["<b>Qu'est-ce que</b> tu fais ?", "Was machst du?"], ["<b>Qu'est-ce que</b> tu aimes ?", "Was magst du?"], ["<b>Qu'est-ce qu'</b>il dessine ?", "Was zeichnet er?"]])}
+      ${tip("Vor Vokal wird que zu <b>qu'</b>: Qu'est-ce qu'il …, Qu'est-ce qu'elle …")}`,
+    quiz: [["Was machst du?", ["Qu'est-ce que tu fais ?", "Qui tu fais ?", "Où tu fais ?"], 0, "Qu'est-ce que = was"], ["___ elle regarde ?", ["Qu'est-ce que", "Qu'est-ce qu'", "Qui est-ce"], 1, "Vor Vokal: qu'."],
+      ["Qu'est-ce que tu ___ ? – J'écoute de la musique.", ["fais", "es", "as"], 0, "Was machst du? → fais"], ["Was magst du?", ["Qu'est-ce que tu aimes ?", "Qu'est-ce tu aimes ?", "Que tu aimes ?"], 0, "Qu'est-ce que tu aimes ?"]] },
+  { id: "imper", at: "Module 2|En classe", ico: "📣", title: "Der Imperativ im Unterricht", sub: "Écoutez ! Lis ! Répétez !",
+    body: `<p>Mit dem Imperativ gibst du Anweisungen. Es gibt eine Form für <b>eine Person</b> (du) und eine für <b>mehrere Personen</b> oder zum Siezen.</p>
+      ${gt(["du", "ihr / Sie", "Deutsch"], [["Écoute !", "Écoutez !", "Hör zu! / Hört zu!"], ["Répète !", "Répétez !", "Wiederhole! / Wiederholt!"], ["Lis !", "Lisez !", "Lies! / Lest!"], ["Écris !", "Écrivez !", "Schreib! / Schreibt!"], ["Prends !", "Prenez !", "Nimm! / Nehmt!"], ["Réponds !", "Répondez !", "Antworte! / Antwortet!"]])}
+      ${tip("Bei Verben auf -er fällt in der du-Form das -s weg: tu écoutes → <b>Écoute !</b>")}`,
+    quiz: [["Die Lehrerin sagt zur Klasse: „Lest den Text!“", ["Lis le texte !", "Lisez le texte !", "Lisons le texte !"], 1, "Mehrere Personen → Lisez."], ["Zu einem Freund: „Hör zu!“", ["Écoute !", "Écoutes !", "Écoutez !"], 0, "-er-Verb ohne -s."],
+      ["„Schreibt den Satz!“", ["Écrivez la phrase !", "Écris la phrase !", "Écrire la phrase !"], 0, "Écrivez = schreibt"], ["„Répétez, s'il vous plaît.“ heißt …", ["Wiederholen Sie bitte.", "Antworten Sie bitte.", "Lesen Sie bitte."], 0, "répéter = wiederholen"],
+      ["Zu einer Person: „Nimm ein Blatt!“", ["Prends une feuille !", "Prenez une feuille !", "Prendre une feuille !"], 0, "du-Form: Prends"]] },
+
+  { id: "prep", at: "Unité 3|Vocabulaire thématique", ico: "🛏️", title: "Präpositionen des Ortes", sub: "sur, sous, devant, à côté de …",
+    body: `${gt(["Präposition", "Deutsch", "Beispiel"], [["sur", "auf", "Le livre est <b>sur</b> la table."], ["sous", "unter", "Le chat est <b>sous</b> le lit."], ["devant / derrière", "vor / hinter", "<b>devant</b> la porte"], ["dans", "in", "<b>dans</b> l'armoire"], ["entre", "zwischen", "<b>entre</b> le lit et le bureau"], ["à côté de", "neben", "<b>à côté de</b> la fenêtre"], ["en face de", "gegenüber von", "<b>en face de</b> la gare"], ["à gauche de / à droite de", "links / rechts von", "<b>à droite de</b> l'étagère"]])}
+      <p>Bei Präpositionen mit <b>de</b> verschmilzt de mit le und les:</p>
+      ${gt(["de + Artikel", "Ergebnis", "Beispiel"], [["de + le", "<b>du</b>", "à côté <b>du</b> lit"], ["de + la", "de la", "en face <b>de la</b> porte"], ["de + l'", "de l'", "à gauche <b>de l'</b>armoire"], ["de + les", "<b>des</b>", "à côté <b>des</b> livres"]])}`,
+    quiz: [["Le chat est ___ le lit. (unter)", ["sur", "sous", "dans"], 1, "sous = unter"], ["La lampe est à côté ___ lit.", ["de le", "du", "de la"], 1, "de + le → du"], ["Le poster est en face ___ fenêtre.", ["du", "de la", "des"], 1, "de + la bleibt."],
+      ["Le sac est à droite ___ livres.", ["de les", "des", "du"], 1, "de + les → des"], ["Les livres sont ___ l'étagère. (auf)", ["sur", "sous", "derrière"], 0, "sur = auf"], ["Le stade est ___ la gare et le parc. (zwischen)", ["entre", "devant", "dans"], 0, "entre = zwischen"]] },
+  { id: "faire", at: "Unité 3|Volet 2", ico: "🎨", title: "Das Verb faire und Hobbys", sub: "je fais du sport, de la danse …",
+    body: `${gt(["Singular", "Plural"], [["je <b>fais</b>", "nous <b>faisons</b>"], ["tu <b>fais</b>", "vous <b>faites</b>"], ["il / elle / on <b>fait</b>", "ils / elles <b>font</b>"]])}
+      <p>Für Hobbys sagst du <b>faire de</b> + Artikel. Dabei verschmilzt de mit le und les:</p>
+      ${gt(["", "Beispiel"], [["de + le = <b>du</b>", "Je fais <b>du</b> piano."], ["de + la", "Elle fait <b>de la</b> danse."], ["de + l'", "Noé fait <b>de l'</b>escalade."], ["de + les = <b>des</b>", "Ils font <b>des</b> arts martiaux."]])}
+      ${tip("Achtung bei <b>vous faites</b>: Es heißt nie „vous faisez“.")}`,
+    quiz: [["Vous ___ du sport ?", ["faisez", "faites", "font"], 1, "vous faites"], ["Ils ___ leurs devoirs.", ["font", "fait", "faisons"], 0, "ils font"], ["Je fais ___ piano.", ["de le", "du", "de la"], 1, "le piano → du piano"],
+      ["Elle fait ___ danse.", ["du", "de la", "des"], 1, "la danse → de la danse"], ["Noé fait ___ escalade.", ["de l'", "du", "de la"], 0, "Vor Vokal: de l'"], ["Nous ___ du basket.", ["faisons", "faites", "font"], 0, "nous faisons"]] },
+  { id: "aimerinf", at: "Unité 3|Volet 2", ico: "👍", title: "Vorlieben ausdrücken", sub: "aimer, adorer, détester + Nomen oder Infinitiv",
+    body: `<p>Nach <b>aimer, aimer bien, adorer, préférer, détester</b> kann ein Nomen mit bestimmtem Artikel oder ein <b>Infinitiv</b> stehen.</p>
+      ${ex([["J'adore <b>le</b> foot.", "Ich liebe Fußball."], ["Je déteste <b>faire</b> du sport.", "Ich hasse es, Sport zu machen."], ["J'aime bien <b>dessiner</b>.", "Ich zeichne gern."]])}
+      <p>So reagierst du auf andere:</p>
+      ${gt(["Aussage", "Reaktion", "Bedeutung"], [["J'aime le rap.", "Moi aussi.", "Ich auch."], ["Je n'aime pas le sport.", "Moi non plus.", "Ich auch nicht."], ["Je n'aime pas Pomme.", "Moi si !", "Ich schon!"], ["J'ai une sœur.", "Moi non.", "Ich nicht."]])}`,
+    quiz: [["– Je n'aime pas les maths. – ___ (Ich auch nicht.)", ["Moi aussi.", "Moi non plus.", "Moi si."], 1, "Zustimmung zu einer Verneinung: moi non plus."], ["– J'adore les BD. – ___ (Ich auch.)", ["Moi aussi.", "Moi non plus.", "Moi non."], 0, "moi aussi"],
+      ["Ich spiele gern Gitarre.", ["J'aime bien jouer de la guitare.", "J'aime bien joue la guitare.", "J'aime bien de jouer guitare."], 0, "aimer bien + Infinitiv"], ["Je déteste ___ chats.", ["les", "des", "de"], 0, "Nach détester steht der bestimmte Artikel."],
+      ["– Je n'aime pas le rap. – ___ (Ich schon!)", ["Moi si !", "Moi aussi !", "Moi non plus !"], 0, "Widerspruch zu einer Verneinung: moi si."]] },
+  { id: "adj", at: "Unité 3|Volet 3", ico: "🎨", title: "Die Adjektive", sub: "Angleichung und Stellung",
+    body: `<p>Adjektive richten sich in Geschlecht und Zahl nach ihrem Nomen. Meist hängst du für weiblich ein <b>-e</b> und für Plural ein <b>-s</b> an.</p>
+      ${gt(["", "männlich", "weiblich"], [["Singular", "un lit bleu", "une chaise bleu<b>e</b>"], ["Plural", "des lits bleu<b>s</b>", "des chaises bleu<b>es</b>"]])}
+      <p>Endet ein Adjektiv schon auf -e, bleibt es gleich: un poster <b>rouge</b>, une plante <b>rouge</b>. Sonderformen: blanc → <b>blanche</b>, préféré → <b>préférée</b>.</p>
+      <p><b>Stellung:</b> Die meisten Adjektive stehen <b>hinter</b> dem Nomen (une chambre <b>moche</b>). Kurze Adjektive wie <b>petit, grand, joli</b> stehen <b>davor</b>: une <b>petite</b> chambre.</p>`,
+    quiz: [["une armoire ___ (weiß)", ["blanc", "blanche", "blancs"], 1, "blanc → blanche"], ["des posters ___ (blau)", ["bleu", "bleus", "bleues"], 1, "männlich Plural: -s"], ["Welche Stellung ist richtig?", ["une chambre petite", "une petite chambre"], 1, "petit steht vor dem Nomen."],
+      ["ma chanteuse ___", ["préféré", "préférée", "préférés"], 1, "weiblich: -e"], ["Welche Stellung ist richtig?", ["un moche lit", "un lit moche"], 1, "moche steht hinter dem Nomen."], ["des chaises ___ (grün)", ["vert", "verts", "vertes"], 2, "weiblich Plural: -es"]] },
+  { id: "neg2", at: "Unité 3|Volet 3", ico: "⛔", title: "ne … pas und ne … plus", sub: "nicht und nicht mehr",
+    body: `<p>Wie <b>ne … pas</b> umschließt auch <b>ne … plus</b> (nicht mehr) das Verb.</p>
+      ${ex([["Je <b>ne</b> joue <b>pas</b> au foot.", "Ich spiele nicht Fußball."], ["Je <b>ne</b> joue <b>plus</b> au foot.", "Ich spiele nicht mehr Fußball."], ["Je <b>n'</b>ai <b>plus</b> mon livre.", "Ich habe mein Buch nicht mehr."]])}
+      ${tip("Nach ne … plus wird un/une/des ebenfalls zu <b>de</b>: Je n'ai plus <b>de</b> devoirs.")}`,
+    quiz: [["Ich spiele nicht mehr Gitarre.", ["Je ne joue plus de la guitare.", "Je ne plus joue de la guitare.", "Je joue ne plus de la guitare."], 0, "ne vor, plus nach dem Verb."], ["Il ___ est pas là.", ["ne", "n'", "pas"], 1, "Vor Vokal: n'"],
+      ["Ich habe keine Hausaufgaben mehr.", ["Je n'ai plus de devoirs.", "Je n'ai plus des devoirs.", "Je n'ai pas plus devoirs."], 0, "ne … plus de"], ["„ne … plus“ heißt …", ["nicht mehr", "nicht", "mehr"], 0, "ne … plus = nicht mehr"]] },
+  { id: "heure", at: "Module 3|L'heure", ico: "🕒", title: "Die Uhrzeit", sub: "Il est quelle heure ?",
+    body: `${gt(["Uhrzeit", "Französisch"], [["2:05", "Il est deux heures cinq."], ["3:15", "Il est trois heures <b>et quart</b>."], ["4:30", "Il est quatre heures <b>et demie</b>."], ["5:45", "Il est six heures <b>moins le quart</b>."], ["6:50", "Il est sept heures <b>moins dix</b>."], ["12:00 / 0:00", "Il est <b>midi</b>. / Il est <b>minuit</b>."]])}
+      <p>Nach der Uhrzeit fragst du mit <b>Il est quelle heure ?</b> Nach einem Zeitpunkt mit <b>À quelle heure … ?</b> – Antwort: <b>à</b> 16 heures.</p>
+      ${tip("Nach midi und minuit heißt es <b>et demi</b> ohne -e: Il est midi et demi.")}`,
+    quiz: [["3:15", ["trois heures et quart", "trois heures moins le quart", "trois heures et demie"], 0, "et quart = Viertel nach"], ["7:45", ["sept heures moins le quart", "huit heures moins le quart", "huit heures et quart"], 1, "Viertel vor acht."],
+      ["4:30", ["quatre heures et demie", "quatre heures et demi", "quatre heures moins demie"], 0, "Nach heures: et demie."], ["Um 16 Uhr", ["à seize heures", "en seize heures", "dans seize heures"], 0, "Zeitpunkt mit à."], ["12:30 mittags", ["midi et demi", "midi et demie", "minuit et demi"], 0, "midi et demi"]] },
+
+  { id: "aller", at: "Unité 4|Volet 1", ico: "🚶", title: "aller und à + Artikel", sub: "je vais au collège",
+    body: `${gt(["Singular", "Plural"], [["je <b>vais</b>", "nous <b>allons</b>"], ["tu <b>vas</b>", "vous <b>allez</b>"], ["il / elle / on <b>va</b>", "ils / elles <b>vont</b>"]])}
+      <p>Wohin du gehst, sagst du mit <b>à</b>. Dabei verschmilzt à mit le und les:</p>
+      ${gt(["à + Artikel", "Ergebnis", "Beispiel"], [["à + le", "<b>au</b>", "Je vais <b>au</b> collège."], ["à + la", "à la", "Je vais <b>à la</b> cantine."], ["à + l'", "à l'", "Je vais <b>à l'</b>école."], ["à + les", "<b>aux</b>", "Je vais <b>aux</b> toilettes."]])}`,
+    quiz: [["Nous ___ au CDI.", ["allons", "allez", "vont"], 0, "nous allons"], ["Ils ___ à la cantine.", ["va", "vont", "allons"], 1, "ils vont"], ["Je vais ___ collège.", ["à le", "au", "à la"], 1, "à + le → au"],
+      ["Tu vas ___ toilettes ?", ["aux", "à les", "au"], 0, "à + les → aux"], ["Elle va ___ salle de musique.", ["au", "à la", "à l'"], 1, "à + la bleibt"], ["Vous ___ où ?", ["allez", "allons", "vas"], 0, "vous allez"]] },
+  { id: "ger", at: "Unité 4|Volet 1", ico: "🍽️", title: "manger und ranger", sub: "nous mangeons, nous rangeons",
+    body: `<p><b>manger</b> und <b>ranger</b> sind -er-Verben. Nur bei <b>nous</b> gibt es eine Besonderheit: Damit das g weich wie in „Garage“ bleibt, steht ein <b>e</b> vor -ons.</p>
+      ${gt(["manger", "ranger"], [["je mange", "je range"], ["tu manges", "tu ranges"], ["il mange", "il range"], ["nous mang<b>e</b>ons", "nous rang<b>e</b>ons"], ["vous mangez", "vous rangez"], ["ils mangent", "ils rangent"]])}`,
+    quiz: [["Nous ___ à la cantine.", ["mangons", "mangeons", "mangeont"], 1, "nous mangeons mit e"], ["Vous ___ vos affaires ?", ["rangez", "rangeez", "rangeons"], 0, "Nur bei nous kommt das e dazu."], ["Ils ___ des pizzas.", ["mangent", "mangeent", "mangeons"], 0, "ils mangent"],
+      ["Nous ___ la chambre.", ["rangons", "rangeons", "rangez"], 1, "nous rangeons"]] },
+  { id: "poss2", at: "Unité 4|Volet 2", ico: "🏫", title: "notre, votre, leur", sub: "unser, euer, ihr",
+    body: `${gt(["", "Singular", "Plural"], [["unser", "<b>notre</b> collège", "<b>nos</b> profs"], ["euer / Ihr", "<b>votre</b> salle", "<b>vos</b> livres"], ["ihr (mehrere Besitzer)", "<b>leur</b> salle", "<b>leurs</b> profs"]])}
+      <p>Bei diesen Begleitern gibt es keinen Unterschied zwischen männlich und weiblich, nur zwischen Singular und Plural.</p>
+      ${tip("<b>leur</b> (ihr) ≠ <b>son/sa</b> (sein/ihr): Léa et Max → <b>leur</b> prof. Léa → <b>sa</b> prof.")}`,
+    quiz: [["Voilà ___ collège. (unsere Schule)", ["notre", "nos", "votre"], 0, "Singular: notre"], ["Ce sont ___ livres ? (eure)", ["votre", "vos", "leurs"], 1, "Plural: vos"], ["Léa et Max cherchent ___ prof.", ["leur", "leurs", "son"], 0, "Mehrere Besitzer, ein Lehrer: leur"],
+      ["Les élèves rangent ___ affaires.", ["leur", "leurs", "ses"], 1, "Mehrere Besitzer, mehrere Dinge: leurs"], ["C'est ___ salle, Madame ? (Ihr)", ["votre", "vos", "notre"], 0, "Höflichkeit, Singular: votre"]] },
+  { id: "estceque", at: "Unité 4|Volet 2", ico: "🔎", title: "Fragen mit est-ce que", sub: "und mit Fragewort",
+    body: `<p><b>Est-ce que</b> macht aus einem Aussagesatz eine Ja/Nein-Frage. Es wird nicht übersetzt.</p>
+      ${ex([["<b>Est-ce que</b> tu as un animal ?", "Hast du ein Haustier?"]])}
+      <p>Mit einem Fragewort davor fragst du genauer nach:</p>
+      ${gt(["Fragewort", "Beispiel", "Deutsch"], [["Où", "Où <b>est-ce que</b> tu habites ?", "Wo wohnst du?"], ["Quand", "Quand <b>est-ce que</b> tu as EPS ?", "Wann hast du Sport?"], ["Pourquoi", "Pourquoi <b>est-ce que</b> tu es en retard ?", "Warum bist du zu spät?"], ["Comment", "Comment <b>est-ce que</b> tu vas au collège ?", "Wie kommst du zur Schule?"], ["Qu'", "Qu'<b>est-ce que</b> tu fais ?", "Was machst du?"]])}
+      ${tip("Auf <b>Pourquoi ?</b> antwortest du mit <b>parce que</b> (weil). Vor Vokal: est-ce qu'il …, parce qu'il …")}`,
+    quiz: [["Hast du Hausaufgaben?", ["Est-ce que tu as des devoirs ?", "Est-ce tu as des devoirs ?", "Qu'est-ce que tu as des devoirs ?"], 0, "Ja/Nein-Frage: est-ce que"], ["___ est-ce que tu es triste ? – Parce que …", ["Où", "Pourquoi", "Quand"], 1, "Antwort mit parce que → Pourquoi"],
+      ["Wann hast du Mathe?", ["Quand est-ce que tu as maths ?", "Où est-ce que tu as maths ?", "Comment est-ce que tu as maths ?"], 0, "Quand = wann"], ["Est-ce ___ il a cours ?", ["que", "qu'", "qui"], 1, "Vor Vokal: qu'"], ["Je suis en retard ___ le métro est en retard.", ["parce que", "pourquoi", "est-ce que"], 0, "parce que = weil"]] },
+  { id: "cer", at: "Unité 4|Volet 2", ico: "🔔", title: "commencer", sub: "nous commençons",
+    body: `<p>Bei <b>commencer</b> bekommt das c vor -ons eine <b>cédille</b>, damit es weiter wie „s“ klingt.</p>
+      ${gt(["Singular", "Plural"], [["je commence", "nous commen<b>ç</b>ons"], ["tu commences", "vous commencez"], ["il commence", "ils commencent"]])}`,
+    quiz: [["Nous ___ à huit heures.", ["commencons", "commençons", "commenceons"], 1, "ç vor -ons"], ["Le cours ___ à dix heures.", ["commence", "commençe", "commences"], 0, "il commence ohne ç"], ["Vous ___ quand ?", ["commencez", "commençez", "commencons"], 0, "Vor e und i kein ç"]] },
+  { id: "quant1", at: "Unité 4|Volet 3", ico: "⚖️", title: "Mengenangaben mit de", sub: "beaucoup de, trop de, assez de",
+    body: `<p>Nach Mengenwörtern steht nur <b>de</b>, ohne Artikel. Vor Vokal wird es zu <b>d'</b>.</p>
+      ${gt(["Mengenwort", "Beispiel", "Deutsch"], [["beaucoup de", "beaucoup <b>de</b> devoirs", "viele Hausaufgaben"], ["trop de", "trop <b>de</b> bruit", "zu viel Lärm"], ["assez de", "assez <b>de</b> pain", "genug Brot"], ["ne … pas assez de", "pas assez <b>de</b> vacances", "nicht genug Ferien"], ["ne … pas de", "pas <b>de</b> problème", "kein Problem"]])}
+      ${tip("Nie „beaucoup des“: Es heißt immer beaucoup <b>de</b> élèves → beaucoup <b>d'</b>élèves.")}`,
+    quiz: [["Il y a beaucoup ___ élèves.", ["des", "de", "d'"], 2, "Vor Vokal: d'"], ["Les profs donnent trop ___ devoirs.", ["de", "des", "les"], 0, "trop de"], ["Il n'y a pas assez ___ pain.", ["de", "du", "le"], 0, "pas assez de"],
+      ["Es gibt kein Problem.", ["Il n'y a pas de problème.", "Il n'y a pas un problème.", "Il n'y a pas des problèmes."], 0, "ne … pas de"], ["zu viel Lärm", ["trop de bruit", "trop du bruit", "beaucoup bruit"], 0, "trop de"]] },
+  { id: "bonnul", at: "Unité 4|Volet 3", ico: "⭐", title: "Meinungen und Noten", sub: "être bon/nul en, je trouve que",
+    body: `<p>Mit <b>être bon/bonne en</b> und <b>être nul/nulle en</b> sagst du, worin jemand gut oder schlecht ist. Das Adjektiv passt sich an.</p>
+      ${ex([["Marc est <b>bon en</b> français.", "Marc ist gut in Französisch."], ["Léa est <b>nulle en</b> maths.", "Léa ist schlecht in Mathe."]])}
+      <p>Deine Meinung leitest du mit <b>je trouve que</b> (ich finde, dass) ein.</p>
+      ${ex([["Je trouve que la cantine est super.", "Ich finde, dass die Kantine super ist."]])}`,
+    quiz: [["Léa est ___ en anglais. (gut)", ["bon", "bonne", "bons"], 1, "Léa → bonne"], ["Max est ___ en sport. (schlecht)", ["nul", "nulle", "nuls"], 0, "Max → nul"], ["Ich finde, dass …", ["je trouve que", "je trouve qui", "je pense de"], 0, "je trouve que"],
+      ["Elles sont ___ en latin. (gut)", ["bons", "bonnes", "bonne"], 1, "weiblich Plural: bonnes"]] },
+  { id: "prendre", at: "Module 4|À la cantine", ico: "🍰", title: "prendre und avoir faim", sub: "Was nimmst du?",
+    body: `${gt(["Singular", "Plural"], [["je <b>prends</b>", "nous <b>prenons</b>"], ["tu <b>prends</b>", "vous <b>prenez</b>"], ["il / elle / on <b>prend</b>", "ils / elles <b>prennent</b>"]])}
+      <p>Hunger und Durst „hat“ man im Französischen: <b>avoir faim</b> (Hunger haben), <b>avoir soif</b> (Durst haben).</p>
+      ${ex([["J'<b>ai faim</b>. Je <b>prends</b> le menu.", "Ich habe Hunger. Ich nehme das Menü."]])}
+      ${tip("Achte auf das doppelte n bei <b>ils prennent</b>.")}`,
+    quiz: [["Ils ___ un dessert.", ["prenent", "prennent", "prendent"], 1, "ils prennent mit nn"], ["Tu ___ quoi ?", ["prends", "prend", "prenez"], 0, "tu prends"], ["Ich habe Durst.", ["Je suis soif.", "J'ai soif.", "J'ai faim."], 1, "avoir soif"],
+      ["Nous ___ le menu sans entrée.", ["prenons", "prennons", "prenez"], 0, "nous prenons mit einem n"], ["Hunger haben", ["avoir faim", "être faim", "avoir soif"], 0, "avoir faim"]] },
+
+  { id: "partitif", at: "Unité 5|Vocabulaire thématique", ico: "🧈", title: "Der Teilungsartikel", sub: "du lait, de la farine, de l'eau",
+    body: `<p>Wenn du von einer <b>unbestimmten Menge</b> sprichst, die man nicht zählt, benutzt du den Teilungsartikel. Im Deutschen steht oft gar nichts.</p>
+      ${gt(["", "Teilungsartikel", "Beispiel"], [["männlich", "<b>du</b>", "Il faut <b>du</b> sucre."], ["weiblich", "<b>de la</b>", "Il faut <b>de la</b> farine."], ["vor Vokal", "<b>de l'</b>", "Je bois <b>de l'</b>eau."], ["Plural", "<b>des</b>", "On achète <b>des</b> fraises."]])}
+      ${tip("Nach der Verneinung steht wieder nur <b>de</b>: Il n'y a pas <b>de</b> lait.")}`,
+    quiz: [["Il faut ___ beurre.", ["du", "de la", "des"], 0, "le beurre → du"], ["Il faut ___ farine.", ["du", "de la", "de l'"], 1, "la farine → de la"], ["Tu veux ___ eau ?", ["de la", "du", "de l'"], 2, "Vor Vokal: de l'"],
+      ["Il n'y a pas ___ lait.", ["du", "de", "des"], 1, "Nach Verneinung: de"], ["On a ___ miel ?", ["du", "de la", "des"], 0, "le miel → du"]] },
+  { id: "vouloir", at: "Unité 5|Volet 1", ico: "🙋", title: "vouloir und pouvoir", sub: "wollen und können + Infinitiv",
+    body: `${gt(["vouloir", "pouvoir"], [["je <b>veux</b>", "je <b>peux</b>"], ["tu <b>veux</b>", "tu <b>peux</b>"], ["il / elle / on <b>veut</b>", "il / elle / on <b>peut</b>"], ["nous <b>voulons</b>", "nous <b>pouvons</b>"], ["vous <b>voulez</b>", "vous <b>pouvez</b>"], ["ils / elles <b>veulent</b>", "ils / elles <b>peuvent</b>"]])}
+      <p>Nach vouloir und pouvoir steht oft ein Verb im <b>Infinitiv</b>:</p>
+      ${ex([["Tu <b>veux jouer</b> avec moi ?", "Willst du mit mir spielen?"], ["On <b>peut aller</b> au parc.", "Wir können in den Park gehen."]])}
+      ${tip("Höflicher als je veux ist <b>je voudrais</b> (ich möchte).")}`,
+    quiz: [["Nous ___ regarder un film.", ["voulons", "voulez", "veulent"], 0, "nous voulons"], ["Ils ___ venir ?", ["peuvent", "pouvent", "peut"], 0, "ils peuvent"], ["Tu ___ apporter des boissons ?", ["peux", "peut", "pouvez"], 0, "tu peux"],
+      ["Willst du mit mir spielen?", ["Tu veux jouer avec moi ?", "Tu veux joues avec moi ?", "Tu veut jouer avec moi ?"], 0, "vouloir + Infinitiv"], ["Vous ___ répéter ?", ["pouvez", "pouvons", "peuvez"], 0, "vous pouvez"], ["Höflich: Ich möchte einen Saft.", ["Je voudrais un jus.", "Je veux un jus.", "Je peux un jus."], 0, "je voudrais"]] },
+  { id: "preferer", at: "Unité 5|Volet 1", ico: "📞", title: "préférer und appeler", sub: "Verben mit Änderungen im Stamm",
+    body: `<p>Bei diesen -er-Verben ändert sich der Stamm in den betonten Formen (je, tu, il, ils). Bei <b>nous</b> und <b>vous</b> bleibt er wie im Infinitiv.</p>
+      ${gt(["préférer", "appeler"], [["je préf<b>è</b>re", "j'appe<b>ll</b>e"], ["tu préf<b>è</b>res", "tu appe<b>ll</b>es"], ["il préf<b>è</b>re", "il appe<b>ll</b>e"], ["nous préférons", "nous appelons"], ["vous préférez", "vous appelez"], ["ils préf<b>è</b>rent", "ils appe<b>ll</b>ent"]])}`,
+    quiz: [["Je ___ le théâtre.", ["préfère", "préfére", "préfèrons"], 0, "je préfère mit è"], ["Nous ___ le cinéma.", ["préfèrons", "préférons", "préferons"], 1, "nous: é bleibt"], ["Tu ___ ta mère ?", ["appelles", "appeles", "appellez"], 0, "tu appelles mit ll"],
+      ["Vous ___ qui ?", ["appelez", "appellez", "appelles"], 0, "vous: ein l"], ["Ils ___ la pizza.", ["préfèrent", "préférent", "préfèrons"], 0, "ils préfèrent"]] },
+  { id: "acheter", at: "Unité 5|Volet 2", ico: "🛒", title: "acheter und Mengen", sub: "un kilo de, une bouteille de",
+    body: `${gt(["Singular", "Plural"], [["j'ach<b>è</b>te", "nous achetons"], ["tu ach<b>è</b>tes", "vous achetez"], ["il ach<b>è</b>te", "ils ach<b>è</b>tent"]])}
+      <p>Nach Maßangaben steht nur <b>de</b>:</p>
+      ${gt(["Menge", "Beispiel"], [["un kilo de", "un kilo <b>de</b> fraises"], ["une bouteille de", "une bouteille <b>d'</b>eau"], ["un paquet de", "un paquet <b>de</b> sucre"], ["250 grammes de", "250 grammes <b>de</b> beurre"]])}
+      <p>Nach dem Preis fragst du: <b>Ça coûte combien ?</b> oder <b>Combien est-ce que ça fait ?</b> Nach einer Menge: <b>Combien de</b> pommes ?</p>`,
+    quiz: [["Nous ___ des madeleines.", ["achetons", "achètons", "achettons"], 0, "nous: kein accent"], ["Elle ___ une baguette.", ["achète", "achete", "achètent"], 0, "elle achète"], ["eine Flasche Wasser", ["une bouteille d'eau", "une bouteille de l'eau", "une bouteille du eau"], 0, "Maßangabe + d'"],
+      ["ein Kilo Erdbeeren", ["un kilo de fraises", "un kilo des fraises", "un kilo fraises"], 0, "un kilo de"], ["Wie viele Äpfel?", ["Combien de pommes ?", "Combien des pommes ?", "Combien pommes ?"], 0, "Combien de"]] },
+  { id: "agout", at: "Unité 5|Volet 2", ico: "🥪", title: "à + Artikel bei Gerichten", sub: "un sandwich au jambon",
+    body: `<p>Die Zutat oder Geschmacksrichtung nennst du mit <b>à</b> + bestimmtem Artikel. Wie bei aller verschmelzen à + le und à + les:</p>
+      ${gt(["", "Beispiel", "Deutsch"], [["au (à + le)", "un sandwich <b>au</b> jambon", "ein Schinkensandwich"], ["à la", "un gâteau <b>à la</b> crème", "ein Sahnekuchen"], ["à l'", "des biscuits <b>à l'</b>orange", "Orangenkekse"], ["aux (à + les)", "une quiche <b>aux</b> légumes", "eine Gemüsequiche"]])}`,
+    quiz: [["une glace ___ chocolat", ["au", "à la", "aux"], 0, "le chocolat → au"], ["une tarte ___ fraises", ["au", "à la", "aux"], 2, "les fraises → aux"], ["un gâteau ___ crème", ["au", "à la", "à l'"], 1, "la crème → à la"], ["des biscuits ___ orange", ["à l'", "au", "à la"], 0, "Vor Vokal: à l'"]] },
+  { id: "nombres", at: "Unité 5|Volet 3", ico: "💯", title: "Die Zahlen bis 100", sub: "trente, soixante-dix, quatre-vingts",
+    body: `${gt(["Zahl", "Französisch", "Zahl", "Französisch"], [["21", "vingt-<b>et</b>-un", "60", "soixante"], ["22", "vingt-deux", "70", "soixante-dix (60 + 10)"], ["30", "trente", "71", "soixante-<b>et</b>-onze"], ["40", "quarante", "80", "quatre-vingt<b>s</b> (4 × 20)"], ["50", "cinquante", "81", "quatre-vingt-un"], ["", "", "90", "quatre-vingt-dix (4 × 20 + 10)"]])}
+      ${tip("Bei 21, 31, 41, 51, 61 und 71 steht <b>et</b>. Bei 81 und 91 nicht. Mehr übst du im Lernbereich unter „Zahlen lernen“.")}`,
+    quiz: [["70", ["septante", "soixante-dix", "soixante-et-dix"], 1, "70 = 60 + 10"], ["80", ["quatre-vingts", "huitante", "quatre-vingt-dix"], 0, "80 = 4 × 20"], ["31", ["trente-et-un", "trente-un", "trente et une"], 0, "Bei 31 steht et."],
+      ["95", ["quatre-vingt-quinze", "soixante-quinze", "quatre-vingts-quinze"], 0, "4 × 20 + 15"], ["81", ["quatre-vingt-un", "quatre-vingt-et-un", "quatre-vingts-un"], 0, "Bei 81 kein et."]] },
+  { id: "date", at: "Module 5|C'est la fête !", ico: "🎂", title: "Das Datum", sub: "le premier mai, le 14 juillet",
+    body: `<p>Das Datum sagst du mit <b>le</b> + Zahl + Monat. Nur der Erste heißt <b>premier</b>.</p>
+      ${ex([["C'est quand, ton anniversaire ? – C'est <b>le 3 mai</b>.", "Wann hast du Geburtstag? – Am 3. Mai."], ["Demain, c'est <b>le premier</b> avril.", "Morgen ist der 1. April."]])}
+      ${tip("Monate schreibt man im Französischen klein: janvier, février …")}`,
+    quiz: [["Der 1. Mai", ["le un mai", "le premier mai", "la première mai"], 1, "Nur beim Ersten: premier."], ["Am 14. Juli", ["le quatorze juillet", "au quatorze juillet", "le quatorzième juillet"], 0, "le + Grundzahl"],
+      ["Welche Schreibweise stimmt?", ["le 3 Mai", "le 3 mai"], 1, "Monate klein."], ["Herzlichen Glückwunsch zum Geburtstag!", ["Joyeux anniversaire !", "Bon anniversaire fête !", "Joyeuse fête !"], 0, "Joyeux anniversaire !"]] },
+  { id: "futur", at: "Module 6|Les vacances", ico: "🔮", title: "Das futur composé", sub: "aller + Infinitiv",
+    body: `<p>Was bald passiert, sagst du mit einer Form von <b>aller</b> und einem <b>Infinitiv</b>, wie „going to“ im Englischen.</p>
+      ${ex([["Je <b>vais rester</b> à la maison.", "Ich werde zu Hause bleiben."], ["Demain, nous <b>allons aller</b> à la plage.", "Morgen gehen wir an den Strand."], ["J'espère qu'il <b>va faire</b> beau.", "Ich hoffe, dass das Wetter schön wird."]])}
+      ${tip("Verneinung: ne … pas umschließt aller: Je <b>ne</b> vais <b>pas</b> rester.")}`,
+    quiz: [["Wir werden an den Strand gehen.", ["Nous allons aller à la plage.", "Nous allons à aller la plage.", "Nous aller allons à la plage."], 0, "aller (konjugiert) + Infinitiv"], ["Ils ___ visiter Paris.", ["vont", "va", "allons"], 0, "ils vont"],
+      ["Es wird regnen.", ["Il va pleuvoir.", "Il pleut va.", "Il va pleut."], 0, "va + Infinitiv"], ["Ich werde nicht bleiben.", ["Je ne vais pas rester.", "Je vais ne pas rester.", "Je ne vais rester pas."], 0, "ne … pas um aller"]] },
+  { id: "meteo", at: "Module 6|Les vacances", ico: "☀️", title: "Das Wetter", sub: "Il fait beau, il pleut",
+    body: `${gt(["Französisch", "Deutsch"], [["Il fait beau.", "Es ist schönes Wetter."], ["Il fait chaud.", "Es ist warm / heiß."], ["Il fait froid.", "Es ist kalt."], ["Il pleut.", "Es regnet."], ["Il y a du soleil.", "Die Sonne scheint."]])}
+      ${tip("Beim Wetter steht meist <b>il fait</b> + Adjektiv, auch wo wir im Deutschen „es ist“ sagen.")}`,
+    quiz: [["Es ist kalt.", ["Il est froid.", "Il fait froid.", "Il a froid."], 1, "il fait froid"], ["Es regnet.", ["Il pleut.", "Il fait pleut.", "Il y a pluie."], 0, "il pleut"], ["Die Sonne scheint.", ["Il y a du soleil.", "Il fait soleil.", "C'est soleil."], 0, "il y a du soleil"], ["Es ist schön.", ["Il fait beau.", "Il est beau.", "Il y a beau."], 0, "il fait beau"]] }
+];
+
+/* ===================== 2.1.1: Nachholen – Lernstraße Lernjahr 1 ===================== */
+const NY1_UNITS = [
+  { key: "C'est parti !", title: "C'est parti !", sub: "Die ersten Wörter: begrüßen, zählen, sagen, was man mag", c1: "#f97316", c2: "#f59e0b" },
+  { key: "Unité 1", title: "Unité 1", sub: "Paris und mein Viertel", c1: "#2563eb", c2: "#06b6d4", mods: ["Module 1"] },
+  { key: "Unité 2", title: "Unité 2", sub: "Familie, Freunde und Freizeit", c1: "#db2777", c2: "#f43f5e", mods: ["Module 2"] },
+  { key: "Unité 3", title: "Unité 3", sub: "Mein Zuhause und meine Vorlieben", c1: "#16a34a", c2: "#14b8a6", mods: ["Module 3"] },
+  { key: "Unité 4", title: "Unité 4", sub: "Schule, Stundenplan und Kantine", c1: "#7c3aed", c2: "#6366f1", mods: ["Module 4"] },
+  { key: "Unité 5", title: "Unité 5", sub: "Einkaufen, Backen, Feiern und Ferien", c1: "#ea580c", c2: "#e11d48", mods: ["Module 5", "Module 6"] }
+];
+const NY_GAME = { name: "Nachholen", c1: "#0d9488", c2: "#22c55e" };
+GICO.ny = '<path d="M5 21 9.5 3M19 21 14.5 3"/><path d="M12 5.5v2.2M12 10.9v2.2M12 16.3v2.7"/>';
+ICO.catchup = '<path d="M5 21 9.5 3M19 21 14.5 3"/><path d="M12 5.5v2M12 10.5v2.5M12 16v3"/>';
+const NY_CHUNK = 9, NY_BONUS = { v: 3, g: 5, c: 20 };
+let NY = null;
+function nyBuild() {
+  if (NY) return NY;
+  const parts = NY1_VOCAB.map(([u, p, w], i) => ({ i, unit: u, part: p, words: w }));
+  const units = NY1_UNITS.map((U, ui) => {
+    const keys = [U.key].concat(U.mods || []), nodes = [];
+    parts.filter(p => keys.includes(p.unit)).forEach(p => {
+      const n = Math.ceil(p.words.length / NY_CHUNK), size = Math.ceil(p.words.length / n);
+      for (let c = 0; c < n; c++) {
+        const words = p.words.slice(c * size, (c + 1) * size);
+        nodes.push({ id: `v${p.i}-${c}`, type: "v", ui, part: p, chunk: c, chunks: n, words, first: c === 0,
+          label: `${p.unit === U.key ? "" : p.unit + " · "}${p.part}`, title: `${p.unit} · ${p.part}`, sub: n > 1 ? `Vokabeln ${c + 1} von ${n} · ${words.length} Wörter` : `${words.length} Wörter` });
+      }
+      NY1_GRAM.filter(g => g.at === p.unit + "|" + p.part).forEach(g => nodes.push({ id: "g-" + g.id, type: "g", ui, part: p, gram: g, title: g.title, sub: g.sub, label: `${p.unit} · ${p.part}` }));
+    });
+    nodes.push({ id: "c" + ui, type: "c", ui, title: `Truhe: ${U.title}`, sub: `${NY_BONUS.c} Münzen für den ganzen Abschnitt` });
+    return Object.assign({}, U, { ui, nodes });
+  });
+  const flat = units.flatMap(u => u.nodes);
+  flat.forEach((n, k) => { n.k = k; });
+  NY = { units, flat, byId: Object.fromEntries(flat.map(n => [n.id, n])) };
+  return NY;
+}
+function nyProg() { const p = (S.me && S.me.settings && S.me.settings.ny1) || {}; return { d: Object.assign({}, p.d || {}), c: Object.assign({}, p.c || {}), at: p.at || 0 }; }
+function nySaveProg(p) { p.at = Date.now(); setSetting("ny1", p); }
+function nyDone(p, n) { return n.type === "c" ? !!p.c[n.id] : (p.d[n.id] || 0) > 0; }
+function nyCurrent(p) { const { flat } = nyBuild(); return flat.find(n => n.type !== "c" && !nyDone(p, n)) || null; }
+function nyUnlocked(p, n) {
+  const cur = nyCurrent(p);
+  if (n.type === "c") return nyBuild().units[n.ui].nodes.every(x => x.type === "c" || nyDone(p, x));
+  return !cur || n.k <= cur.k || nyDone(p, n);
+}
+function nyStats(p) {
+  const { flat } = nyBuild(), les = flat.filter(n => n.type !== "c");
+  const done = les.filter(n => nyDone(p, n));
+  return { total: les.length, done: done.length, words: done.filter(n => n.type === "v").reduce((s, n) => s + n.words.length, 0), allWords: les.filter(n => n.type === "v").reduce((s, n) => s + n.words.length, 0),
+    gram: done.filter(n => n.type === "g").length, allGram: les.filter(n => n.type === "g").length, stars: Object.values(p.d).reduce((s, x) => s + (+x || 0), 0) };
+}
+
+/* ---------- Ansicht: Lernstraße ---------- */
+const NY_OFF = [0, 58, 92, 58, 0, -58, -92, -58];
+function nyNodeIcon(n) {
+  if (n.type === "c") return CHEST_SVG;
+  if (n.type === "g") return `<span class="nn-emo">${n.gram.ico}</span>`;
+  return `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${ICO.vocab}</svg>`;
+}
+function nyStars(s) { return `<span class="nn-stars" aria-label="${s} von 3 Sternen">${[1, 2, 3].map(i => `<i class="${i <= s ? "on" : ""}">★</i>`).join("")}</span>`; }
+function nyRoad(p) {
+  const { units } = nyBuild(), cur = nyCurrent(p);
+  return units.map(U => {
+    const les = U.nodes.filter(n => n.type !== "c"), done = les.filter(n => nyDone(p, n)).length;
+    const locked = cur && U.nodes[0].k > cur.k && !nyDone(p, U.nodes[0]);
+    const finished = done === les.length;
+    let y = 10, j = 0, html = "", pts = [], lastLabel = "";
+    U.nodes.forEach(n => {
+      const lab = n.type === "v" && n.first ? n.label : n.type === "c" ? "" : null;
+      if (lab && lab !== lastLabel) { html += `<div class="ny-label" style="top:${y}px"><span>${esc(lab)}</span></div>`; y += 78; lastLabel = lab; }
+      const off = n.type === "c" ? 0 : NY_OFF[j++ % NY_OFF.length];
+      const st = nyDone(p, n) ? "done" : n === cur ? "cur" : nyUnlocked(p, n) ? (n.type === "c" ? "ready" : "open") : "lock";
+      pts.push([off, y + 38, st]);
+      html += `<button class="ny-node t-${n.type} s-${st}" style="left:calc(50% + ${off}px);top:${y}px" data-act="nyNode" data-id="${n.id}" aria-label="${esc(n.title)}${st === "lock" ? " (gesperrt)" : ""}">
+        ${st === "cur" ? `<span class="nn-start">${p.d && Object.keys(p.d).length ? "Weiter" : "Start"}</span>` : ""}
+        <span class="nn-in">${st === "lock" && n.type !== "c" ? `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="5.5" y="10.5" width="13" height="9" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>` : nyNodeIcon(n)}</span>
+        ${n.type !== "c" && nyDone(p, n) ? nyStars(p.d[n.id]) : ""}</button>`;
+      y += n.type === "c" ? 118 : 100;
+    });
+    const H = y + 6;
+    let d = "", dDone = "";
+    pts.forEach(([x, py], i) => {
+      if (!i) { d = `M${x} ${py}`; return; }
+      const [px0, py0] = pts[i - 1], mid = (py0 + py) / 2, seg = ` C${px0} ${mid} ${x} ${mid} ${x} ${py}`;
+      d += seg; if (pts[i][2] === "done" || pts[i][2] === "cur" || pts[i][2] === "ready") dDone += (dDone ? "" : `M${px0} ${py0}`) + seg;
+    });
+    return `<section class="ny-unit${locked ? " locked" : ""}" style="--u1:${U.c1};--u2:${U.c2}" id="ny-u${U.ui}">
+      <div class="ny-banner"><div class="nb-txt"><small>Abschnitt ${U.ui + 1} von ${units.length}</small><h2>${esc(U.title)}</h2><p>${esc(U.sub)}</p></div>
+        <div class="nb-side"><div class="nb-prog"><b>${done}/${les.length}</b><span>Lektionen</span></div>
+        ${finished ? `<span class="nb-done">✓ Geschafft</span>` : `<button class="btn small nb-skip" data-act="nySkip" data-u="${U.ui}">${locked ? "Hierher springen" : "Überspringen"}</button>`}</div>
+        <div class="nb-bar"><i style="width:${les.length ? done / les.length * 100 : 0}%"></i></div></div>
+      <div class="ny-path" style="height:${H}px">
+        <svg class="ny-svg" viewBox="-200 0 400 ${H}" width="400" height="${H}" aria-hidden="true"><path d="${d}" class="np-base"/>${dDone ? `<path d="${dDone}" class="np-done"/>` : ""}</svg>
+        ${html}</div></section>`;
+  }).join("");
+}
+function catchupView() {
+  const p = nyProg(), st = nyStats(p), cur = nyCurrent(p), pct = st.total ? st.done / st.total : 0;
+  return `<h1>Nachholen</h1><p class="muted" style="margin-top:-.4rem">Verpasste Vokabeln und Grammatik Schritt für Schritt nachholen, wie auf einer Lernstraße.</p>
+    <div class="tabs" role="tablist"><button role="tab" aria-selected="true">Lernjahr 1</button><button role="tab" aria-selected="false" disabled title="Kommt später">Lernjahr 2 · bald</button></div>
+    <section class="card ny-hero">
+      <div class="ring-wrap">${ringSVG(pct)}<div class="ring-n"><b>${Math.round(pct * 100)}%</b><span>geschafft</span></div></div>
+      <div class="nh-main"><p class="eyebrow">Französisch · À plus ! 1 (Neubearbeitung)</p>
+        <h2>${cur ? `Weiter mit ${esc(cur.title)}` : "Lernjahr 1 komplett nachgeholt!"}</h2>
+        <p class="muted">${st.words} von ${st.allWords} Vokabeln · ${st.gram} von ${st.allGram} Grammatikthemen · ${st.stars} ★</p>
+        <div class="row" style="gap:.5rem">${cur ? `<button class="btn primary" data-act="nyStart" data-id="${cur.id}">${st.done ? "Weiterlernen" : "Loslegen"}</button><button class="btn" data-act="nyJump">Zur aktuellen Lektion</button>` : ""}</div></div>
+    </section>
+    <div class="ny-legend"><span><i class="lg v"></i>Vokabeln</span><span><i class="lg g"></i>Grammatik</span><span><i class="lg c"></i>Truhe</span></div>
+    <div class="ny-road">${nyRoad(p)}</div>
+    <p class="muted" style="text-align:center;font-size:.85rem;margin-top:1rem">Vokabeln aus der Vokabelliste von À plus ! 1. Mit „Überspringen“ kannst du einen Abschnitt, den du schon kannst, mit einem kurzen Test abhaken.</p>`;
+}
+function nyHomeCard() {
+  if (!S.me) return "";
+  const p = nyProg(), st = nyStats(p), cur = nyCurrent(p);
+  return `<button class="cta-learn ny-cta" data-act="nav" data-v="catchup"><span class="ico-big">${icon("catchup")}</span><span><b>Lernjahr 1 nachholen · ${Math.round(st.done / st.total * 100)} %</b><span>${cur ? "Weiter mit " + esc(cur.title) : "Alles geschafft!"}</span></span><span class="go" aria-hidden="true">→</span></button>`;
+}
+function nyScrollTo() {
+  S.nyScroll = false;
+  setTimeout(() => { const el = $(".ny-node.s-cur") || $(".ny-node.s-ready"); if (el) el.scrollIntoView({ block: "center", behavior: "smooth" }); }, 80);
+}
+function nyNodeModal(n) {
+  const p = nyProg(), st = nyDone(p, n) ? "done" : nyUnlocked(p, n) ? "open" : "lock", U = nyBuild().units[n.ui];
+  if (n.type === "c") {
+    const claimed = !!p.c[n.id], ready = nyUnlocked(p, n);
+    return `<div class="big-chest">${CHEST_SVG}</div><h2>${esc(n.title)}</h2>
+      <p class="muted">${claimed ? "Diese Truhe hast du schon geöffnet." : ready ? `Du hast alle Lektionen in ${esc(U.title)} geschafft!` : `Schaffe alle Lektionen in ${esc(U.title)}, dann kannst du die Truhe öffnen.`}</p>
+      <div class="row" style="justify-content:center">${!claimed && ready ? `<button class="btn primary" data-act="nyChest" data-id="${n.id}">${COIN} ${NY_BONUS.c} Münzen einsammeln</button>` : `<button class="btn" data-act="closeModal">Schließen</button>`}</div>`;
+  }
+  const head = `<div class="ny-mhead" style="--u1:${U.c1};--u2:${U.c2}"><span class="nn-in">${nyNodeIcon(n)}</span><div><p class="eyebrow">${n.type === "g" ? "Grammatik" : "Vokabeln"} · ${esc(n.label || U.title)}</p><h2>${esc(n.type === "g" ? n.title : n.part.part)}</h2><p class="muted">${esc(n.sub)}</p></div></div>`;
+  const preview = n.type === "v" ? `<div class="ny-wlist">${n.words.map(([f, d]) => `<span><b>${esc(f)}</b> ${esc(d)}</span>`).join("")}</div>` : "";
+  const saved = n.type === "v" && S.sections.some(s => s.name === nySecName(n.part));
+  return `${head}${preview}
+    ${st === "done" ? `<p class="ny-mstars">${nyStars(p.d[n.id])} Bestes Ergebnis</p>` : ""}
+    ${st === "lock" ? `<p class="note">Diese Lektion ist noch gesperrt. Schaffe zuerst die Lektionen davor oder nutze beim Abschnitt „Hierher springen“.</p>` : ""}
+    <div class="row end" style="margin-top:1rem;flex-wrap:wrap">
+      ${n.type === "v" ? `<button class="btn small ghost" data-act="nySaveSec" data-p="${n.part.i}" ${saved ? "disabled" : ""}>${saved ? "✓ In deinen Vokabeln" : "Zu meinen Vokabeln hinzufügen"}</button><span class="spacer"></span>` : ""}
+      <button class="btn" data-act="closeModal">Schließen</button>
+      ${st !== "lock" ? `<button class="btn primary" data-act="nyStart" data-id="${n.id}">${st === "done" ? "Nochmal üben" : n.type === "g" ? "Lernen" : "Starten"}</button>` : ""}
+    </div>`;
+}
+function nySecName(part) { return `À plus 1 · ${part.unit === "C'est parti !" ? "C'est parti" : part.unit} · ${part.part}`; }
+
+/* ---------- Lektionen ---------- */
+function nyWordPool(n) {
+  const U = nyBuild().units[n.ui];
+  return U.nodes.filter(x => x.type === "v").flatMap(x => x.words);
+}
+function nyMC(word, pool, dir) {
+  const fi = dir === "fd" ? 1 : 0, right = word[fi], seen = new Set([norm(right)]), opts = [right];
+  const near = shuffle(pool.filter(w => w !== word));
+  for (const w of near) { if (opts.length >= 4) break; const t = w[fi]; if (seen.has(norm(t)) || checkAnswer(t, right).ok) continue; seen.add(norm(t)); opts.push(t); }
+  const order = shuffle(opts.map((t, i) => ({ t, i })));
+  return { opts: order.map(o => o.t), a: order.findIndex(o => o.i === 0) };
+}
+function nyVocabTasks(n) {
+  const pool = nyWordPool(n).concat(n.part.words), W = n.words, tasks = [], speech = "speechSynthesis" in window;
+  if (W.length >= 3) { const ws = shuffle(W.slice()).slice(0, Math.min(5, W.length)); tasks.push({ t: "match", ws }); }
+  shuffle(W.slice()).forEach((w, i) => tasks.push(Object.assign({ t: speech && i % 4 === 3 ? "hear" : "mc", dir: "fd", w }, nyMC(w, pool, "fd"))));
+  shuffle(W.slice()).forEach((w, i) => tasks.push(i % 2 ? Object.assign({ t: "mc", dir: "df", w }, nyMC(w, pool, "df")) : { t: "type", w }));
+  return tasks;
+}
+function nyGramTasks(g) { return shuffle(g.quiz.map((q, i) => ({ t: "gq", q: i, g }))); }
+function nyStart(id, test) {
+  const { byId, units } = nyBuild();
+  let n = byId[id], tasks;
+  if (test != null) {
+    const U = units[test], words = shuffle(U.nodes.filter(x => x.type === "v").flatMap(x => x.words)).slice(0, 10), pool = nyWordPool(U.nodes[0]);
+    const grams = shuffle(U.nodes.filter(x => x.type === "g")).slice(0, 3).map(x => ({ t: "gq", q: Math.floor(Math.random() * x.gram.quiz.length), g: x.gram }));
+    tasks = shuffle(words.map((w, i) => i % 3 === 2 ? { t: "type", w } : Object.assign({ t: "mc", dir: i % 2 ? "df" : "fd", w }, nyMC(w, pool, i % 2 ? "df" : "fd"))).concat(grams));
+    n = { id: "test" + test, type: "t", ui: test, title: `Test: ${U.title}`, sub: "" };
+  } else {
+    if (!n || n.type === "c") return;
+    if (!nyUnlocked(nyProg(), n)) { toast("Diese Lektion ist noch gesperrt."); return; }
+    tasks = n.type === "v" ? nyVocabTasks(n) : nyGramTasks(n.gram);
+  }
+  closeModal(true);
+  const G = { kind: "ny", node: n, tasks, total: tasks.length, i: 0, state: n.type === "t" ? "ask" : "intro", mistakes: 0, hearts: n.type === "t" ? 3 : 0, retried: new Set(),
+    right: 0, n: 0, wrongs: [], coinsEarned: 0, bonus: 0, score: 0, startedAt: Date.now(), finished: false, timers: [], lastCoin: 0, o: {}, sel: null, matched: [], token: 0 };
+  S.view = "catchup"; S.learn = null; S.game = G;
+  render(); window.scrollTo({ top: 0 });
+}
+function nyTask(G) { return G.tasks[G.i]; }
+function nyLangLabel(G) { return "Französisch"; }
+function nyView(G) {
+  const n = G.node, U = nyBuild().units[n.ui];
+  if (G.state === "intro") {
+    if (n.type === "g") return `<article class="gram ny-gram"><div class="gram-head"><span class="lb-ico big" aria-hidden="true">${n.gram.ico}</span><div><p class="eyebrow">Grammatik · ${esc(n.label)}</p><h2>${esc(n.gram.title)}</h2><p class="muted">${esc(n.gram.sub)}</p></div></div>
+      <div class="gram-body">${n.gram.body}</div></article>
+      <div class="row end" style="margin-top:1.2rem"><button class="btn primary big" id="nextBtn" data-act="nyGo">Zur Übung (${G.tasks.length} Fragen)</button></div>`;
+    return `<p class="eyebrow">${esc(n.title)}${n.chunks > 1 ? ` · Teil ${n.chunk + 1} von ${n.chunks}` : ""}</p><h2 style="margin:.2rem 0 .3rem">Deine neuen Wörter</h2>
+      <p class="muted">Lies sie dir einmal durch${speakOn("fr") ? " und tippe auf den Lautsprecher, um sie zu hören" : ""}. Danach übst du sie in ${G.tasks.length} kurzen Aufgaben.</p>
+      <div class="ny-cards">${n.words.map(([f, d]) => `<div class="ny-card"><b>${esc(f)}</b>${spkBtn(f, "fr", "sm")}<span>${esc(d)}</span></div>`).join("")}</div>
+      <div class="row end" style="margin-top:1.2rem"><button class="btn primary big" id="nextBtn" data-act="nyGo">Los geht’s</button></div>`;
+  }
+  const T = nyTask(G); if (!T) return "";
+  const done = G.state !== "ask";
+  let body = "", sol = "";
+  if (T.t === "match") {
+    const left = T.left || (T.left = shuffle(T.ws.slice())), right = T.right || (T.right = shuffle(T.ws.slice()));
+    const m = new Set(G.matched);
+    body = `<p class="ny-ask">Finde die Paare</p><div class="ny-match">
+      <div>${left.map((w, i) => `<button class="mt${m.has(w) ? " ok" : ""}${G.sel && G.sel.side === "l" && G.sel.i === i ? " sel" : ""}" data-act="nyMatch" data-s="l" data-i="${i}" ${m.has(w) ? "disabled" : ""}>${esc(w[0])}</button>`).join("")}</div>
+      <div>${right.map((w, i) => `<button class="mt${m.has(w) ? " ok" : ""}${G.sel && G.sel.side === "r" && G.sel.i === i ? " sel" : ""}" data-act="nyMatch" data-s="r" data-i="${i}" ${m.has(w) ? "disabled" : ""}>${esc(w[1])}</button>`).join("")}</div></div>`;
+  } else if (T.t === "gq") {
+    const [q, opts, a] = T.g.quiz[T.q];
+    sol = opts[a];
+    body = `<p class="ny-ask">${n.type === "t" ? esc(T.g.title) : "Wähle die richtige Antwort"}</p><div class="ny-q">${esc(q)}</div>
+      <div class="opt-grid">${opts.map((o, k) => `<button class="opt${done ? (k === a ? " right" : o === G.given ? " wrong" : "") : ""}" data-act="nyPick" data-i="${k}" ${done ? "disabled" : ""}><span class="k">${k + 1}</span>${esc(o)}</button>`).join("")}</div>`;
+  } else if (T.t === "type") {
+    sol = T.w[0];
+    body = `<p class="ny-ask">Schreib es auf Französisch</p><div class="ny-q">${esc(T.w[1])}</div>
+      <form data-form="nyType" class="det-form" autocomplete="off"><input class="input" id="ny-in" name="a" placeholder="auf Französisch …" autocapitalize="none" spellcheck="false" ${done ? `value="${esc(G.given)}" readonly` : ""} aria-label="Antwort">
+      ${done ? "" : `<button class="btn primary big" type="submit">Prüfen</button>`}</form>
+      ${done ? "" : `<div class="ny-acc">${["é", "è", "ê", "à", "ç", "ô", "œ", "î", "û"].map(c => `<button type="button" data-act="nyAcc" data-k="${c}">${c}</button>`).join("")}</div>`}`;
+  } else {
+    const fd = T.dir === "fd";
+    sol = T.opts[T.a];
+    body = `<p class="ny-ask">${T.t === "hear" ? "Hör zu: Was bedeutet das Wort?" : fd ? "Was heißt das auf Deutsch?" : "Wie heißt das auf Französisch?"}</p>
+      <div class="ny-q">${T.t === "hear" ? `<button class="lsn-btn sm" data-act="speak" data-t="${esc(T.w[0])}" data-l="fr" aria-label="Wort anhören">${icon("speaker")}</button>${done ? esc(T.w[0]) : ""}` : esc(fd ? T.w[0] : T.w[1])}${T.t !== "hear" && fd ? spkBtn(T.w[0], "fr") : ""}</div>
+      <div class="opt-grid">${T.opts.map((o, k) => `<button class="opt${done ? (k === T.a ? " right" : o === G.given ? " wrong" : "") : ""}" data-act="nyPick" data-i="${k}" ${done ? "disabled" : ""}><span class="k">${k + 1}</span>${esc(o)}</button>`).join("")}</div>`;
+  }
+  let fb = "";
+  if (G.state === "right") fb = `<div class="ny-fb right" role="status"><span class="nf-ico">✓</span><div><b>${["Super!", "Richtig!", "Genau!", "Stark!", "Très bien !"][G.i % 5]}</b>${G.typo ? `<span>Achte auf die Schreibweise: ${esc(sol)}</span>` : ""}</div>${coinNote(G)}<span class="spacer"></span><button class="btn primary" id="nextBtn" data-act="nyNext">Weiter</button></div>`;
+  if (G.state === "wrong") fb = `<div class="ny-fb wrong" role="status"><span class="nf-ico">✗</span><div><b>Richtige Lösung:</b><span>${esc(sol)}</span>${T.t === "gq" && T.g.quiz[T.q][3] ? `<span class="muted">${esc(T.g.quiz[T.q][3])}</span>` : ""}</div><span class="spacer"></span><button class="btn primary" id="nextBtn" data-act="nyNext">Weiter</button></div>`;
+  return `${n.type === "t" ? `<div class="row" style="justify-content:flex-end">${heartsHTML(G.hearts, 3)}</div>` : ""}<div class="ny-task">${body}</div>${fb}`;
+}
+function nyAnswer(ok, given, typo) {
+  const G = S.game; if (!G || G.kind !== "ny" || G.state !== "ask") return;
+  const T = nyTask(G), n = G.node;
+  G.given = given; G.typo = !!typo; G.n++; bumpHist(ok);
+  if (ok) {
+    G.state = "right"; G.right++;
+    const key = "ny1:" + n.id + ":" + (T.w ? T.w[0] : T.g.id + T.q);
+    const amt = verbCorrect(key); G.coinsEarned += amt; G.lastCoin = amt; syncCoins();
+    const tok = ++G.token; gTimer(G, () => { if (G.token === tok && G.state === "right") nyNext(); }, typo ? 2600 : 1300);
+  } else {
+    G.state = "wrong"; G.mistakes++; G.lastCoin = 0;
+    if (n.type === "t") G.hearts--;
+    else if (!G.retried.has(G.i)) { G.retried.add(G.tasks.length); const c = Object.assign({}, T); if (c.opts && T.w) Object.assign(c, nyMC(T.w, nyWordPool(n).concat(n.part.words), T.dir)); G.tasks.push(c); }
+    if (T.w && !G.wrongs.some(w => w[0] === T.w[0])) G.wrongs.push(T.w);
+  }
+  render();
+}
+function nyNext() {
+  const G = S.game; if (!G || G.kind !== "ny" || G.state === "ask" || G.state === "intro") return;
+  G.token++;
+  if (G.node.type === "t" && G.hearts <= 0) { finishGame(G, { failed: true }); return; }
+  G.i++; G.sel = null; G.matched = [];
+  if (G.i >= G.tasks.length) { finishGame(G); return; }
+  G.state = "ask"; G.given = ""; render();
+}
+GEND.ny = G => {
+  const n = G.node, p = nyProg();
+  if (n.type === "t") {
+    if (G.failed || G.stopped) return;
+    const U = nyBuild().units[n.ui];
+    nyBuild().flat.filter(x => x.type !== "c" && x.k <= U.nodes[U.nodes.length - 1].k && !nyDone(p, x)).forEach(x => { p.d[x.id] = 1; });
+    G.passed = true; nySaveProg(p); return;
+  }
+  if (G.stopped) return;
+  G.stars = G.mistakes === 0 ? 3 : G.mistakes <= 2 ? 2 : 1;
+  const first = !nyDone(p, n);
+  G.improved = !first && G.stars > (p.d[n.id] || 0);
+  p.d[n.id] = Math.max(p.d[n.id] || 0, G.stars);
+  if (first) gameBonus(G, NY_BONUS[n.type] || 0);
+  G.first = first; nySaveProg(p);
+};
+function nySummary(G) {
+  const n = G.node, p = nyProg(), nx = nyCurrent(p), U = nyBuild().units[n.ui];
+  if (n.type === "t") return `<section class="card summary game-sum" style="--g1:${U.c1};--g2:${U.c2}">
+      <span class="gt-art big">${G.passed ? "✓" : "✗"}</span><p class="eyebrow">${esc(n.title)}</p>
+      <h1>${G.passed ? "Test bestanden!" : "Noch nicht ganz"}</h1>
+      <p class="muted">${G.passed ? `Alle Lektionen bis zum Ende von ${esc(U.title)} sind jetzt freigeschaltet und abgehakt.` : "Du hattest zu viele Fehler. Lerne die Lektionen in Ruhe nach oder versuch den Test später noch einmal."}</p>
+      <div class="row" style="justify-content:center"><button class="btn primary big" id="nextBtn" data-act="gameLeave">Zur Lernstraße</button></div></section>`;
+  const nextBtn = nx && nx.id !== n.id ? `<button class="btn primary big" id="nextBtn" data-act="nyStart" data-id="${nx.id}">Nächste Lektion</button>` : "";
+  return `<section class="card summary game-sum ny-sum" style="--g1:${U.c1};--g2:${U.c2}">
+    <div class="ny-bigstars">${[1, 2, 3].map(i => `<i class="${i <= G.stars ? "on" : ""}" style="--d:${i}">★</i>`).join("")}</div>
+    <p class="eyebrow">${esc(n.type === "g" ? "Grammatik · " + n.title : n.title)}</p>
+    <h1>${G.stars === 3 ? "Perfekt, ohne Fehler!" : G.stars === 2 ? "Lektion geschafft!" : "Geschafft! Übung macht den Meister."}</h1>
+    ${G.improved ? `<div class="rec-badge">Neues bestes Ergebnis!</div>` : ""}
+    <div class="stats">
+      <div class="stat"><span class="l">Aufgaben</span><span class="v">${G.total}</span></div>
+      <div class="stat"><span class="l">Fehler</span><span class="v">${G.mistakes}</span></div>
+      <div class="stat"><span class="l">Münzen</span><span class="v" style="display:flex;align-items:center;justify-content:center;gap:.3em">${COIN}${G.coinsEarned + G.bonus}</span></div>
+    </div>
+    ${G.wrongs.length ? `<div class="wrong-list"><h3 style="margin-bottom:.6rem">Schau dir diese Wörter noch einmal an</h3><div class="table-wrap"><table><thead><tr><th>Französisch</th><th>Deutsch</th></tr></thead><tbody>${G.wrongs.map(([f, d]) => `<tr><td>${esc(f)}</td><td>${esc(d)}</td></tr>`).join("")}</tbody></table></div></div>` : ""}
+    <div class="row" style="justify-content:center">${nextBtn}<button class="btn big${nextBtn ? "" : " primary"}" ${nextBtn ? "" : 'id="nextBtn"'} data-act="gameLeave">Zur Lernstraße</button><button class="btn big" data-act="gameAgain">Nochmal</button></div>
+  </section>`;
+}
+
+Object.assign(A, {
+  nyNode(t) { const n = nyBuild().byId[t.dataset.id]; if (n) openModal(nyNodeModal(n)); },
+  nyStart(t) { const id = t.dataset.id; if (S.game) { gStopTimers(S.game); S.game = null; } nyStart(id); },
+  nyGo() { const G = S.game; if (G && G.state === "intro") { G.state = "ask"; render(); window.scrollTo({ top: 0 }); } },
+  nyNext() { nyNext(); },
+  nyPick(t) {
+    const G = S.game, T = nyTask(G), k = +t.dataset.i;
+    if (T.t === "gq") { const [, opts, a] = T.g.quiz[T.q]; nyAnswer(k === a, opts[k]); }
+    else nyAnswer(k === T.a, T.opts[k]);
+  },
+  nyAcc(t) { const i = $("#ny-in"); if (!i) return; const s = i.selectionStart ?? i.value.length; i.value = i.value.slice(0, s) + t.dataset.k + i.value.slice(i.selectionEnd ?? s); i.focus(); i.setSelectionRange(s + 1, s + 1); },
+  nyMatch(t) {
+    const G = S.game, T = nyTask(G), side = t.dataset.s, i = +t.dataset.i;
+    if (!G.sel || G.sel.side === side) { G.sel = { side, i }; render(); return; }
+    const l = side === "l" ? T.left[i] : T.left[G.sel.i], r = side === "r" ? T.right[i] : T.right[G.sel.i];
+    G.sel = null;
+    if (l === r) {
+      G.matched.push(l);
+      if (G.matched.length === T.ws.length) { G.state = "right"; G.lastCoin = 0; const tok = ++G.token; render(); gTimer(G, () => { if (G.token === tok) nyNext(); }, 900); return; }
+      render();
+    } else { render(); const box = $(".ny-match"); if (box) { box.classList.add("shake"); setTimeout(() => box.classList.remove("shake"), 400); } }
+  },
+  nySkip(t) {
+    const ui = +t.dataset.u, U = nyBuild().units[ui];
+    openModal(`<h2>${esc(U.title)} überspringen?</h2><p class="muted">Du bekommst einen kurzen Test mit Vokabeln und Grammatik aus diesem Abschnitt. Bei höchstens zwei Fehlern werden alle Lektionen bis zum Ende von ${esc(U.title)} abgehakt.</p>
+      <div class="row end" style="margin-top:1rem"><button class="btn" data-act="closeModal">Abbrechen</button><button class="btn primary" data-act="nyTest" data-u="${ui}">Test starten</button></div>`);
+  },
+  nyTest(t) { nyStart(null, +t.dataset.u); },
+  nyJump() { nyScrollTo(); },
+  nyChest(t) {
+    const p = nyProg(), n = nyBuild().byId[t.dataset.id]; if (!n || p.c[n.id] || !nyUnlocked(p, n)) return;
+    p.c[n.id] = 1; nySaveProg(p); S.me.coins = (S.me.coins || 0) + NY_BONUS.c; markDirty("me"); flush();
+    openModal(`<div class="big-chest">${CHEST_SVG}</div><h2>Truhe geöffnet!</h2><div class="reward">${COIN}+${NY_BONUS.c}</div><p class="muted">Abschnitt ${esc(nyBuild().units[n.ui].title)} ist komplett nachgeholt.</p><button class="btn primary" data-act="collect">Einsammeln</button>`);
+    render();
+  },
+  async nySaveSec(t) {
+    const part = nyBuild().flat.find(x => x.part && x.part.i === +t.dataset.p).part, name = nySecName(part);
+    if (S.sections.some(s => s.name === name)) { toast("Den Abschnitt hast du schon."); return; }
+    const now = Date.now();
+    const sec = { id: uid(), owner: S.me.username, name, lang: "fr", createdAt: now, vocab: part.words.map(([f, d], i) => ({ id: uid(), f, d, r: 0, w: 0, added: now - i })) };
+    try { await Store.set(C.sec, sec.id, sec); S.sections.push(cleanSection(sec)); toast(`„${name}“ ist jetzt in deinen Vokabeln.`); t.disabled = true; t.textContent = "✓ In deinen Vokabeln"; }
+    catch { toast("Speichern fehlgeschlagen."); }
+  }
+});
+Object.assign(F, {
+  nyType(f) {
+    const G = S.game; if (!G || G.state !== "ask") return;
+    const v = f.a.value; if (!v.trim()) return;
+    const T = nyTask(G), r = checkAnswer(v, T.w[0]);
+    nyAnswer(r.ok, v, r.typo);
+  }
+});
+document.addEventListener("keydown", e => {
+  const G = S.game; if (!G || G.kind !== "ny" || G.finished || $("#modal")) return;
+  const typing = /^(INPUT|TEXTAREA)$/.test((document.activeElement || {}).tagName || "") && G.state === "ask";
+  if (e.key === "Enter" && (G.state === "right" || G.state === "wrong")) { e.preventDefault(); nyNext(); return; }
+  if (typing || G.state !== "ask") return;
+  const k = +e.key, T = nyTask(G);
+  if (k >= 1 && k <= 4 && T && T.t !== "type" && T.t !== "match") { e.preventDefault(); A.nyPick({ dataset: { i: k - 1 } }); }
+});
+function nyFocus() {
+  const G = S.game; if (!G || G.kind !== "ny" || G.state !== "ask") return;
+  const T = nyTask(G); if (!T) return;
+  if (T.t === "type") { const i = $("#ny-in"); if (i) i.focus({ preventScroll: true }); }
+  if (T.t === "hear" && G.heard !== G.i) { G.heard = G.i; setTimeout(() => speak(T.w[0], "fr"), 250); }
+}
+/* ---------- Ende 2.1.1 ---------- */
 
 document.addEventListener("click", e => {
   const t = e.target.closest("[data-act]");
