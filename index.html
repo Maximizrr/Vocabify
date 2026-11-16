@@ -1278,6 +1278,22 @@ body.has-pet .startbar{bottom:calc(110px + env(safe-area-inset-bottom,0px))}
 .gq-opt.right{opacity:1;border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--surface));color:var(--good);font-weight:600}
 .gq-opt.wrong{opacity:1;border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--surface));color:var(--bad);text-decoration:line-through}
 .gq-ex{margin:.6rem 0 0;font-size:.9rem;color:var(--muted)}
+.bf-banner{display:flex;align-items:center;gap:1rem;width:100%;text-align:left;font:inherit;border:0;border-radius:18px;padding:1rem 1.2rem;background:linear-gradient(120deg,#0b0b0f,#1c1c24 60%,#2a1f05);color:#fff;box-shadow:0 14px 34px -20px rgba(0,0,0,.6);position:relative;overflow:hidden}
+.bf-banner.live{cursor:pointer}
+.bf-banner.live::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,214,90,.18) 50%,transparent 65%);background-size:250% 100%;animation:bfShine 3.2s linear infinite;pointer-events:none}
+@keyframes bfShine{from{background-position:120% 0}to{background-position:-120% 0}}
+.bf-banner.soon{background:linear-gradient(120deg,#16161c,#2b2b36)}
+.bf-tag{flex:none;font-family:var(--f-display);font-weight:800;letter-spacing:.06em;font-size:.82rem;padding:.35em .7em;border-radius:8px;background:#ffd65a;color:#111}
+.bf-txt{display:flex;flex-direction:column;gap:.15rem;min-width:0}
+.bf-txt b{font-size:1.15rem;font-family:var(--f-display)}
+.bf-txt span{color:rgba(255,255,255,.75);font-size:.88rem}
+.bf-go{margin-left:auto;font-weight:700;color:#ffd65a;flex:none}
+.old-price{color:var(--muted);font-weight:500;margin-right:.3em;text-decoration-thickness:2px;text-decoration-color:#e11d48}
+.bf-price{color:#e11d48;font-weight:800}
+.legend-info .old-price{color:rgba(255,226,122,.65);text-decoration-color:#fff}
+.legend-info .bf-price{color:#fff}
+.linklike{font:inherit;background:none;border:0;padding:0;color:var(--acc);text-decoration:underline;cursor:pointer}
+@media (prefers-reduced-motion: reduce){.bf-banner.live::after{animation:none}}
 .notify-rows{display:flex;flex-direction:column;gap:.8rem}
 .notify-row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;justify-content:space-between;padding:.8rem 1rem;border:1px solid var(--line);border-radius:14px}
 .notify-row>div:first-child{display:flex;flex-direction:column;gap:.2rem;flex:1 1 260px;min-width:0}
@@ -1403,7 +1419,7 @@ function buildIntro(kind, el) {
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js"></script>
 <script>
 "use strict";
-const APP_VERSION = "2.0.2";
+const APP_VERSION = "2.0.3";
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
   authDomain: "vocabify-8abb9.firebaseapp.com",
@@ -1414,6 +1430,7 @@ const FIREBASE_CONFIG = {
 };
 const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
 const CHANGELOG = [
+  { v: "2.0.3", items: ["Black Friday: Am Freitag nach dem vierten Donnerstag im November ist alles im Shop 50 % günstiger", "Eine Woche vorher kündigt der Shop den Black Friday an, am Tag selbst gibt es einen Hinweis auf der Startseite"] },
   { v: "2.0.2", items: ["Neu: Erinnerungen. Einmal am Tag zu der Uhrzeit, zu der du meistens lernst", "Neu: Warnung, wenn deine Flamme abends zu erlöschen droht", "Erinnerungen schaltest du unter Einstellungen → Allgemein ein und aus"] },
   { v: "2.0.1", items: ["Lernbereich Französisch: genau die Verben aus dem Buch (Seiten 154–157)", "Neue Verbübungen: Impératif und „à oder de?“ (Verben mit indirektem Objekt)", "Verbtabellen zeigen jetzt auch den Impératif", "Neu im Lernbereich: Zahlen lernen auf Französisch und Englisch, mit Zahl → Wort, Wort → Zahl, Hören und Ordnungszahlen"] },
   { v: "2.0.0", items: ["Neues Logo und neue App-Symbole", "Komplett neues Design mit bewegter Menüleiste und neuer Menü-Reihenfolge: Home, Shop, Lernen, Vokabeln, Lernbereich, Einstellungen", "Home: Tagesübersicht mit Fortschrittsring, Truhenpfad und direktem Weg zum Lernen", "Lernen: Auswahl in drei übersichtlichen Schritten mit Startleiste", "Shop: neue Kategorie „Gestaltung“ mit Farben, eckiger oder runder Form und Liquid Glass", "Shop: neue Kategorie „Ladescreen“ mit fünf neuen Ladeanimationen und Vorschau", "Lernbereich: Sprache wählen, Grammatik-Erklärungen mit Übungen, Pronomen für Französisch, unregelmäßige Verben", "Feedback findest du jetzt in den Einstellungen"] },
@@ -1465,12 +1482,41 @@ const PET_DEFS = {
               desc: "Ein majestätischer Drache aus 24-karätigem Gold. Er schreitet stolz über den Bildschirm, breitet glitzernde Flügel aus und landet nach seinem Looping mit einem „Kling!“.",
               perks: ["Brüllt bei jeder richtigen Antwort und lässt goldenes Konfetti regnen", "Leuchtet heller, je länger deine Lernserie ist, ab 7 Tagen mit goldener Aura", "Goldrausch: alle 2 Minuten 30 Sekunden lang doppelte Münzen"], acts: [] }
 };
+/* ---------- Black Friday: am Freitag nach dem 4. Donnerstag im November ist alles im Shop 50 % günstiger ---------- */
+function blackFridayDate(year) {
+  const d = new Date(year, 10, 1), firstThu = 1 + ((4 - d.getDay() + 7) % 7);
+  return new Date(year, 10, firstThu + 21 + 1);
+}
+function bfPreview() { return isAdmin() && lsGet("vocabify:bfPreview") === "1"; }
+function isBlackFriday() { return todayKey() === todayKey(blackFridayDate(new Date().getFullYear())) || bfPreview(); }
+function bfDaysLeft() { const t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((blackFridayDate(t.getFullYear()) - t) / 86400000); }
+function sale(p) { return isBlackFriday() && p > 0 ? Math.ceil(p / 2) : p; }
+function priceHTML(base) { return isBlackFriday() && base > 0 ? `${COIN}<s class="old-price">${base}</s><span class="bf-price">${sale(base)}</span>` : `${COIN}${base}`; }
+function bfBanner(where) {
+  const n = bfDaysLeft();
+  if (isBlackFriday()) {
+    const end = new Date(); end.setHours(24, 0, 0, 0);
+    const h = Math.floor((end - Date.now()) / 3600000), m = Math.floor((end - Date.now()) / 60000) % 60;
+    return `<${where === "home" ? 'button data-act="nav" data-v="shop"' : "div"} class="bf-banner live"><span class="bf-tag">BLACK FRIDAY</span><span class="bf-txt"><b>Alles im Shop −50 %</b><span>Haustiere, Accessoires, Gestaltung und Ladescreens. Nur noch heute, ${h} Std. ${m} Min.</span></span>${where === "home" ? `<span class="bf-go">Zum Shop →</span>` : ""}</${where === "home" ? "button" : "div"}>`;
+  }
+  if (where === "shop" && n > 0 && n <= 7) {
+    const d = blackFridayDate(new Date().getFullYear()).toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" });
+    return `<div class="bf-banner soon"><span class="bf-tag">BLACK FRIDAY</span><span class="bf-txt"><b>${n === 1 ? "Morgen" : `In ${n} Tagen`}: alles im Shop −50 %</b><span>Am ${d}. Spar deine Münzen!</span></span></div>`;
+  }
+  return "";
+}
 function petPrice(id) {
   const p = PET_DEFS[id];
-  if (p && p.legendary) return p.price;
+  if (p && p.legendary) return sale(p.price);
   const owned = (S.me && Array.isArray(S.me.pets) ? S.me.pets : []).filter(x => PET_DEFS[x] && !PET_DEFS[x].legendary).length;
-  return PET_BASE + PET_STEP * owned;
+  return sale(PET_BASE + PET_STEP * owned);
 }
+function petBasePrice(id) {
+  const p = PET_DEFS[id];
+  if (p && p.legendary) return p.price;
+  return PET_BASE + PET_STEP * (S.me && Array.isArray(S.me.pets) ? S.me.pets : []).filter(x => PET_DEFS[x] && !PET_DEFS[x].legendary).length;
+}
+function accPrice(a) { return sale(a.price); }
 function petArticle(id, cap) { const f = id === "cat" || id === "turtle"; return cap ? (f ? "Deine" : "Dein") : (f ? "deine" : "dein"); }
 
 /* Accessoires: je Tier drei Stück zu 50, 100 und 200 Münzen. wear = sitzt am Tier, prop = steht im Bild, act = neue Aktion */
@@ -1785,15 +1831,16 @@ function applyDesign() {
   try { localStorage.setItem("vocabify14:design", JSON.stringify({ accent: d.accent, shape: d.shape, glass: d.glass })); localStorage.setItem("vocabify14:loader", loaderKind()); } catch {}
 }
 function setDesign(patch) { const d = designState(); setSetting("design", Object.assign({}, d, patch)); applyDesign(); }
-function designPrice(key) {
+function designBasePrice(key) {
   const [t, id] = key.split(":");
   return t === "c" ? ACCENTS[id].price : t === "s" ? SHAPES[id].price : t === "g" ? GLASS.price : t === "l" ? LOADERS[id].price : 0;
 }
+function designPrice(key) { return sale(designBasePrice(key)); }
 function designValid(key) { const [t, id] = key.split(":"); return (t === "c" && ACCENTS[id]) || (t === "s" && SHAPES[id]) || (t === "g" && id === "glass") || (t === "l" && LOADERS[id]); }
 function designBuyBtn(key, total) {
   const price = designPrice(key);
   if (S.confirm === "d:" + key) return `<button class="btn small" data-act="cancelConfirm">Nein</button><button class="btn small primary" data-act="buyDesign" data-id="${key}">Kaufen!</button>`;
-  return `<button class="btn small" data-act="askConfirm" data-k="d:${key}" ${total < price ? "disabled" : ""}>${total < price ? `Noch ${price - total}` : `${COIN}${price} kaufen`}</button>`;
+  return `<button class="btn small" data-act="askConfirm" data-k="d:${key}" ${total < price ? "disabled" : ""}>${total < price ? `Noch ${price - total}` : `${priceHTML(designBasePrice(key))} kaufen`}</button>`;
 }
 function designView(total) {
   const d = designState();
@@ -2387,7 +2434,7 @@ const GRAM_EN = [
 const LB_TOPICS = () => [...GRAM_FR, ...PRON_FR, ...GRAM_EN];
 /* ---------- 2.0.2 Erinnerungen (Push über Firebase Cloud Messaging) ---------- */
 /* Öffentlicher Web-Push-Schlüssel: Firebase-Konsole → Projekteinstellungen → Cloud Messaging → Web-Push-Zertifikate */
-const VAPID_KEY = "BMcaSY10oMwe75sh3EOaSs04dmPXsiGR1JUKx9sqdHEHFAb8dHcdLvh9ioJcIkdR4_3vngaDFk4s86jR-jp95YY";
+const VAPID_KEY = "";
 const DAY_MS_N = 86400000;
 /* Uhrzeit, zu der man meistens aktiv ist: Online-Zeiten der letzten 3 Wochen in Halbstunden-Fenstern zählen */
 function bestLearnTime() {
@@ -3453,6 +3500,7 @@ function homeView() {
       <div style="min-width:0"><p class="eyebrow">${esc(dateStr)}</p><h1>${esc(gr.title)}</h1><p class="sub">${esc(gr.sub)}</p></div>
       ${rushBadge()}
     </section>
+    ${bfBanner("home")}
     <section class="card today">
       <div class="ring-wrap">${ringSVG(c / goal)}<div class="ring-n"><b>${c}</b><span>von ${goal}</span></div></div>
       <div class="today-main" style="min-width:0">
@@ -3735,7 +3783,7 @@ function accControls(pet, a, total) {
   if (accHas(pet, a.k)) { const on = accWorn(pet, a.k); return `<button class="btn small${on ? "" : " primary"}" data-act="toggleAcc" data-id="${id}" aria-pressed="${on}">${on ? "Ablegen" : "Anlegen"}</button>`; }
   if (!S.me.pets.includes(pet)) return `<span class="muted acc-lock">Erst ${PET_DEFS[pet].name} kaufen</span>`;
   if (S.confirm === "acc:" + id) return `<button class="btn small" data-act="cancelConfirm">Nein</button><button class="btn small primary" data-act="buyAcc" data-id="${id}">Kaufen!</button>`;
-  return `<button class="btn small" data-act="askConfirm" data-k="acc:${id}" ${total < a.price ? "disabled" : ""}>${total < a.price ? `Noch ${a.price - total}` : "Kaufen"}</button>`;
+  return `<button class="btn small" data-act="askConfirm" data-k="acc:${id}" ${total < accPrice(a) ? "disabled" : ""}>${total < accPrice(a) ? `Noch ${accPrice(a) - total}` : "Kaufen"}</button>`;
 }
 function accShopView(total) {
   const pets = Object.keys(ACC_DEFS).sort((x, y) => (S.me.pets.includes(y) ? 1 : 0) - (S.me.pets.includes(x) ? 1 : 0));
@@ -3745,7 +3793,7 @@ function accShopView(total) {
       <div class="acc-grid">${ACC_DEFS[pet].map(a => `<article class="acc-card${accHas(pet, a.k) ? " owned" : ""}">
         <div class="acc-ava" aria-hidden="true">${accAva(pet, a)}</div>
         <div class="acc-info"><h4>${a.name}</h4><p>${a.desc}</p>
-        <div class="row">${accHas(pet, a.k) ? `<span class="ok">Gekauft</span>` : `<span class="price">${COIN}${a.price}</span>`}<span class="spacer"></span>${accControls(pet, a, total)}</div></div>
+        <div class="row">${accHas(pet, a.k) ? `<span class="ok">Gekauft</span>` : `<span class="price">${priceHTML(a.price)}</span>`}<span class="spacer"></span>${accControls(pet, a, total)}</div></div>
       </article>`).join("")}</div></div>`; }).join("")}
   </section>`;
 }
@@ -3800,17 +3848,19 @@ function shopView() {
           <h3>${a.name}, ${a.title}</h3>
           <p>${a.desc}</p>
           <ul>${a.perks.map(x => `<li>${x}</li>`).join("")}</ul>
-          <div class="row"><span class="price">${COIN}${a.price}</span><span class="spacer"></span>${buyControls("aurelius", a.price, total)}</div>
+          <div class="row"><span class="price">${priceHTML(a.price)}</span><span class="spacer"></span>${buyControls("aurelius", petPrice("aurelius"), total)}</div>
         </div></article>`;
     const cards = regular.map(([id, p]) => `<article class="pet-card ${owned.includes(id) ? "owned" : ""}">
       <div class="ava" aria-hidden="true">${p.e}</div>
       <h3>${p.name}</h3><p>${p.desc}</p>
-      <div class="row">${owned.includes(id) ? "" : `<span class="price">${COIN}${price}</span>`}<span class="spacer"></span>${buyControls(id, price, total)}</div></article>`).join("");
+      <div class="row">${owned.includes(id) ? "" : `<span class="price">${priceHTML(petBasePrice("dog"))}</span>`}<span class="spacer"></span>${buyControls(id, price, total)}</div></article>`).join("");
     body = `${legend}
-      <section><div class="card-head"><h2>Haustiere</h2><span class="muted" style="font-size:.88rem">${regOwned === regular.length ? "Du hast alle Tiere!" : `Nächstes Tier: ${price} Münzen · jedes weitere kostet ${PET_STEP} mehr`}</span></div>
+      <section><div class="card-head"><h2>Haustiere</h2><span class="muted" style="font-size:.88rem">${regOwned === regular.length ? "Du hast alle Tiere!" : `Nächstes Tier: ${price} Münzen · jedes weitere kostet ${isBlackFriday() ? PET_STEP / 2 : PET_STEP} mehr`}</span></div>
       <div class="pets">${cards}</div></section>`;
   }
   return `<div class="shop-head"><h1>Shop</h1><span class="coin-pill">${COIN}<span class="num">${total}</span></span></div>
+    ${bfBanner("shop")}
+    ${isAdmin() ? `<p class="muted" style="font-size:.8rem;margin:-.4rem 0 0">Admin: <button class="linklike" data-act="bfPreview">Black-Friday-Vorschau ${bfPreview() ? "ausschalten" : "einschalten (nur für dich)"}</button></p>` : ""}
     <div class="shop-layout">${side}<div class="shop-main">${body}</div></div>`;
 }
 
@@ -4782,6 +4832,7 @@ const A = {
     toast(PET_DEFS[id].legendary ? "Aurelius gehört jetzt dir! Er begleitet dich ab sofort beim Lernen." : `${PET_DEFS[id].name} gekauft! Schau auf der Startseite vorbei.`);
   },
   shopCat(t) { S.shopCat = t.dataset.k; S.confirm = null; render(); },
+  bfPreview() { lsSet("vocabify:bfPreview", bfPreview() ? null : "1"); S.confirm = null; render(); },
   async buyDesign(t) {
     const key = t.dataset.id; if (!designValid(key) || designOwns(key)) return;
     const price = designPrice(key); if (coinsTotal() < price) return;
@@ -4829,8 +4880,9 @@ const A = {
   async buyAcc(t) {
     const f = accFind(t.dataset.id); if (!f) return;
     const { pet, a } = f, id = pet + "." + a.k;
-    if (!S.me.pets.includes(pet) || accHas(pet, a.k) || coinsTotal() < a.price) return;
-    S.me.coins = (S.me.coins || 0) - a.price;
+    const price = accPrice(a);
+    if (!S.me.pets.includes(pet) || accHas(pet, a.k) || coinsTotal() < price) return;
+    S.me.coins = (S.me.coins || 0) - price;
     S.me.settings = Object.assign({}, S.me.settings || {}, { acc: [...accOwned(), id], accOff: accOffList().filter(x => x !== id) });
     S.confirm = null; markDirty("me"); await flush();
     render();
