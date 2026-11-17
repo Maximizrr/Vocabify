@@ -1723,6 +1723,102 @@ html[data-shape="square"] :is(.game-tile,.gt-art,.mem-card,.mc-back,.mc-front,.o
 .g-ny .gt-art.big,.ny-sum .gt-art.big{font-size:2rem;color:#fff}
 @media (max-width:560px){.nb-txt h2{font-size:1.2rem}.ny-match .mt{font-size:.92rem;padding:.7rem .5rem}}
 html[data-shape="square"] :is(.ny-banner,.mt,.ny-card,.ny-fb,.ny-node.t-c .nn-in){border-radius:4px}
+/* ===== 2.1.2 Weihnachten ===== */
+#snow{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:60}
+.brand-logo{position:relative;display:inline-flex}
+.ld-deco{position:absolute;pointer-events:none;z-index:2}
+.ld-muetze{width:26px;left:-7px;top:-13px;transform:rotate(-14deg)}
+.ld-geweih{width:36px;left:-4px;top:-17px}
+.ld-haube{width:30px;left:-1px;top:-5px}
+.ld-stech{width:20px;right:-8px;top:-8px}
+.ld-bell{font-size:15px;right:-9px;top:-7px;animation:bellSwing 2.4s ease-in-out infinite;transform-origin:50% 0}
+.ld-star{font-size:15px;left:5px;top:-15px;animation:starTw 1.8s ease-in-out infinite}
+@keyframes bellSwing{0%,60%,100%{transform:rotate(0)}70%{transform:rotate(18deg)}80%{transform:rotate(-14deg)}90%{transform:rotate(8deg)}}
+@keyframes starTw{50%{transform:scale(1.25);filter:drop-shadow(0 0 4px #fde047)}}
+.topbar{position:sticky}
+.xmas-snowcap{position:absolute;left:0;right:0;bottom:-8px;height:12px;pointer-events:none;z-index:1;
+  background:radial-gradient(circle at 10px -2px,#fff 9px,transparent 9.5px) 0 0/26px 12px repeat-x;opacity:.95;filter:drop-shadow(0 2px 2px rgba(15,23,42,.12))}
+.xmas-lights{position:absolute;left:0;right:0;bottom:-2px;height:22px;display:flex;justify-content:space-around;pointer-events:none;z-index:2;overflow:hidden}
+.xmas-lights::before{content:"";position:absolute;left:0;right:0;top:2px;height:8px;border-bottom:1.5px solid #14532d;border-radius:0 0 50% 50%/0 0 100% 100%;opacity:.7}
+.xmas-lights i{position:relative;top:7px;width:7px;height:11px;border-radius:50% 50% 45% 45%;background:var(--c);box-shadow:0 0 8px 2px var(--c);animation:bulb 1.6s ease-in-out infinite;animation-delay:var(--d)}
+.xmas-lights i::before{content:"";position:absolute;left:1.5px;top:-3px;width:4px;height:4px;border-radius:1px;background:#3f3f46}
+@keyframes bulb{50%{opacity:.35;box-shadow:none}}
+@media (prefers-reduced-motion:reduce){.xmas-lights i,.to-ball,.to-ic,.tl,.wreath .fl{animation:none!important}}
+/* Startseite */
+.xmas-home{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:1.4rem;align-items:center;background:linear-gradient(135deg,color-mix(in srgb,#dc2626 7%,var(--surface)),color-mix(in srgb,#15803d 8%,var(--surface)))!important;border:1.5px solid color-mix(in srgb,#dc2626 25%,var(--line))!important;position:relative;overflow:hidden}
+.xh-wreath .wreath{width:190px;height:auto;display:block}
+.wreath .fl{transform-box:fill-box;transform-origin:50% 100%;animation:flick .9s ease-in-out infinite alternate}
+.wreath .glow{animation:glowP 1.8s ease-in-out infinite}
+@keyframes flick{to{transform:scale(.9,1.08) skewX(4deg)}}
+@keyframes glowP{50%{opacity:.6}}
+.xh-main{display:flex;flex-direction:column;gap:.4rem;min-width:0}
+.xh-main h2{margin:0}
+.xmas-cd{font-variant-numeric:tabular-nums}
+.xmas-btn{background:linear-gradient(135deg,#dc2626,#b91c1c)!important;color:#fff!important;border-color:transparent!important}
+.xh-tree{width:200px;text-align:center}
+.xh-tree .eyebrow{margin:0 0 .3rem}
+.xh-hint{font-size:.78rem;margin:.2rem 0 0}
+.xtree{position:relative;width:180px;height:234px;margin:0 auto}
+.xtree svg{width:100%;height:100%;display:block}
+.to-ball{position:absolute;width:13px;height:13px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--b);box-shadow:inset -2px -2px 3px rgba(0,0,0,.25),inset 2px 2px 3px rgba(255,255,255,.55);animation:sway 3s ease-in-out infinite;animation-delay:var(--d);transform-origin:50% -6px}
+.to-ic{position:absolute;font-size:15px;line-height:1;margin:-8px 0 0 -8px;animation:sway 3.4s ease-in-out infinite;animation-delay:var(--d);transform-origin:50% 0}
+.to-top{position:absolute;left:50%;top:-4px;transform:translateX(-50%);font-size:26px;animation:starTw 2s ease-in-out infinite}
+.to-floor{position:absolute;left:0;right:0;bottom:-2px;display:flex;justify-content:center;gap:2px;font-size:22px}
+.tl{animation:bulb 1.6s ease-in-out infinite;animation-delay:var(--d)}
+@media (max-width:760px){.xmas-home{grid-template-columns:1fr;justify-items:center;text-align:center}.xh-main .row{justify-content:center}}
+/* Shop */
+.xmas-cat{background:linear-gradient(135deg,color-mix(in srgb,#dc2626 12%,var(--surface)),color-mix(in srgb,#15803d 12%,var(--surface)))!important}
+.xmas-strip{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;width:100%;font:inherit;text-align:left;cursor:pointer;color:#fff;border:0;border-radius:14px;padding:.75rem 1rem;background:linear-gradient(135deg,#b91c1c,#15803d)}
+.xmas-strip span{opacity:.9}
+.xmas-soon{background:linear-gradient(135deg,#7f1d1d,#14532d)!important}
+.xmas-shop-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:1.2rem 1.4rem;border-radius:20px;color:#fff;background:radial-gradient(circle at 15% 20%,rgba(255,255,255,.18) 0 2px,transparent 3px) 0 0/40px 40px,linear-gradient(135deg,#991b1b,#166534)}
+.xmas-shop-head .eyebrow{color:rgba(255,255,255,.85)}
+.xs-cd{font-family:var(--f-display);font-weight:800;font-size:clamp(1.6rem,5vw,2.4rem)}
+.xs-side{display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;max-width:340px;text-align:right}
+.xs-side .muted{color:rgba(255,255,255,.85)}
+.xs-side .btn.ghost{color:#fff;border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.12)}
+.cal{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.55rem;padding:1rem;border-radius:18px;background:linear-gradient(160deg,#7f1d1d,#450a0a);box-shadow:inset 0 0 0 3px rgba(250,204,21,.35)}
+.door{position:relative;aspect-ratio:4/3;border-radius:12px;border:2px dashed rgba(250,204,21,.55);background:linear-gradient(145deg,#b91c1c,#991b1b);color:#fde68a;font:inherit;cursor:default;display:grid;place-items:center;padding:.2rem;overflow:hidden}
+.door.big{grid-column:span 2;aspect-ratio:auto;background:linear-gradient(145deg,#15803d,#14532d)}
+.door-n{font-family:var(--f-display);font-weight:800;font-size:clamp(1.1rem,3vw,1.6rem);text-shadow:0 2px 0 rgba(0,0,0,.25)}
+.door.ready{cursor:pointer;border-style:solid;border-color:#facc15;animation:doorGlow2 1.6s ease-in-out infinite}
+.door.ready:hover{transform:translateY(-2px)}
+@keyframes doorGlow2{50%{box-shadow:0 0 0 4px rgba(250,204,21,.35),0 0 22px rgba(250,204,21,.55)}}
+.door:disabled:not(.open){opacity:.75}
+.door.open{background:#fff7ed;border:2px solid #fde68a;color:#7c2d12}
+.door-in{display:flex;flex-direction:column;align-items:center;gap:.15rem;font-size:.66rem;line-height:1.1;text-align:center}
+.door-in small{font-weight:700;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.xi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.6rem}
+.xi-card{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.4rem .8rem;align-items:center;padding:.8rem .9rem;border-radius:14px;background:var(--surface);border:1px solid var(--line)}
+.xi-card .row{grid-column:1/-1;justify-content:flex-end}
+.xi-card.owned{border-color:color-mix(in srgb,#15803d 40%,var(--line))}
+.xi-ico{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,color-mix(in srgb,#dc2626 12%,var(--surface-2)),color-mix(in srgb,#15803d 14%,var(--surface-2)))}
+.xo-ic{font-size:1.6rem;line-height:1}
+.xo-ball{display:block;width:26px;height:26px;border-radius:50%;background:var(--b);box-shadow:inset -3px -3px 5px rgba(0,0,0,.25),inset 3px 3px 5px rgba(255,255,255,.55);position:relative}
+.xo-ball::before{content:"";position:absolute;left:50%;top:-5px;width:8px;height:6px;margin-left:-4px;border-radius:2px;background:#a1a1aa}
+.xo-sw{display:block;width:30px;height:30px;border-radius:50%}
+.xo-logo{position:relative;display:inline-flex;transform:scale(1.15)}
+.xo-logo svg:first-child{width:26px;height:26px}
+.door .xo-ic{font-size:1.25rem}.door .xo-ball{width:18px;height:18px}.door .xo-sw{width:20px;height:20px}
+.door-reveal{font-size:3rem;display:grid;place-items:center;margin:.4rem auto;animation:pop .5s}
+.door-reveal .xo-ball{width:54px;height:54px}.door-reveal .xo-sw{width:58px;height:58px}.door-reveal .xo-ic{font-size:3.4rem}
+.gifts{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;margin:1rem 0}
+.gift{min-height:120px;border-radius:16px;border:0;cursor:pointer;display:grid;place-items:center;background:none;font:inherit;padding:.5rem}
+.gift .gbox{position:relative;width:76px;height:64px;border-radius:8px;background:hsl(var(--h) 75% 50%);box-shadow:0 6px 0 hsl(var(--h) 70% 35%);animation:wiggle 1.6s ease-in-out infinite}
+.gift .gbox::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:12px;margin-left:-6px;background:#facc15}
+.gift .gbox::after{content:"";position:absolute;left:-6px;right:-6px;top:-12px;height:16px;border-radius:6px;background:hsl(var(--h) 75% 58%);box-shadow:inset 0 0 0 0 #000,0 0 0 0 #000;background-image:linear-gradient(90deg,transparent 41%,#facc15 41% 59%,transparent 59%)}
+.gift.open{display:flex;flex-direction:column;gap:.4rem;align-items:center;background:color-mix(in srgb,#facc15 14%,var(--surface));border-radius:16px;animation:pop .45s;text-align:center}
+.gift.open .xo-ic{font-size:2.4rem}.gift.open .xo-ball{width:40px;height:40px}.gift.open .xo-sw{width:42px;height:42px}
+.gap-de{display:inline-block;font-size:.72rem;color:var(--muted);margin:0 .3rem 0 -.1rem;vertical-align:super}
+@media (max-width:560px){.cal{padding:.6rem;gap:.35rem}.door{aspect-ratio:1}.xs-side{align-items:flex-start;text-align:left}}
+html[data-shape="square"] :is(.cal,.door,.xi-card,.xi-ico,.xmas-shop-head,.xmas-strip){border-radius:4px}
+.opt.picked{border-color:var(--g2);background:color-mix(in srgb,var(--g2) 12%,var(--surface))}
+.bt-count{font-family:var(--f-display);font-weight:900;font-size:4.2rem;line-height:1;background:linear-gradient(135deg,var(--g1),var(--g2));-webkit-background-clip:text;background-clip:text;color:transparent;animation:vsPulse 1s ease-in-out infinite;min-width:1.4em;text-align:center}
+.bt-wait{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.1rem}
+.bt-after{min-height:1.6rem}
+.bt-pop{text-align:center;display:flex;flex-direction:column;align-items:center;gap:.4rem}
+.bt-pop .gt-art.big{width:72px;height:72px;border-radius:22px}.bt-pop .gt-art.big .g-ico{width:36px;height:36px}
+.vs-pick .online-dot{margin-left:-.2rem}
 </style>
 
 <div id="intro" aria-hidden="true"></div>
@@ -1792,7 +1888,7 @@ function buildIntro(kind, el) {
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js"></script>
 <script>
 "use strict";
-const APP_VERSION = "2.1.1";
+const APP_VERSION = "2.1.3";
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
   authDomain: "vocabify-8abb9.firebaseapp.com",
@@ -1803,6 +1899,8 @@ const FIREBASE_CONFIG = {
 };
 const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
 const CHANGELOG = [
+  { v: "2.1.3", items: ["Vokabel-Battle jetzt live: Beide spielen gleichzeitig dieselbe Frage. Wer zuerst richtig antwortet, bekommt den Punkt", "Rundenlänge beim Herausfordern wählbar: 10, 20, 30 oder 50 Vokabeln", "Herausforderungen erscheinen sofort als Einladung beim Gegner, mit Lobby und Countdown", "Falsche Antwort sperrt dich für diese Frage, dein Gegner kann den Punkt dann noch holen"] },
+  { v: "2.1.2", items: ["Weihnachtszeit ab dem 1. Advent: Schneefall, Lichterkette an der Menüleiste, Weihnachtsmütze auf dem Logo und weihnachtliche Begrüßung", "Auf der Startseite: Adventskranz, dessen Kerzen mit jedem Adventssonntag angehen, Countdown bis Heiligabend und dein eigener Weihnachtsbaum", "Ab dem 1. Dezember im Shop: Weihnachten mit 50 Artikeln (Baumschmuck, Schneearten, Weihnachtsfarben und Logo-Deko)", "Adventskalender: vom 1. bis 24. Dezember jeden Tag ein Geschenk, verpasste Türchen kannst du nachholen", "Bescherung am 24. Dezember: 4 Überraschungen aus dem ganzen Shop, sogar Aurelius ist möglich", "Schnee lässt sich in den Einstellungen ausschalten", "Lückentext: Neue Textquelle mit 50 fertigen Geschichten auf Französisch und Englisch"] },
   { v: "2.1.1", items: ["Neuer Menüpunkt „Nachholen“ mit dem Unterpunkt „Lernjahr 1“", "Lernstraße wie bei Duolingo: alle Vokabeln aus À plus ! 1 (C'est parti, Unités 1–5, Modules 1–6), aufgeteilt nach Unités und Volets", "Dazu 36 Grammatikthemen mit Erklärung und Übung, jeweils an der passenden Stelle der Straße", "Lektionen mit Wortkarten, Paare finden, Auswahl- und Schreibaufgaben. Sterne für wenige Fehler, am Ende jedes Abschnitts eine Truhe mit 20 Münzen", "Abschnitte, die du schon kannst, überspringst du mit einem kurzen Test", "Jeder Vokabelteil lässt sich mit einem Tipp zu deinen eigenen Vokabeln hinzufügen"] },
   { v: "2.1.0", items: ["Sechs neue Lernmodi unter „Lernen“: Vokabel-Memory, Vokabel-Detektiv, Lückentext, Escape Game, Hör-Quiz und Vokabel-Battle. Der bisherige Modus heißt jetzt „Klassisch“", "Vokabel-Memory: Finde alle Paare, bevor die Zeit abläuft", "Vokabel-Detektiv: Errate das Wort aus bis zu fünf Spuren, je früher, desto mehr Punkte", "Lückentext: Setze deine Vokabeln in kleine Geschichten ein, mit Wortkasten oder selbst geschrieben", "Escape Game: Knacke drei Räume mit je drei Schlössern und gib am Ende den Türcode ein", "Hör-Quiz: Hör ein Wort und wähle die Bedeutung, erkenne die Schreibweise oder schreib es als Diktat", "Freundesliste: Schick Mitschüler:innen eine Freundschaftsanfrage und sieh ihre Lernserie", "Vokabel-Battle: Fordere Freunde mit 10 Fragen heraus. Der Sieger bekommt 10 Münzen"] },
   { v: "2.0.3", items: ["Black Friday: Am Freitag nach dem vierten Donnerstag im November ist alles im Shop 50 % günstiger", "Eine Woche vorher kündigt der Shop den Black Friday an, am Tag selbst gibt es einen Hinweis auf der Startseite"] },
@@ -2219,7 +2317,7 @@ function designBuyBtn(key, total) {
 }
 function designView(total) {
   const d = designState();
-  const colors = Object.entries(ACCENTS).map(([k, a]) => {
+  const colors = Object.entries(ACCENTS).filter(([k, a]) => !a.xmas || designOwns("c:" + k)).map(([k, a]) => {
     const key = "c:" + k, own = designOwns(key), on = d.accent === k;
     return `<article class="d-card${on ? " on" : ""}">
       <span class="d-swatch" style="background:linear-gradient(135deg,${a.h[0]},${a.h[1]} 55%,${a.h[3]})"><i style="background:${a.l[0]}"></i></span>
@@ -3238,6 +3336,7 @@ async function seedStarterArticles(author) {
   } catch {}
 }
 async function logout() {
+  btStopListen(); if (S.game) { gStopTimers(S.game); S.game = null; }
   await flush();
   try { await Store.auth.signOut(); } catch {}
   S.learn = null; S.view = "home"; Pets.unmount();
@@ -3560,6 +3659,7 @@ function renderKeepScroll() {
 function render() {
   const app = $("#app");
   Intro.done();
+  try { Snow.sync(); if (S.me && isXmas()) document.documentElement.dataset.xmas = "1"; else delete document.documentElement.dataset.xmas; } catch {}
   if (!S.me) {
     delete document.body.dataset.lang;
     app.innerHTML = loginView();
@@ -3704,6 +3804,9 @@ function settingsView() {
     <div class="theme-pick">${themes.map(([k, l, bg, fg]) => `<button class="theme-opt" data-act="setTheme" data-k="${k}" aria-pressed="${theme === k}">
       <span class="swatch" style="background:${bg}"><i style="background:${fg}"></i><i style="background:${fg};width:40%"></i></span><b>${l}</b></button>`).join("")}</div>
   </section>
+  ${isXmas() ? `<section class="card"><div class="card-head"><h2>❄️ Weihnachten</h2><span class="muted" style="font-size:.88rem">Schneefall und Weihnachtsdeko vom 1. Advent bis 6. Januar</span></div>
+    <div class="row"><div class="seg">${[["1", "Schnee an"], ["0", "Schnee aus"]].map(([k, l]) => `<button data-act="xmasSnowToggle" aria-pressed="${(!xmasState().off) === (k === "1")}" ${(!xmasState().off) === (k === "1") ? "disabled" : ""}>${l}</button>`).join("")}</div>
+    ${xmasShopOpen() ? `<button class="btn small" data-act="xmasShop">🎄 Weihnachtsshop</button>` : ""}</div></section>` : ""}
   ${notifyCard()}
   <section class="card">
     <div class="card-head"><h2>Laut aussprechen (Französisch und Englisch)</h2><span class="muted" style="font-size:.88rem">Zeigt einen Lautsprecher neben englischen und französischen Vokabeln. Antippen liest das Wort vor.</span></div>
@@ -3799,7 +3902,7 @@ function headerView() {
   const NAVC = { home: "blue", learn: "indigo", vocab: "green", shop: "orange", wiki: "purple", catchup: "teal", feedback: "pink", settings: "gray", admin: "indigo" };
   const tab = (v, label, badge) => `<button data-act="nav" data-v="${v}" style="--tc:var(--c-${NAVC[v]})" ${S.view === v ? 'aria-current="page"' : ""}>${icon(v)}<span>${label}</span>${badge ? `<span class="badge">${badge}</span>` : ""}</button>`;
   return `<header class="topbar"><div class="topbar-in">
-    <button class="brand" data-act="nav" data-v="home" aria-label="Vocabify Home">${LOGO_SVG(false, true)}Vocabify${TEST_MODE ? ' <span class="status pending" style="font-family:var(--f-body)">Test</span>' : ""}</button>
+    <button class="brand" data-act="nav" data-v="home" aria-label="Vocabify Home"><span class="brand-logo">${LOGO_SVG(false, true)}${xmasLogoDeco()}</span>Vocabify${TEST_MODE ? ' <span class="status pending" style="font-family:var(--f-body)">Test</span>' : ""}</button>
     <nav class="nav" aria-label="Hauptmenü">
       ${tab("home", "Home")}${tab("shop", "Shop")}${tab("learn", "Lernen", socialBadge())}${tab("vocab", "Vokabeln", pend)}${tab("wiki", "Lernbereich")}${tab("catchup", "Nachholen")}${tab("settings", "Einstellungen", isAdmin() ? S.feedback.filter(f => f.status === "new").length : 0)}${isAdmin() ? tab("admin", "Admin", pendArt) : ""}
     </nav>
@@ -3808,7 +3911,7 @@ function headerView() {
       <span class="user-chip">${esc(S.me.username)}</span>
       <button class="btn small ghost" data-act="logout">Abmelden</button>
     </div>
-  </div></header>`;
+  </div>${xmasHeaderDeco()}</header>`;
 }
 function viewHtml() {
   switch (S.view) {
@@ -3838,6 +3941,9 @@ function greeting() {
   let title;
   if (fresh) title = `Willkommen bei Vocabify, ${name}!`;
   else if (away) title = `Schön, dass du wieder da bist, ${name}!`;
+  else if (isXmas() && bescherungOpen()) title = `Frohe Weihnachten, ${name}!`;
+  else if (isXmas() && xmasNow().getMonth() === 0) title = `Frohes neues Jahr, ${name}!`;
+  else if (isXmas() && Math.random() < .5) title = [`Schöne Adventszeit, ${name}!`, `Joyeux Noël bientôt, ${name} !`, `Ho ho ho, ${name}!`][new Date().getDate() % 3];
   else if (h < 5) title = `Noch wach, ${name}?`;
   else if (h < 11) title = `Guten Morgen, ${name}!`;
   else if (h < 14) title = `Hallo ${name}!`;
@@ -3885,6 +3991,7 @@ function homeView() {
     </section>
     ${bfBanner("home")}
     ${socialHome()}
+    ${xmasHome()}
     <section class="card today">
       <div class="ring-wrap">${ringSVG(c / goal)}<div class="ring-n"><b>${c}</b><span>von ${goal}</span></div></div>
       <div class="today-main" style="min-width:0">
@@ -3953,7 +4060,7 @@ function configView() {
     const mc = { general: ["shuffle", "blue"], older: ["clock", "purple"], errors: ["alert", "pink"], newest: ["spark", "green"], custom: ["target", "indigo"] }[k] || ["spark", "blue"];
     return `<button class="mode${k === "older" || k === "newest" ? " wide" : ""}" data-act="cfgMode" data-k="${k}" style="--tc:var(--c-${mc[1]})" aria-pressed="${S.cfg.mode === k}">${chip(mc[0], mc[1])}<b>${m.name}</b><span>${m.desc}</span><em>${n} Vokabel${n === 1 ? "" : "n"}</em></button>`;
   }).join("");
-  const n = cnt(S.cfg.mode), need = GAME_NEED[g] || 1, gm = GAMES[g];
+  const n = cnt(S.cfg.mode), need = g === "cloze" && gameOpts().cloze.src === "rand" ? 0 : GAME_NEED[g] || 1, gm = GAMES[g];
   const dirs = [["f2d", "Fremdsprache → Deutsch"], ["d2f", "Deutsch → Fremdsprache"], ["mix", "Gemischt"]];
   const sizes = [[10, "10 Fragen · Probetest"], [20, "20 Fragen"], [30, "30 Fragen"], [-1, `Jede einmal${n ? " (" + n + ")" : ""}`], [0, "Endlos"]];
   const sizeName = (sizes.find(x => x[0] === S.cfg.size) || [0, ""])[1];
@@ -4205,7 +4312,7 @@ function ownedAccView() {
 function shopView() {
   const owned = S.me.pets;
   const total = coinsTotal();
-  const cat = ["owned", "acc", "design", "loader"].includes(S.shopCat) ? S.shopCat : "pets";
+  const cat = ["owned", "acc", "design", "loader"].includes(S.shopCat) || (S.shopCat === "xmas" && xmasShopOpen()) ? S.shopCat : "pets";
   const dOwned = designState().owned.filter(designValid).length;
   const accAll = Object.values(ACC_DEFS).reduce((n, l) => n + l.length, 0), accN = accOwned().filter(x => accFind(x)).length;
   const regular = Object.entries(PET_DEFS).filter(([, p]) => !p.legendary);
@@ -4213,6 +4320,7 @@ function shopView() {
   const price = petPrice("dog");
   const side = `<nav class="shop-side" aria-label="Shop-Kategorien">
       <p class="eyebrow">Kategorien</p>
+      ${xmasShopOpen() ? `<button class="shop-cat xmas-cat" data-act="shopCat" data-k="xmas" aria-current="${cat === "xmas"}"><span class="ic" aria-hidden="true">🎄</span><span class="t">Weihnachten</span><span class="n">${XMAS_ITEMS.filter(i => xmasOwns(i.key)).length}/${XMAS_ITEMS.length}</span></button>` : ""}
       <button class="shop-cat" data-act="shopCat" data-k="pets" aria-current="${cat === "pets"}"><span class="ic" aria-hidden="true">🐾</span><span class="t">Haustiere</span><span class="n">${regOwned + (owned.includes("aurelius") ? 1 : 0)}/${Object.keys(PET_DEFS).length}</span></button>
       <button class="shop-cat" data-act="shopCat" data-k="acc" aria-current="${cat === "acc"}"><span class="ic" aria-hidden="true">🎀</span><span class="t">Accessoires</span><span class="n">${accN}/${accAll}</span></button>
       <button class="shop-cat" data-act="shopCat" data-k="design" aria-current="${cat === "design"}"><span class="ic" aria-hidden="true">🎨</span><span class="t">Gestaltung</span><span class="n">${dOwned - designState().owned.filter(k => k.startsWith("l:")).length}</span></button>
@@ -4234,6 +4342,8 @@ function shopView() {
     body = designView(total);
   } else if (cat === "loader") {
     body = loaderShopView(total);
+  } else if (cat === "xmas") {
+    body = xmasShopView(total);
   } else {
     const a = PET_DEFS.aurelius;
     const legend = `<article class="legend-card${owned.includes("aurelius") ? " owned" : ""}">
@@ -4255,7 +4365,9 @@ function shopView() {
   }
   return `<div class="shop-head"><h1>Shop</h1><span class="coin-pill">${COIN}<span class="num">${total}</span></span></div>
     ${bfBanner("shop")}
-    ${isAdmin() ? `<p class="muted" style="font-size:.8rem;margin:-.4rem 0 0">Admin: <button class="linklike" data-act="bfPreview">Black-Friday-Vorschau ${bfPreview() ? "ausschalten" : "einschalten (nur für dich)"}</button></p>` : ""}
+    ${isXmas() && !xmasShopOpen() ? `<div class="bf-banner soon xmas-soon"><span class="bf-tag">🎄 Bald</span><div><b>Ab dem 1. Dezember: Weihnachtsshop</b><span>Mit Adventskalender, 50 Weihnachtsartikeln und Countdown bis Heiligabend.</span></div></div>` : ""}
+    ${isXmas() && xmasShopOpen() && cat !== "xmas" ? `<button class="xmas-strip" data-act="shopCat" data-k="xmas">🎄 <b>Weihnachtsshop ist offen!</b> <span>${calDay() ? "Heute wartet ein Türchen im Adventskalender." : xmasCountdownText(true)}</span> →</button>` : ""}
+    ${isAdmin() ? `<p class="muted" style="font-size:.8rem;margin:-.4rem 0 0">Admin: <button class="linklike" data-act="bfPreview">Black-Friday-Vorschau ${bfPreview() ? "ausschalten" : "einschalten (nur für dich)"}</button> · Weihnachts-Vorschau (nur für dich): ${[["", "aus"], [xmasYear(new Date()) + "-11-29", "1. Advent"], [xmasYear(new Date()) + "-12-05", "5. Dez."], [xmasYear(new Date()) + "-12-24", "24. Dez."]].map(([k, l]) => `<button class="linklike" data-act="xmasPreview" data-k="${k}"${(xmasPreview() || "") === k ? ' style="font-weight:800"' : ""}>${l}</button>`).join(" · ")}</p>` : ""}
     <div class="shop-layout">${side}<div class="shop-main">${body}</div></div>`;
 }
 
@@ -5596,7 +5708,7 @@ const GICO = {
 };
 const gIcon = k => `<svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true">${GICO[k] || ""}</svg>`;
 const GAME_NEED = { classic: 1, memory: 3, detective: 1, cloze: 2, escape: 2, listen: 2, battle: 4 };
-const GAME_OPT_DEFAULT = { memory: { pairs: 6, speed: "normal" }, detective: { cases: 5 }, cloze: { texts: 2, help: "bank" }, escape: { hearts: 3 }, listen: { ans: "de", size: 10 } };
+const GAME_OPT_DEFAULT = { battle: { n: 10 }, memory: { pairs: 6, speed: "normal" }, detective: { cases: 5 }, cloze: { texts: 2, help: "bank", src: "mine" }, escape: { hearts: 3 }, listen: { ans: "de", size: 10 } };
 const MEM_SPEED = { relax: { name: "Gemütlich", s: 20 }, normal: { name: "Normal", s: 13 }, blitz: { name: "Blitz", s: 8 } };
 const LANG_ADJ = { en: "englisches", fr: "französisches", la: "lateinisches" };
 function gameOpts() {
@@ -5683,7 +5795,7 @@ function startGame(kind) {
   if (kind === "classic") { startLearning(); return; }
   if (kind === "battle") return;
   const pool = gamePool(kind);
-  if (pool.length < GAME_NEED[kind]) { toast(`Für ${GAMES[kind].name} brauchst du mindestens ${GAME_NEED[kind]} passende Vokabeln.`); return; }
+  if (pool.length < (kind === "cloze" && gameOpts().cloze.src === "rand" ? 0 : GAME_NEED[kind])) { toast(`Für ${GAMES[kind].name} brauchst du mindestens ${GAME_NEED[kind]} passende Vokabeln.`); return; }
   if (kind === "listen" && !("speechSynthesis" in window)) { toast("Dein Browser kann leider nicht vorlesen. Probier einen anderen Lernmodus."); return; }
   const G = { kind, o: Object.assign({}, gameOpts()[kind]), right: 0, n: 0, wrongs: [], coinsEarned: 0, bonus: 0, score: 0, startedAt: Date.now(), finished: false, timers: [], lastCoin: 0 };
   GINIT[kind](G, pool);
@@ -5692,7 +5804,7 @@ function startGame(kind) {
   if (GSTART[kind]) GSTART[kind](G);
 }
 function gTimer(G, fn, ms) { const id = setTimeout(() => { if (S.game === G && !G.finished) fn(); }, ms); G.timers.push(id); return id; }
-function gStopTimers(G) { if (!G) return; (G.timers || []).forEach(clearTimeout); G.timers = []; clearInterval(G.tick); G.tick = 0; }
+function gStopTimers(G) { if (!G) return; (G.timers || []).forEach(clearTimeout); G.timers = []; clearInterval(G.tick); G.tick = 0; clearInterval(G.lobbyTick); if (G.unsub) { try { G.unsub(); } catch {} G.unsub = null; } }
 function finishGame(G, extra) {
   G = G || S.game; if (!G || G.finished) return;
   gStopTimers(G); Object.assign(G, extra || {});
@@ -5718,7 +5830,7 @@ function gameProgress(G) {
     case "cloze": { const T = G.texts[G.t]; return [`Text ${G.t + 1} von ${G.texts.length}`, (G.t + (T.checked ? 1 : 0)) / G.texts.length]; }
     case "escape": return [`Raum ${G.room + 1} von 3`, (G.room * 4 + G.lock + (G.state === "code" || G.state === "open" ? 1 : 0)) / 12];
     case "listen": return [`Wort ${G.i + 1} von ${G.items.length}`, (G.i + (G.state !== "ask" ? 1 : 0)) / G.items.length];
-    case "battle": return [`Frage ${Math.min(G.i + 1, G.qs.length)} von ${G.qs.length}`, G.ans.length / G.qs.length];
+    case "battle": return G.state === "lobby" ? ["Warte auf Gegner", 0] : G.state === "count" ? ["Gleich geht’s los", 0] : G.state === "declined" ? ["Abgelehnt", 0] : [`Frage ${Math.min(G.i + 1, G.qs.length)} von ${G.qs.length}`, (G.i + (G.state === "reveal" ? 1 : 0)) / G.qs.length];
     case "ny": return [G.state === "intro" ? (G.node.type === "g" ? "Erklärung" : "Neue Wörter") : `Aufgabe ${Math.min(G.i + 1, G.tasks.length)} von ${G.tasks.length}`, G.state === "intro" ? 0 : (G.i + (G.state === "ask" ? 0 : 1)) / G.tasks.length];
   }
   return ["", 0];
@@ -5733,7 +5845,7 @@ function gameHeader() {
     <div class="learn-progress"><span id="g-prog-label">${label}</span><div class="bar"><i id="g-prog-bar" style="width:${Math.min(100, pct * 100)}%"></i></div></div>
     ${extra}
     <span class="coin-pill" title="Deine Münzen">${COIN}<span class="num">${coinsTotal()}</span></span>
-    ${G.finished ? "" : `<button class="btn small" data-act="gameStop">${G.kind === "battle" ? "Aufgeben" : "Beenden"}</button>`}
+    ${G.finished ? "" : `<button class="btn small" data-act="gameStop">${G.kind === "battle" ? (G.state === "lobby" ? "Abbrechen" : G.state === "declined" ? "Zurück" : "Aufgeben") : "Beenden"}</button>`}
   </div></header>`;
 }
 function gameFocus() {
@@ -5744,8 +5856,10 @@ function gameFocus() {
   const el = sel && $(sel); if (el) el.focus({ preventScroll: true });
 }
 function wrongTable(G) {
-  const rows = G.wrongs.map(w => { const it = gItem(w); return it ? `<tr><td>${esc(it.v.f)}</td><td>${esc(it.v.d)}</td><td><span class="lang-dot ${it.s.lang}"></span> ${esc(it.s.name)}</td></tr>` : ""; }).join("");
-  return rows ? `<div class="wrong-list"><h3 style="margin-bottom:.6rem">Diese ${G.wrongs.length} Vokabel${G.wrongs.length === 1 ? "" : "n"} solltest du wiederholen</h3>
+  const fw = G.fixedWrongs || [];
+  const rows = G.wrongs.map(w => { const it = gItem(w); return it ? `<tr><td>${esc(it.v.f)}</td><td>${esc(it.v.d)}</td><td><span class="lang-dot ${it.s.lang}"></span> ${esc(it.s.name)}</td></tr>` : ""; }).join("")
+    + fw.map(([f, d]) => `<tr><td>${esc(f)}</td><td>${esc(d)}</td><td>Zufallstext</td></tr>`).join("");
+  return rows ? `<div class="wrong-list"><h3 style="margin-bottom:.6rem">Diese ${G.wrongs.length + fw.length} Wörter solltest du wiederholen</h3>
     <div class="table-wrap"><table><thead><tr><th>Vokabel</th><th>Deutsch</th><th>Abschnitt</th></tr></thead><tbody>${rows}</tbody></table></div></div>` : "";
 }
 function gameSummary() {
@@ -5938,6 +6052,7 @@ const CLOZE_TEXTS = {
       "Paul ist unsicher und schaut in sein Vokabelheft: „{d}“ heißt {g}.", "Am Ende kann jede und jeder {g} („{d}“) fehlerfrei schreiben."] }
 };
 GINIT.cloze = (G, pool) => {
+  if (G.o.src === "rand") { G.texts = clozeRandTexts(G, pool); G.t = 0; return; }
   const by = {}; pool.forEach(x => (by[x.s.lang] = by[x.s.lang] || []).push(x));
   const langs = Object.keys(by).sort((a, b) => by[b].length - by[a].length);
   const decks = {}, ptr = {};
@@ -5958,7 +6073,8 @@ GINIT.cloze = (G, pool) => {
   G.t = 0;
 };
 function clozeView(G) {
-  const T = G.texts[G.t], tx = CLOZE_TEXTS[T.lang], bank = G.o.help === "bank";
+  const T = G.texts[G.t]; if (T.fixed) return clozeFixedView(G, T);
+  const _u = 0, tx = CLOZE_TEXTS[T.lang], bank = G.o.help === "bank";
   const used = new Set(T.fill.filter(x => x != null));
   const sentences = T.frames.map((fr, i) => {
     const it = gItem(T.items[i]); if (!it) return "";
@@ -5988,6 +6104,7 @@ function clozeView(G) {
 }
 function clzCheck() {
   const G = S.game, T = G.texts[G.t], bank = G.o.help === "bank";
+  if (T.fixed) { if (!T.checked) clzCheckFixed(G, T); return; }
   if (T.checked) return;
   if (!bank) document.querySelectorAll(".clz-input").forEach(el => { T.typed[+el.dataset.i] = el.value; });
   if (bank && T.fill.some(x => x == null)) { toast("Fülle zuerst alle Lücken aus."); return; }
@@ -6002,7 +6119,7 @@ function clzCheck() {
   G.lastCoin = coins; T.checked = true;
   render();
 }
-GEND.cloze = G => { G.rec = G.score ? saveBest("cloze" + G.texts.length + G.o.help, G.score) : ""; };
+GEND.cloze = G => { G.rec = G.score ? saveBest("cloze" + G.texts.length + G.o.help + (G.o.src || ""), G.score) : ""; };
 
 /* ---------- Escape Game ---------- */
 const ESC_ROOMS = [
@@ -6174,7 +6291,8 @@ function gameOptionsHtml(g, n) {
   }
   if (g === "detective") return grp("Anzahl der Fälle", optSeg(g, "cases", [[5, "5 Fälle"], [10, "10 Fälle"], [15, "15 Fälle"]]),
     "Pro Fall gibt es bis zu fünf Spuren. Löst du ihn mit der ersten Spur, bekommst du 50 Punkte, jede weitere kostet 10. Drei falsche Verdächtigungen und der Fall ist ungelöst.");
-  if (g === "cloze") return grp("Anzahl der Texte", optSeg(g, "texts", [[1, "1 Text"], [2, "2 Texte"], [3, "3 Texte"]]), "Jeder Text hat bis zu fünf Lücken.")
+  if (g === "cloze") return grp("Textquelle", optSeg(g, "src", [["mine", "Passend zu meinen Vokabeln"], ["rand", "50 Zufallstexte"]]), o.src === "rand" ? "Fertige Geschichten auf Französisch und Englisch, jedes Mal zufällig ausgewählt. Die Sprache richtet sich nach Schritt 2." : "Die Texte werden aus den Vokabeln erstellt, die du oben ausgewählt hast.")
+    + grp("Anzahl der Texte", optSeg(g, "texts", [[1, "1 Text"], [2, "2 Texte"], [3, "3 Texte"]]), "Jeder Text hat bis zu fünf Lücken.")
     + grp("Hilfe", optSeg(g, "help", [["bank", "Mit Wortkasten"], ["type", "Selbst schreiben"]]), o.help === "bank" ? "Die passenden Wörter stehen im Wortkasten, dazu zwei, die nicht passen." : "Du schreibst jedes Wort selbst. Die deutsche Bedeutung steht im Satz.");
   if (g === "escape") return grp("Schwierigkeit", optSeg(g, "hearts", [[5, "Leicht · 5 Herzen"], [3, "Normal · 3 Herzen"], [1, "Profi · 1 Herz"]]),
     "Drei Räume mit je drei Schlössern: erst Übersetzungen auswählen, dann Buchstaben ordnen, zum Schluss selbst schreiben. Jedes Schloss verrät eine Zahl für den Türcode. Schaffst du es hinaus, gibt es 5 Bonus-Münzen.");
@@ -6185,25 +6303,33 @@ function gameOptionsHtml(g, n) {
 }
 function optSummary(g) {
   const o = gameOpts()[g] || {};
-  return { memory: `${o.pairs} Paare · ${(MEM_SPEED[o.speed] || MEM_SPEED.normal).name}`, detective: `${o.cases} Fälle`, cloze: `${o.texts} Text${o.texts === 1 ? "" : "e"} · ${o.help === "bank" ? "Wortkasten" : "selbst schreiben"}`,
+  return { memory: `${o.pairs} Paare · ${(MEM_SPEED[o.speed] || MEM_SPEED.normal).name}`, detective: `${o.cases} Fälle`, cloze: `${o.src === "rand" ? "Zufallstexte" : "Meine Vokabeln"} · ${o.texts} Text${o.texts === 1 ? "" : "e"} · ${o.help === "bank" ? "Wortkasten" : "selbst schreiben"}`,
     escape: `${o.hearts} Herz${o.hearts === 1 ? "" : "en"}`, listen: `${o.size} Wörter · ${{ de: "Bedeutung", f: "Wort erkennen", write: "Diktat" }[o.ans]}` }[g] || "";
 }
 
 /* ---------- Freunde ---------- */
-function freshBt() { return { friends: [], reqIn: [], reqOut: [], battles: [], acc: {}, vs: "", loaded: false, err: false, loading: null }; }
+function freshBt() { return { friends: [], reqIn: [], reqOut: [], battles: [], acc: {}, vs: "", loaded: false, err: false, loading: null, seenInv: new Set() }; }
 S.bt = freshBt();
 function cleanFriend(f) { return { id: String(f.id), from: String(f.from || ""), to: String(f.to || ""), status: f.status === "accepted" ? "accepted" : "pending", createdAt: +f.createdAt || 0 }; }
-function cleanRes(r) {
-  if (!r || typeof r !== "object") return null;
-  return { score: +r.score || 0, right: +r.right || 0, time: +r.time || 0, ans: (Array.isArray(r.ans) ? r.ans : []).slice(0, 20).map(a => ({ c: Number.isFinite(+a.c) ? +a.c : -1, ok: !!a.ok, t: +a.t || 0, p: +a.p || 0 })) };
-}
 function cleanBattle(b) {
+  const qs = (Array.isArray(b.qs) ? b.qs : []).slice(0, 50).map(q => ({ p: String(q.p || ""), l: q.l === "de" ? "de" : safeLang(q.l), o: (Array.isArray(q.o) ? q.o : []).slice(0, 4).map(String), a: +q.a || 0 }));
+  const r = {};
+  if (b.r && typeof b.r === "object") for (const k in b.r) { const x = b.r[k] || {}; r[k] = { w: x.w === "f" || x.w === "t" ? x.w : "", x: Array.isArray(x.x) ? x.x.filter(v => v === "f" || v === "t") : [], to: !!x.to }; }
   return { id: String(b.id), from: String(b.from || "?"), to: String(b.to || "?"), fromName: String(b.fromName || b.from || "?").slice(0, 40), toName: String(b.toName || b.to || "?").slice(0, 40),
     lang: safeLang(b.lang), title: String(b.title || "").slice(0, 80), createdAt: +b.createdAt || 0, doneAt: +b.doneAt || 0,
-    status: ["open", "done", "declined"].includes(b.status) ? b.status : "open",
-    qs: (Array.isArray(b.qs) ? b.qs : []).slice(0, 20).map(q => ({ p: String(q.p || ""), l: q.l === "de" ? "de" : safeLang(q.l), o: (Array.isArray(q.o) ? q.o : []).slice(0, 4).map(String), a: +q.a || 0 })),
-    r1: cleanRes(b.r1), r2: cleanRes(b.r2), claim1: !!b.claim1, claim2: !!b.claim2, seen1: !!b.seen1 };
+    status: ["invite", "live", "done", "declined"].includes(b.status) && b.n ? b.status : "legacy",
+    n: Math.min(qs.length, +b.n || qs.length), qs, qi: +b.qi || 0, r, sf: +b.sf || 0, st: +b.st || 0, quit: b.quit === "f" || b.quit === "t" ? b.quit : "", paidF: !!b.paidF, paidT: !!b.paidT };
 }
+function btRole(b) { return b.from === S.me.username ? "f" : "t"; }
+function btScores(b, role) { return role === "f" ? [b.sf, b.st] : [b.st, b.sf]; }
+function btInviteFresh(b) { return b.status === "invite" && Date.now() - b.createdAt < BT_INVITE_TTL; }
+function btOutcome(b, me) {
+  if (b.status !== "done") return "";
+  const role = b.from === me ? "f" : "t";
+  if (b.quit) return b.quit === role ? "lose" : "win";
+  const [m, o] = btScores(b, role); return m > o ? "win" : m < o ? "lose" : "tie";
+}
+const BT_WIN = 10, BT_TIE = 5, BT_LIMIT = 15000, BT_LENS = [10, 20, 30, 50], BT_INVITE_TTL = 120000;
 function accDisplayName(name, acc) { const n = acc && acc.settings && String(acc.settings.displayName || "").trim(); return (n || name.charAt(0).toUpperCase() + name.slice(1)).slice(0, 24); }
 function accStreak(acc) { const st = acc && acc.settings && acc.settings.streak; if (!st || !st.last) return 0; return dayNum(todayKey()) - dayNum(st.last) <= 1 ? +st.count || 0 : 0; }
 function accToday(acc) { return acc && acc.daily && acc.daily.date === todayKey() ? +acc.daily.count || 0 : 0; }
@@ -6211,24 +6337,10 @@ function avatar(name, acc, cls) {
   const hue = [...String(name)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 17);
   return `<span class="avatar${cls ? " " + cls : ""}" style="--h:${hue}" aria-hidden="true">${esc(accDisplayName(String(name), acc).charAt(0).toUpperCase())}</span>`;
 }
-function btOutcome(b, me) {
-  const my = b.from === me ? b.r1 : b.r2, opp = b.from === me ? b.r2 : b.r1;
-  if (!my || !opp) return "";
-  return my.score > opp.score ? "win" : my.score < opp.score ? "lose" : "tie";
-}
-const BT_WIN = 10, BT_TIE = 5, BT_Q = 10, BT_LIMIT = 12000;
-async function claimBattle(b) {
-  const me = S.me.username, o = btOutcome(b, me); if (!o || b.from !== me || b.claim1) return;
-  try { await Store.update(C.bt, b.id, { claim1: true, seen1: true }); } catch { return; }
-  b.claim1 = true; b.seen1 = true;
-  const amt = o === "win" ? BT_WIN : o === "tie" ? BT_TIE : 0;
-  if (amt) { S.me.coins = (S.me.coins || 0) + amt; markDirty("me"); syncCoins(); }
-  toast(`Duell gegen ${b.toName}: ${o === "win" ? `Gewonnen! +${amt} Münzen` : o === "tie" ? `Unentschieden, +${amt} Münzen` : "Verloren. Zeit für eine Revanche?"}`);
-}
 function socialBadge() {
   if (!S.me || !S.bt) return 0;
   const me = S.me.username;
-  return S.bt.reqIn.length + S.bt.battles.filter(b => b.status === "open" && b.to === me).length;
+  return S.bt.reqIn.length + S.bt.battles.filter(b => b.to === me && btInviteFresh(b)).length;
 }
 async function loadSocial(notify) {
   if (!S.me) return false;
@@ -6237,7 +6349,7 @@ async function loadSocial(notify) {
     const me = S.me.username, B = S.bt, L = (c, f) => Store.list(c, f, me).catch(() => null);
     const [f1, f2, b1, b2] = await Promise.all([L(C.fr, "from"), L(C.fr, "to"), L(C.bt, "from"), L(C.bt, "to")]);
     if (!f1 || !f2 || !b1 || !b2) { if (!B.loaded) B.err = true; return false; }
-    const oldReq = new Set(B.reqIn.map(x => x.id)), oldTurn = new Set(B.battles.filter(b => b.status === "open" && b.to === me).map(b => b.id));
+    const oldReq = new Set(B.reqIn.map(x => x.id));
     const before = socialBadge();
     const fr = f1.concat(f2).map(cleanFriend);
     B.friends = fr.filter(f => f.status === "accepted").map(f => ({ id: f.id, name: f.from === me ? f.to : f.from, since: f.createdAt }))
@@ -6245,18 +6357,19 @@ async function loadSocial(notify) {
     B.reqIn = fr.filter(f => f.status === "pending" && f.to === me);
     B.reqOut = fr.filter(f => f.status === "pending" && f.from === me);
     const map = {}; b1.concat(b2).forEach(b => { map[b.id] = cleanBattle(b); });
+    for (const b of Object.values(map)) if (b.status === "legacy" || (b.status === "invite" && b.from === me && Date.now() - b.createdAt > BT_INVITE_TTL * 3)) { delete map[b.id]; Store.del(C.bt, b.id).catch(() => {}); }
     B.battles = Object.values(map).sort((a, b) => (b.doneAt || b.createdAt) - (a.doneAt || a.createdAt));
     const names = [...new Set(B.friends.map(f => f.name).concat(B.reqIn.map(f => f.from)))];
     await Promise.all(names.map(async n => { try { const a = await Store.get(C.acc, n); if (a) B.acc[n] = a; } catch {} }));
     if (B.vs && !B.friends.some(f => f.name === B.vs)) B.vs = "";
     B.loaded = true; B.err = false;
-    for (const b of B.battles) if (b.from === me && b.status === "done" && !b.claim1) await claimBattle(b);
-    const old = B.battles.filter(b => b.status !== "open").slice(25);
+    for (const b of B.battles) if (b.status === "done" && !(btRole(b) === "f" ? b.paidF : b.paidT) && !(S.game && S.game.bid === b.id)) await btPay(b);
+    if (!btUnsub) btListen();
+    const old = B.battles.filter(b => b.status === "done" || b.status === "declined").slice(25);
     for (const b of old) { try { await Store.del(C.bt, b.id); } catch {} }
     if (old.length) B.battles = B.battles.filter(b => !old.includes(b));
     if (notify) {
       B.reqIn.filter(r => !oldReq.has(r.id)).forEach(r => toast(`${accDisplayName(r.from, B.acc[r.from])} möchte mit dir befreundet sein.`));
-      B.battles.filter(b => b.status === "open" && b.to === me && !oldTurn.has(b.id)).forEach(b => toast(`${b.fromName} fordert dich zum Vokabel-Battle heraus!`));
     }
     return socialBadge() !== before;
   })();
@@ -6290,26 +6403,27 @@ function friendsCard() {
   </section>`;
 }
 
-/* ---------- Vokabel-Battle ---------- */
+/* ---------- Vokabel-Battle live (2.1.3) ---------- */
 function battleRow(b) {
   const B = S.bt, me = S.me.username, mine = b.from === me, opp = mine ? b.to : b.from, oppDn = mine ? b.toName : b.fromName;
   let status = "", cls = "", btns = "";
   if (b.status === "declined") { status = mine ? "Abgelehnt" : "Du hast abgelehnt"; cls = "off"; btns = `<button class="btn small ghost" data-act="btDel" data-id="${esc(b.id)}">Entfernen</button>`; }
-  else if (b.status === "open" && mine) { status = `Wartet auf ${esc(oppDn)}`; cls = "wait";
-    btns = S.confirm === "btdel:" + b.id ? `<span class="inline-confirm"><button class="btn small danger solid" data-act="btDel" data-id="${esc(b.id)}">Zurückziehen</button><button class="btn small" data-act="cancelConfirm">Nein</button></span>`
-      : `<button class="btn small ghost" data-act="askConfirm" data-k="btdel:${esc(b.id)}">Zurückziehen</button>`; }
-  else if (b.status === "open") { status = `Du bist dran! ${esc(oppDn)} hat ${b.r1 ? b.r1.score : 0} Punkte vorgelegt`; cls = "turn";
-    btns = `<button class="btn small primary" data-act="btPlay" data-id="${esc(b.id)}">Annehmen und spielen</button><button class="btn small" data-act="btDecline" data-id="${esc(b.id)}">Ablehnen</button>`; }
-  else { const o = btOutcome(b, me), my = mine ? b.r1 : b.r2, ot = mine ? b.r2 : b.r1;
-    status = `${{ win: "Gewonnen", lose: "Verloren", tie: "Unentschieden" }[o] || "Fertig"} <span class="num">${my ? my.score : 0} : ${ot ? ot.score : 0}</span>`; cls = o;
+  else if (b.status === "invite" && btInviteFresh(b)) {
+    if (mine) { status = `Wartet auf ${esc(oppDn)}`; cls = "wait"; btns = `<button class="btn small" data-act="btRejoin" data-id="${esc(b.id)}">Zur Lobby</button>`; }
+    else { status = `${b.n} Fragen · jetzt live`; cls = "turn"; btns = `<button class="btn small primary" data-act="btAccept" data-id="${esc(b.id)}">Annehmen</button><button class="btn small" data-act="btDecline" data-id="${esc(b.id)}">Ablehnen</button>`; }
+  }
+  else if (b.status === "invite") { status = "Keine Antwort"; cls = "off"; btns = `<button class="btn small ghost" data-act="btDel" data-id="${esc(b.id)}">Entfernen</button>`; }
+  else if (b.status === "live") { const [m, o] = btScores(b, btRole(b)); status = `Läuft · <span class="num">${m} : ${o}</span>`; cls = "turn"; btns = `<button class="btn small primary" data-act="btRejoin" data-id="${esc(b.id)}">Weiterspielen</button>`; }
+  else { const o = btOutcome(b, me), [m, ot] = btScores(b, btRole(b));
+    status = `${{ win: "Gewonnen", lose: "Verloren", tie: "Unentschieden" }[o] || "Fertig"} <span class="num">${m} : ${ot}</span>${b.quit ? ` <span class="muted">(${b.quit === btRole(b) ? "aufgegeben" : "Gegner hat aufgegeben"})</span>` : ""}`; cls = o;
     btns = `<button class="btn small" data-act="btShow" data-id="${esc(b.id)}">Details</button><button class="btn small" data-act="btPick" data-u="${esc(opp)}">Revanche</button>`; }
-  return `<div class="bt-row ${cls}">${avatar(opp, B.acc[opp])}<div class="bt-info"><b>${esc(oppDn)}</b><span>${esc(b.title || LANGS[b.lang].name)} · ${esc(fbDate(b.createdAt))}</span></div>
+  return `<div class="bt-row ${cls}">${avatar(opp, B.acc[opp])}<div class="bt-info"><b>${esc(oppDn)}</b><span>${esc(b.title || LANGS[b.lang].name)} · ${b.n} Fragen · ${esc(fbDate(b.createdAt))}</span></div>
     <span class="bt-status">${status}</span><div class="fr-btns">${btns}</div></div>`;
 }
 function battleTurnCard() {
   if (!S.bt.loaded) return "";
-  const me = S.me.username, turn = S.bt.battles.filter(b => b.status === "open" && b.to === me);
-  return turn.length ? `<section class="card bt-turn"><div class="card-head"><h2>Du bist dran</h2><span class="muted" style="font-size:.88rem">Herausforderungen an dich</span></div>${turn.map(battleRow).join("")}</section>` : "";
+  const me = S.me.username, turn = S.bt.battles.filter(b => b.to === me && btInviteFresh(b));
+  return turn.length ? `<section class="card bt-turn"><div class="card-head"><h2>Du wirst herausgefordert!</h2><span class="muted" style="font-size:.88rem">Dein Gegner wartet gerade in der Lobby</span></div>${turn.map(battleRow).join("")}</section>` : "";
 }
 function battleHub() {
   const B = S.bt, me = S.me.username;
@@ -6318,149 +6432,249 @@ function battleHub() {
     return `<section class="card"><div class="empty"><span class="spinner"></span><p>Lade Freunde und Duelle …</p></div></section>`;
   }
   if (B.err) return `<section class="card"><div class="empty"><strong>Freunde und Battles sind noch nicht freigeschaltet</strong>
-    <p>${isAdmin() ? "Veröffentliche in Firebase die neuen Firestore-Regeln aus Version 2.1.0. Danach funktioniert alles." : "Der Admin muss dafür noch etwas einrichten. Versuch es später noch einmal."}</p>
+    <p>${isAdmin() ? "Veröffentliche in Firebase die neuen Firestore-Regeln aus Version 2.1.3. Danach funktioniert alles." : "Der Admin muss dafür noch etwas einrichten. Versuch es später noch einmal."}</p>
     <button class="btn" data-act="btReload">Erneut versuchen</button></div></section>`;
-  const turn = B.battles.filter(b => b.status === "open" && b.to === me);
-  const rest = B.battles.filter(b => !(b.status === "open" && b.to === me)).slice(0, 10);
-  const vsAcc = B.vs ? B.acc[B.vs] : null;
+  const rest = B.battles.filter(b => !(b.to === me && btInviteFresh(b))).slice(0, 10);
+  const vsAcc = B.vs ? B.acc[B.vs] : null, len = gameOpts().battle.n;
   const shown = S.sections.filter(s => !S.cfg.lang || s.lang === S.cfg.lang);
   const scope = effSecs(S.cfg.secs, S.cfg.lang);
   const n = S.sections.length ? gamePool("battle", scope).length : 0;
   const can = B.vs && n >= GAME_NEED.battle;
-  const friendPick = B.friends.length ? `<div class="vs-picks">${B.friends.map(f => `<button class="vs-pick" data-act="btVs" data-u="${esc(f.name)}" aria-pressed="${B.vs === f.name}">${avatar(f.name, B.acc[f.name])}<span>${esc(accDisplayName(f.name, B.acc[f.name]))}</span></button>`).join("")}</div>`
+  const friendPick = B.friends.length ? `<div class="vs-picks">${B.friends.map(f => { const a = B.acc[f.name], ls = a ? lastSeenText(+a.lastSeen || 0) : null;
+      return `<button class="vs-pick" data-act="btVs" data-u="${esc(f.name)}" aria-pressed="${B.vs === f.name}">${avatar(f.name, a)}<span>${esc(accDisplayName(f.name, a))}</span>${ls && ls.now ? `<span class="online-dot" title="online"></span>` : ""}</button>`; }).join("")}</div>
+      <p class="muted size-hint">Ihr spielt gleichzeitig. Am besten forderst du jemanden heraus, der gerade online ist (grüner Punkt).</p>`
     : `<p class="muted">Du hast noch keine Freunde in Vocabify. Füge unten jemanden hinzu, dann kannst du sie oder ihn herausfordern.</p>`;
-  return `<section class="card step"><span class="step-n">2</span><div style="min-width:0"><h2>Gegen wen trittst du an?</h2><p class="step-sub">Ihr beantwortet dieselben ${BT_Q} Fragen mit je ${BT_LIMIT / 1000} Sekunden Zeit. Wer schneller und richtiger ist, gewinnt ${BT_WIN} Münzen.</p>${friendPick}</div></section>
-    <section class="card step"><span class="step-n">3</span><div style="min-width:0"><h2>Mit welchen Vokabeln?</h2><p class="step-sub">Die Fragen kommen aus deinen Abschnitten. Dein Gegner braucht sie nicht.</p>
-      ${S.sections.length ? secPickHtml(shown) : `<p class="muted">Für ein eigenes Duell brauchst du Vokabeln. Herausforderungen annehmen kannst du aber auch ohne.</p>`}</div></section>
+  return `<section class="card step"><span class="step-n">2</span><div style="min-width:0"><h2>Gegen wen trittst du an?</h2><p class="step-sub">Live-Duell: Ihr seht dieselbe Frage zur selben Zeit. Wer zuerst richtig antwortet, bekommt den Punkt.</p>${friendPick}</div></section>
+    <section class="card step"><span class="step-n">3</span><div style="min-width:0"><h2>Wie lang soll die Runde sein?</h2><p class="step-sub">${BT_LIMIT / 1000} Sekunden pro Frage. Wer am Ende mehr Punkte hat, gewinnt ${BT_WIN} Münzen.</p>
+      ${optSeg("battle", "n", BT_LENS.map(k => [k, k + " Vokabeln"]))}</div></section>
+    <section class="card step"><span class="step-n">4</span><div style="min-width:0"><h2>Mit welchen Vokabeln?</h2><p class="step-sub">Die Fragen kommen aus deinen Abschnitten. Dein Gegner braucht sie nicht.</p>
+      ${S.sections.length ? secPickHtml(shown) : `<p class="muted">Für ein eigenes Duell brauchst du Vokabeln. Herausforderungen annehmen kannst du aber auch ohne.</p>`}
+      ${n && n < len ? `<p class="muted size-hint">Im Pool sind ${n} Vokabeln, einige kommen deshalb mehrmals dran.</p>` : ""}</div></section>
     ${rest.length ? `<section class="card"><div class="card-head"><h2>Deine Duelle</h2><span class="muted" style="font-size:.88rem">Laufend und zuletzt gespielt</span></div>${rest.map(battleRow).join("")}</section>` : ""}
     ${friendsCard()}
-    <div class="startbar" role="region" aria-label="Zusammenfassung"><div class="sum"><b>${B.vs ? `Duell gegen ${esc(accDisplayName(B.vs, vsAcc))}` : "Wähle einen Gegner"}</b>
-      <span>${n >= GAME_NEED.battle ? `${n} Vokabeln im Pool · ${BT_Q} Fragen` : S.sections.length ? `Mindestens ${GAME_NEED.battle} Vokabeln nötig` : "Keine eigenen Vokabeln"}</span></div>
+    <div class="startbar" role="region" aria-label="Zusammenfassung"><div class="sum"><b>${B.vs ? `Live-Duell gegen ${esc(accDisplayName(B.vs, vsAcc))}` : "Wähle einen Gegner"}</b>
+      <span>${n >= GAME_NEED.battle ? `${len} Vokabeln · ${BT_LIMIT / 1000} s pro Frage` : S.sections.length ? `Mindestens ${GAME_NEED.battle} Vokabeln nötig` : "Keine eigenen Vokabeln"}</span></div>
       <button class="btn primary big bt-go" data-act="btNew" ${can ? "" : "disabled"}>${gIcon("battle")} Herausfordern</button></div>`;
 }
-function buildBattleQs(pool) {
-  return gameDeck(pool, BT_Q, true).map((q, i) => {
+function buildBattleQs(pool, n) {
+  return gameDeck(pool, n, true).map((q, i) => {
     const it = gItem(q), rev = i % 3 === 2, m = mcOptions(it, rev ? "f" : "d");
     return { p: firstPart(rev ? it.v.d : it.v.f), l: rev ? "de" : it.s.lang, o: m.opts, a: m.a };
   });
 }
-function startBattle(o) {
-  const G = Object.assign({ kind: "battle", o: {}, right: 0, n: 0, wrongs: [], coinsEarned: 0, bonus: 0, score: 0, startedAt: Date.now(), finished: false, timers: [], i: 0, ans: [], state: "ready", lastCoin: 0 }, o);
-  S.view = "learn"; S.learn = null; S.game = G;
+
+/* Spielablauf */
+function btEnter(b, role) {
+  if (S.game) { gStopTimers(S.game); S.game = null; }
+  closeModal(true);
+  const G = { kind: "battle", bid: b.id, b, role, vs: role === "f" ? b.to : b.from, vsName: role === "f" ? b.toName : b.fromName, lang: b.lang, qs: b.qs,
+    state: b.status === "invite" ? "lobby" : "count", i: b.qi || 0, my: {}, locked: false, right: 0, n: 0, wrongs: [], coinsEarned: 0, bonus: 0, score: 0,
+    startedAt: Date.now(), finished: false, timers: [], lastCoin: 0, o: {} };
+  S.view = "learn"; S.learn = null; S.game = G; S.cfg.game = "battle";
+  if (G.state === "count") btCountdown(G);
+  else gTimer(G, () => btCancel(G, true), Math.max(5000, BT_INVITE_TTL - (Date.now() - b.createdAt)));
   render(); window.scrollTo({ top: 0 });
+  try { G.unsub = Store.ref(C.bt, b.id).onSnapshot(s => btOnSnap(G, s), () => { if (S.game === G && !G.finished) toast("Verbindung zum Duell unterbrochen."); }); } catch {}
+  G.lobbyTick = setInterval(() => { const e = $("#bt-lobby-t"); if (e && G.state === "lobby") e.textContent = fmtClock(Math.max(0, BT_INVITE_TTL - (Date.now() - G.b.createdAt))); }, 500);
 }
-function btPts(ok, t) { return ok ? 100 + Math.round(50 * Math.max(0, BT_LIMIT - t) / BT_LIMIT) : 0; }
-function btOppSoFar(G, upto) { return G.opp ? G.opp.ans.slice(0, upto).reduce((s, a) => s + (a.p || 0), 0) : 0; }
+function btCountdown(G) {
+  G.state = "count"; G.countEnd = Date.now() + 3200; render();
+  clearInterval(G.tick); G.tick = setInterval(() => { const e = $("#bt-count"); if (e) e.textContent = Math.max(1, Math.ceil((G.countEnd - Date.now()) / 1000)); }, 100);
+  gTimer(G, () => btShowQ(G), 3200);
+}
+function btOnSnap(G, snap) {
+  if (S.game !== G || G.finished) return;
+  if (!snap.exists) { if (G.state === "lobby" || G.state === "count") { const role = G.role; leaveGame(); toast(role === "f" ? "Duell abgebrochen." : "Die Herausforderung wurde zurückgezogen."); } return; }
+  const b = cleanBattle(Object.assign(snap.data(), { id: snap.id })); G.b = b;
+  if (b.status === "declined") { gStopTimers(G); G.state = "declined"; render(); return; }
+  if (b.status === "invite") return;
+  if (G.state === "lobby") { btCountdown(G); return; }
+  if (G.state === "count") { if (b.status === "done") btFinish(G); return; }
+  if (G.state === "ask" && b.qi > G.i) { btReveal(G); return; }
+  if (G.state === "ask" && b.status === "done") { btFinish(G); return; }
+  if (G.state === "ask") btLiveUpdate(G);
+}
+function btShowQ(G) {
+  if (S.game !== G || G.finished) return;
+  clearInterval(G.tick);
+  const b = G.b;
+  if (b.status === "done" || b.qi >= b.n) { btFinish(G); return; }
+  G.i = b.qi; G.state = "ask"; G.qStart = Date.now(); G.locked = false; G.toSent = false;
+  render();
+  G.tick = setInterval(btTick, 100);
+}
 function btTick() {
   const G = S.game; if (!G || G.kind !== "battle" || G.state !== "ask") return;
   const left = Math.max(0, BT_LIMIT - (Date.now() - G.qStart));
   const s = $("#bt-sec"); if (s) s.textContent = Math.ceil(left / 1000);
   const r = $("#bt-ring"); if (r) r.style.strokeDashoffset = String(113.1 * (1 - left / BT_LIMIT));
   const w = $(".vs-timer"); if (w) w.classList.toggle("hurry", left < 4000);
-  if (left <= 0) btAnswer(-1);
+  if (left <= 0 && !G.toSent) { G.toSent = true; btTx(G, G.i, "timeout"); }
 }
-function btAsk(G) { G.state = "ask"; G.qStart = Date.now(); render(); clearInterval(G.tick); G.tick = setInterval(btTick, 100); }
+async function btTx(G, i, kind) {
+  const role = G.role;
+  try {
+    await Store.db.runTransaction(async tx => {
+      const ref = Store.ref(C.bt, G.bid), s = await tx.get(ref); if (!s.exists) return;
+      const d = s.data(); if (d.status !== "live" || (d.qi | 0) !== i) return;
+      const cur = Object.assign({ w: "", x: [] }, (d.r && d.r[i]) || {}); cur.x = Array.isArray(cur.x) ? cur.x.slice() : [];
+      if (cur.w) return;
+      const upd = {};
+      if (kind === "right") { if (cur.x.includes(role)) return; cur.w = role; const k = role === "f" ? "sf" : "st"; upd[k] = (d[k] | 0) + 1; upd.qi = i + 1; }
+      else if (kind === "wrong") { if (cur.x.includes(role)) return; cur.x.push(role); if (cur.x.length >= 2) upd.qi = i + 1; }
+      else { cur.to = true; upd.qi = i + 1; }
+      upd["r." + i] = cur;
+      if (upd.qi >= (d.n | 0)) { upd.status = "done"; upd.doneAt = Date.now(); }
+      tx.update(ref, upd);
+    });
+  } catch { if (S.game === G && kind !== "timeout") toast("Antwort konnte nicht gesendet werden."); }
+}
 function btAnswer(c) {
-  const G = S.game; if (!G || G.kind !== "battle" || G.state !== "ask") return;
+  const G = S.game; if (!G || G.kind !== "battle" || G.state !== "ask" || G.locked) return;
+  const i = G.i, ok = c === G.qs[i].a;
+  G.my[i] = c; G.locked = true; G.n++; bumpHist(ok);
+  if (!ok) G.wrongs.push(i);
+  render();
+  btTx(G, i, ok ? "right" : "wrong");
+}
+function btLiveUpdate(G) {
+  const role = G.role, opp = role === "f" ? "t" : "f", cur = G.b.r[G.i];
+  const [m, o] = btScores(G.b, role);
+  const a = $("#bt-sc-me"), bb = $("#bt-sc-opp"); if (a) a.textContent = m; if (bb) bb.textContent = o;
+  const st = $("#bt-oppst"); if (st) st.innerHTML = cur && cur.x.includes(opp) ? `<span class="no">${esc(G.vsName)} lag falsch!</span>` : "";
+}
+function btReveal(G) {
   clearInterval(G.tick);
-  const Q = G.qs[G.i], t = Math.min(BT_LIMIT, Date.now() - G.qStart), ok = c === Q.a, p = btPts(ok, t);
-  G.ans.push({ c, ok, t, p }); G.score += p; G.n++; bumpHist(ok);
-  if (ok) { G.right++; const amt = verbCorrect("bt:" + G.bid + ":" + G.i); G.coinsEarned += amt; G.lastCoin = amt; syncCoins(); }
-  else { G.lastCoin = 0; G.wrongs.push(G.i); }
-  G.state = "shown"; render();
-  gTimer(G, () => { G.i++; if (G.i >= G.qs.length) finishGame(G); else btAsk(G); }, ok ? 1300 : 2100);
+  G.state = "reveal"; G.revealI = G.i;
+  const cur = G.b.r[G.i] || { w: "", x: [] };
+  G.lastCoin = 0;
+  if (cur.w === G.role) { G.right++; const amt = verbCorrect("bt:" + G.bid + ":" + G.i); G.coinsEarned += amt; G.lastCoin = amt; syncCoins(); }
+  render();
+  gTimer(G, () => btShowQ(G), cur.w === G.role ? 1500 : 2100);
+}
+function btFinish(G) { if (S.game === G && !G.finished) finishGame(G); }
+async function btCancel(G, timeout) {
+  if (S.game !== G || G.state !== "lobby") return;
+  try { await Store.del(C.bt, G.bid); } catch {}
+  leaveGame(); toast(timeout ? `${G.vsName} hat nicht reagiert. Versuch es später noch einmal.` : "Herausforderung zurückgezogen.");
+  loadSocial().then(() => render()).catch(() => {});
+}
+async function btPay(b, G) {
+  const role = btRole(b), key = role === "f" ? "paidF" : "paidT";
+  if (b.status !== "done" || b[key]) return;
+  const o = btOutcome(b, S.me.username), amt = o === "win" ? BT_WIN : o === "tie" ? BT_TIE : 0;
+  b[key] = true;
+  try { await Store.update(C.bt, b.id, { [key]: true }); } catch { return; }
+  if (amt) { S.me.coins = (S.me.coins || 0) + amt; markDirty("me"); syncCoins(); if (G) { G.bonus += amt; if (S.game === G) render(); } }
+  if (!G) toast(`Duell gegen ${role === "f" ? b.toName : b.fromName}: ${o === "win" ? `Gewonnen! +${amt} Münzen` : o === "tie" ? `Unentschieden, +${amt} Münzen` : "Verloren. Zeit für eine Revanche?"}`);
+}
+GEND.battle = G => { G.outcome = btOutcome(G.b, S.me.username); btPay(G.b, G); loadSocial().catch(() => {}); };
+function btTimerRing(left) {
+  return `<div class="vs-timer${left < 4000 ? " hurry" : ""}"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" class="tr-bg"/><circle id="bt-ring" cx="20" cy="20" r="18" class="tr-fg" style="stroke-dashoffset:${113.1 * (1 - left / BT_LIMIT)}"/></svg><b id="bt-sec">${left > 0 ? Math.ceil(left / 1000) : ""}</b></div>`;
 }
 function battleView(G) {
-  const me = S.me.username, oppAcc = S.bt.acc[G.vs], oppDn = G.vsName;
-  if (G.state === "ready") return `<div class="vs-intro">
-      <div class="vs-side">${avatar(me, S.me, "big")}<b>Du</b></div>
-      <div class="vs-mid"><span class="vs-bolt">${gIcon("battle")}</span><span class="vs-word">VS</span></div>
-      <div class="vs-side">${avatar(G.vs, oppAcc, "big")}<b>${esc(oppDn)}</b></div>
-    </div>
-    <div class="vs-info"><p>${G.qs.length} Fragen · ${BT_LIMIT / 1000} Sekunden pro Frage · schnelle richtige Antworten bringen Extrapunkte</p>
-      ${G.opp ? `<p><b>${esc(oppDn)} hat ${G.opp.score} Punkte vorgelegt.</b> Schaffst du mehr?</p>` : `<p>Du spielst zuerst. Danach ist ${esc(oppDn)} mit denselben Fragen dran.</p>`}
-      <button class="btn primary big bt-go" id="nextBtn" data-act="btGo">Los geht’s!</button></div>`;
-  const Q = G.qs[G.i], shown = G.state === "shown", my = shown ? G.ans[G.i] : null;
-  const oa = G.opp && G.opp.ans[G.i];
-  const left = shown ? 0 : Math.max(0, BT_LIMIT - (Date.now() - (G.qStart || Date.now())));
+  const me = S.me.username, oppAcc = S.bt.acc[G.vs], oppDn = G.vsName, role = G.role, opp = role === "f" ? "t" : "f";
+  const intro = mid => `<div class="vs-intro"><div class="vs-side">${avatar(me, S.me, "big")}<b>Du</b></div>
+      <div class="vs-mid">${mid}</div><div class="vs-side">${avatar(G.vs, oppAcc, "big")}<b>${esc(oppDn)}</b></div></div>`;
+  if (G.state === "lobby") return intro(`<span class="vs-bolt">${gIcon("battle")}</span><span class="vs-word">VS</span>`) + `<div class="vs-info">
+      <p class="bt-wait"><span class="spinner"></span> Warte auf ${esc(oppDn)} …</p>
+      <p class="muted">${G.b.n} Vokabeln · ${BT_LIMIT / 1000} Sekunden pro Frage · Wer zuerst richtig antwortet, bekommt den Punkt.<br>Die Einladung läuft noch <b id="bt-lobby-t">${fmtClock(Math.max(0, BT_INVITE_TTL - (Date.now() - G.b.createdAt)))}</b> Minuten.</p>
+      <button class="btn" data-act="btCancel">Herausforderung zurückziehen</button></div>`;
+  if (G.state === "declined") return intro(`<span class="vs-word">VS</span>`) + `<div class="vs-info"><p><b>${esc(oppDn)} hat abgelehnt.</b> Vielleicht klappt es später.</p>
+      <button class="btn primary" id="nextBtn" data-act="gameLeave">Zu den Duellen</button></div>`;
+  if (G.state === "count") return intro(`<span class="bt-count" id="bt-count">3</span>`) + `<div class="vs-info"><p><b>Gleich geht’s los!</b> ${G.b.n} Fragen. Wer zuerst richtig antwortet, bekommt den Punkt.</p>
+      <p class="muted">Falsch geantwortet? Dann bist du für diese Frage gesperrt und ${esc(oppDn)} kann den Punkt noch holen.</p></div>`;
+  const Q = G.qs[G.i], reveal = G.state === "reveal", cur = G.b.r[G.i] || { w: "", x: [] }, mine = G.my[G.i];
+  const [m, o] = btScores(G.b, role);
+  const left = reveal ? 0 : Math.max(0, BT_LIMIT - (Date.now() - (G.qStart || Date.now())));
+  let after = "";
+  if (reveal) {
+    after = cur.w === role ? `<span class="ok">Du warst schneller! +1 Punkt</span>${coinNote(G)}`
+      : cur.w === opp ? `<span class="no">${esc(oppDn)} war schneller.</span>`
+      : `<span class="muted">${cur.to ? "Zeit abgelaufen." : "Beide lagen falsch."} Kein Punkt.</span>`;
+  } else if (G.locked) after = mine === Q.a ? `<span class="muted">Antwort gesendet …</span>` : `<span class="no">Falsch! Du bist für diese Frage gesperrt.</span>`;
   return `<div class="vs-bar">
-      <div class="vs-p me">${avatar(me, S.me)}<div><b>Du</b><span class="num">${G.score}</span></div></div>
-      <div class="vs-timer${left < 4000 && !shown ? " hurry" : ""}"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" class="tr-bg"/><circle id="bt-ring" cx="20" cy="20" r="18" class="tr-fg" style="stroke-dashoffset:${113.1 * (1 - left / BT_LIMIT)}"/></svg><b id="bt-sec">${Math.ceil(left / 1000)}</b></div>
-      <div class="vs-p opp"><div><b>${esc(oppDn)}</b><span class="num">${G.opp ? btOppSoFar(G, G.i + (shown ? 1 : 0)) : "?"}</span></div>${avatar(G.vs, oppAcc)}</div>
+      <div class="vs-p me">${avatar(me, S.me)}<div><b>Du</b><span class="num" id="bt-sc-me">${m}</span></div></div>
+      ${btTimerRing(left)}
+      <div class="vs-p opp"><div><b>${esc(oppDn)}</b><span class="num" id="bt-sc-opp">${o}</span></div>${avatar(G.vs, oppAcc)}</div>
     </div>
-    <div class="bt-q"><p class="eyebrow">${Q.l === "de" ? `Wie heißt das auf ${LANGS[G.lang] ? LANGS[G.lang].name : "der Fremdsprache"}?` : "Was heißt das auf Deutsch?"}</p>
+    <div class="bt-q"><p class="eyebrow">Frage ${G.i + 1} von ${G.qs.length} · ${Q.l === "de" ? `Wie heißt das auf ${LANGS[G.lang] ? LANGS[G.lang].name : "der Fremdsprache"}?` : "Was heißt das auf Deutsch?"}</p>
       <div class="quiz-word">${esc(Q.p)}</div>
-      <div class="opt-grid">${Q.o.map((o, k) => `<button class="opt${shown ? (k === Q.a ? " right" : my && k === my.c ? " wrong" : "") : ""}" data-act="btAns" data-i="${k}" ${shown ? "disabled" : ""}><span class="k">${k + 1}</span>${esc(o)}</button>`).join("")}</div>
-      ${shown ? `<div class="bt-after"><span class="${my.ok ? "ok" : "no"}">${my.c < 0 ? "Zeit abgelaufen" : my.ok ? `Richtig, +${my.p} Punkte` : "Leider falsch"}</span>${my.ok ? coinNote(G) : ""}
-        ${oa ? `<span class="muted">${esc(oppDn)}: ${oa.ok ? `richtig in ${(oa.t / 1000).toFixed(1).replace(".", ",")} s` : oa.c < 0 ? "Zeit abgelaufen" : "falsch"}</span>` : ""}</div>` : ""}
+      <div class="opt-grid">${Q.o.map((t, k) => { let c = "";
+          if (reveal) c = k === Q.a ? " right" : k === mine ? " wrong" : "";
+          else if (G.locked && k === mine) c = mine === Q.a ? " picked" : " wrong";
+          return `<button class="opt${c}" data-act="btAns" data-i="${k}" ${reveal || G.locked ? "disabled" : ""}><span class="k">${k + 1}</span>${esc(t)}</button>`; }).join("")}</div>
+      <div class="bt-after">${after}<span id="bt-oppst">${!reveal && cur.x.includes(opp) ? `<span class="no">${esc(oppDn)} lag falsch!</span>` : ""}</span></div>
     </div>`;
 }
-GEND.battle = G => {
-  while (G.ans.length < G.qs.length) { G.ans.push({ c: -1, ok: false, t: BT_LIMIT, p: 0 }); G.n++; }
-  const res = { score: G.score, right: G.right, time: G.ans.reduce((s, a) => s + a.t, 0), ans: G.ans };
-  G.res = res; btSave(G);
-};
-async function btSave(G) {
-  const me = S.me.username;
-  G.saved = "saving";
-  try {
-    if (G.role === "from") {
-      await Store.set(C.bt, G.bid, { from: me, to: G.vs, fromName: displayName(), toName: G.vsName, lang: G.lang, title: G.title, createdAt: Date.now(), doneAt: 0,
-        status: "open", qs: G.qs, r1: G.res, r2: null, claim1: false, claim2: false, seen1: false });
-    } else {
-      await Store.update(C.bt, G.bid, { r2: G.res, status: "done", doneAt: Date.now(), claim2: true });
-      const o = G.res.score > G.opp.score ? "win" : G.res.score < G.opp.score ? "lose" : "tie";
-      G.outcome = o; gameBonus(G, o === "win" ? BT_WIN : o === "tie" ? BT_TIE : 0); syncCoins();
-    }
-    G.saved = "ok";
-  } catch { G.saved = "err"; }
-  flush(); loadSocial().catch(() => {});
-  if (S.game === G) render();
-}
 function battleSummary(G) {
-  const m = GAMES.battle, me = S.me.username, oppAcc = S.bt.acc[G.vs];
-  const saving = G.saved === "saving", err = G.saved === "err";
-  let title, sub;
-  if (G.role === "from") { title = err ? "Senden hat nicht geklappt" : saving ? "Wird gesendet …" : "Herausforderung gesendet!"; sub = err ? "Prüfe deine Verbindung und versuch es noch einmal." : `Jetzt ist ${esc(G.vsName)} mit denselben Fragen dran. Sobald das Ergebnis da ist, bekommst du Bescheid.`; }
-  else { const o = G.outcome; title = err ? "Speichern hat nicht geklappt" : saving ? "Ergebnis wird gespeichert …" : o === "win" ? "Du hast gewonnen!" : o === "tie" ? "Unentschieden!" : `${esc(G.vsName)} gewinnt knapp`; sub = o === "win" ? `+${BT_WIN} Münzen für den Sieg.` : o === "tie" ? `+${BT_TIE} Münzen für euch beide.` : o === "lose" ? "Fordere eine Revanche!" : ""; }
-  const rows = G.qs.map((q, i) => { const a = G.ans[i], b = G.opp && G.opp.ans[i];
-    const cell = x => x ? `<span class="${x.ok ? "ok" : "no"}">${x.ok ? "✓" : "✗"}</span> <span class="muted">${x.c < 0 ? "–" : (x.t / 1000).toFixed(1).replace(".", ",") + " s"}</span>` : "–";
-    return `<tr><td>${esc(q.p)}</td><td>${esc(q.o[q.a] || "")}</td><td>${cell(a)}</td>${G.opp ? `<td>${cell(b)}</td>` : ""}</tr>`; }).join("");
+  const m = GAMES.battle, me = S.me.username, oppAcc = S.bt.acc[G.vs], b = G.b, role = G.role, opp = role === "f" ? "t" : "f";
+  const [ms, os] = btScores(b, role), o = G.outcome;
+  const title = b.quit ? (b.quit === role ? "Du hast aufgegeben" : `${esc(G.vsName)} hat aufgegeben. Du gewinnst!`) : o === "win" ? "Du hast gewonnen!" : o === "tie" ? "Unentschieden!" : `${esc(G.vsName)} gewinnt`;
+  const sub = o === "win" ? `+${BT_WIN} Münzen für den Sieg.` : o === "tie" ? `+${BT_TIE} Münzen für euch beide.` : "Fordere eine Revanche!";
+  const rows = G.qs.map((q, i) => { const r = b.r[i]; if (!r && i >= b.qi) return "";
+    const w = r && r.w === role ? `<span class="ok">Du</span>` : r && r.w === opp ? `<span class="no">${esc(G.vsName)}</span>` : `<span class="muted">–</span>`;
+    return `<tr><td>${esc(q.p)}</td><td>${esc(q.o[q.a] || "")}</td><td>${w}</td></tr>`; }).join("");
   return `<section class="card summary game-sum" style="--g1:${m.c1};--g2:${m.c2}">
-    <div class="vs-intro small"><div class="vs-side">${avatar(me, S.me, "big")}<b>Du</b><span class="num vs-score">${G.score}</span></div>
+    <div class="vs-intro small"><div class="vs-side">${avatar(me, S.me, "big")}<b>Du</b><span class="num vs-score">${ms}</span></div>
       <div class="vs-mid"><span class="vs-word">VS</span></div>
-      <div class="vs-side">${avatar(G.vs, oppAcc, "big")}<b>${esc(G.vsName)}</b><span class="num vs-score">${G.opp ? G.opp.score : "?"}</span></div></div>
+      <div class="vs-side">${avatar(G.vs, oppAcc, "big")}<b>${esc(G.vsName)}</b><span class="num vs-score">${os}</span></div></div>
     <h1>${title}</h1><p class="muted">${sub}</p>
     <div class="stats">
-      <div class="stat"><span class="l">Richtig</span><span class="v">${G.right} / ${G.qs.length}</span></div>
+      <div class="stat"><span class="l">Deine Punkte</span><span class="v">${ms} / ${b.n}</span></div>
       <div class="stat"><span class="l">Münzen verdient</span><span class="v" style="display:flex;align-items:center;justify-content:center;gap:.3em">${COIN}${G.coinsEarned + G.bonus}</span></div>
-      <div class="stat"><span class="l">Bedenkzeit</span><span class="v">${(G.res.time / 1000).toFixed(0)} s</span></div>
+      <div class="stat"><span class="l">Gespielt</span><span class="v">${fmtClock((G.endedAt || Date.now()) - G.startedAt)}</span></div>
     </div>
-    <div class="table-wrap bt-table"><table><thead><tr><th>Frage</th><th>Lösung</th><th>Du</th>${G.opp ? `<th>${esc(G.vsName)}</th>` : ""}</tr></thead><tbody>${rows}</tbody></table></div>
+    ${rows ? `<div class="table-wrap bt-table"><table><thead><tr><th>Frage</th><th>Lösung</th><th>Punkt an</th></tr></thead><tbody>${rows}</tbody></table></div>` : ""}
     <div class="row" style="justify-content:center">
-      ${err ? `<button class="btn primary big" data-act="btRetrySave">Nochmal senden</button>` : ""}
-      ${G.role === "to" && !err ? `<button class="btn primary big" data-act="btPick" data-u="${esc(G.vs)}">Revanche</button>` : ""}
-      <button class="btn big${!err && G.role === "from" ? " primary" : ""}" id="nextBtn" data-act="gameLeave" ${saving ? "disabled" : ""}>Zu den Duellen</button>
+      <button class="btn primary big" data-act="btPick" data-u="${esc(G.vs)}">Revanche</button>
+      <button class="btn big" id="nextBtn" data-act="gameLeave">Zu den Duellen</button>
     </div></section>`;
 }
 function battleDetail(b) {
-  const me = S.me.username, mine = b.from === me, my = mine ? b.r1 : b.r2, ot = mine ? b.r2 : b.r1, dn = mine ? b.toName : b.fromName;
-  const cell = x => x ? `<span class="${x.ok ? "ok" : "no"}">${x.ok ? "✓" : "✗"}</span> <span class="muted">${x.c < 0 ? "–" : (x.t / 1000).toFixed(1).replace(".", ",") + " s"}</span>` : "–";
-  const o = btOutcome(b, me);
-  return `<h2>${{ win: "Gewonnen", lose: "Verloren", tie: "Unentschieden" }[o] || "Duell"} gegen ${esc(dn)}</h2>
-    <p class="muted">${esc(b.title)} · ${esc(fbDate(b.createdAt))}</p>
-    <div class="score" style="font-size:2rem;font-weight:800;margin:.4rem 0">${my ? my.score : 0} : ${ot ? ot.score : 0}</div>
-    <div class="table-wrap bt-table"><table><thead><tr><th>Frage</th><th>Lösung</th><th>Du</th><th>${esc(dn)}</th></tr></thead><tbody>
-      ${b.qs.map((q, i) => `<tr><td>${esc(q.p)}</td><td>${esc(q.o[q.a] || "")}</td><td>${cell(my && my.ans[i])}</td><td>${cell(ot && ot.ans[i])}</td></tr>`).join("")}</tbody></table></div>
-    <div class="row end" style="margin-top:1rem"><button class="btn" data-act="closeModal">Schließen</button><button class="btn primary" data-act="btPick" data-u="${esc(mine ? b.to : b.from)}">Revanche</button></div>`;
+  const me = S.me.username, role = btRole(b), opp = role === "f" ? "t" : "f", dn = role === "f" ? b.toName : b.fromName, [m, o] = btScores(b, role);
+  const oc = btOutcome(b, me);
+  return `<h2>${{ win: "Gewonnen", lose: "Verloren", tie: "Unentschieden" }[oc] || "Duell"} gegen ${esc(dn)}</h2>
+    <p class="muted">${esc(b.title)} · ${b.n} Fragen · ${esc(fbDate(b.createdAt))}${b.quit ? (b.quit === role ? " · du hast aufgegeben" : " · Gegner hat aufgegeben") : ""}</p>
+    <div class="score" style="font-size:2rem;font-weight:800;margin:.4rem 0">${m} : ${o}</div>
+    <div class="table-wrap bt-table"><table><thead><tr><th>Frage</th><th>Lösung</th><th>Punkt an</th></tr></thead><tbody>
+      ${b.qs.map((q, i) => { const r = b.r[i]; if (!r) return ""; return `<tr><td>${esc(q.p)}</td><td>${esc(q.o[q.a] || "")}</td><td>${r.w === role ? `<span class="ok">Du</span>` : r.w === opp ? `<span class="no">${esc(dn)}</span>` : `<span class="muted">–</span>`}</td></tr>`; }).join("")}</tbody></table></div>
+    <div class="row end" style="margin-top:1rem"><button class="btn" data-act="closeModal">Schließen</button><button class="btn primary" data-act="btPick" data-u="${esc(role === "f" ? b.to : b.from)}">Revanche</button></div>`;
+}
+function btInvitePopup(b) {
+  if (S.game || S.learn) { toast(`${b.fromName} fordert dich zum Live-Duell heraus! Unter „Lernen“ annehmen.`); return; }
+  S.btPopId = b.id;
+  openModal(`<div class="bt-pop"><span class="gt-art big" style="--g1:${GAMES.battle.c1};--g2:${GAMES.battle.c2}">${gIcon("battle")}</span>
+    <h2>${esc(b.fromName)} fordert dich heraus!</h2>
+    <p class="muted">Live-Vokabel-Battle mit ${b.n} Fragen${b.title ? ` aus „${esc(b.title)}“` : ""}. ${esc(b.fromName)} wartet gerade auf dich.</p>
+    <div class="row" style="justify-content:center"><button class="btn" data-act="btDecline" data-id="${esc(b.id)}">Ablehnen</button><button class="btn primary bt-go" data-act="btAccept" data-id="${esc(b.id)}">${gIcon("battle")} Annehmen</button></div></div>`);
+}
+let btUnsub = null;
+function btStopListen() { if (btUnsub) { try { btUnsub(); } catch {} btUnsub = null; } }
+function btListen() {
+  btStopListen();
+  if (!Store.cloud || !S.me) return;
+  const me = S.me.username;
+  try {
+    btUnsub = Store.db.collection(C.bt).where("to", "==", me).onSnapshot(snap => {
+      if (!S.me || S.me.username !== me) return;
+      const B = S.bt, inc = snap.docs.map(d => cleanBattle(Object.assign(d.data(), { id: d.id }))).filter(b => b.status !== "legacy");
+      const before = socialBadge();
+      B.battles = B.battles.filter(b => b.to !== me).concat(inc).sort((a, b) => (b.doneAt || b.createdAt) - (a.doneAt || a.createdAt));
+      inc.filter(b => btInviteFresh(b) && !B.seenInv.has(b.id)).forEach(b => { B.seenInv.add(b.id); btInvitePopup(b); });
+      inc.forEach(b => B.seenInv.add(b.id));
+      if (S.btPopId && !inc.some(b => b.id === S.btPopId && btInviteFresh(b))) { const pb = inc.find(b => b.id === S.btPopId); S.btPopId = null; if ($("#modal .bt-pop")) { closeModal(true); if (!pb || pb.status === "invite") toast("Die Herausforderung wurde zurückgezogen."); } }
+      if (socialBadge() !== before && !S.game && !S.learn && !$("#modal")) renderKeepScroll();
+    }, () => {});
+  } catch {}
 }
 function socialHome() {
   if (!S.me || !S.bt.loaded) return "";
-  const me = S.me.username, turn = S.bt.battles.filter(b => b.status === "open" && b.to === me), req = S.bt.reqIn;
+  const me = S.me.username, turn = S.bt.battles.filter(b => b.to === me && btInviteFresh(b)), req = S.bt.reqIn;
   if (!turn.length && !req.length) return "";
-  const t = turn.length ? (turn.length === 1 ? `${esc(turn[0].fromName)} fordert dich zum Vokabel-Battle heraus!` : `${turn.length} Freunde fordern dich zum Vokabel-Battle heraus!`)
+  const t = turn.length ? (turn.length === 1 ? `${esc(turn[0].fromName)} fordert dich zum Live-Duell heraus!` : `${turn.length} Freunde fordern dich zum Live-Duell heraus!`)
     : (req.length === 1 ? `${esc(accDisplayName(req[0].from, S.bt.acc[req[0].from]))} möchte mit dir befreundet sein.` : `${req.length} neue Freundschaftsanfragen`);
-  return `<button class="social-banner" data-act="goBattle" style="--g1:${GAMES.battle.c1};--g2:${GAMES.battle.c2}"><span class="gt-art">${gIcon("battle")}</span><span><b>${t}</b><span>${turn.length ? "Nimm die Herausforderung an" : "Anfrage ansehen"}</span></span><span class="go" aria-hidden="true">→</span></button>`;
+  return `<button class="social-banner" data-act="${turn.length === 1 ? "btAccept" : "goBattle"}" ${turn.length === 1 ? `data-id="${esc(turn[0].id)}"` : ""} style="--g1:${GAMES.battle.c1};--g2:${GAMES.battle.c2}"><span class="gt-art">${gIcon("battle")}</span><span><b>${t}</b><span>${turn.length ? "Jetzt annehmen und loslegen" : "Anfrage ansehen"}</span></span><span class="go" aria-hidden="true">→</span></button>`;
 }
 
 /* ---------- Aktionen ---------- */
@@ -6477,8 +6691,9 @@ Object.assign(A, {
   gameStop() {
     const G = S.game; if (!G) return;
     if (G.kind === "battle" && !G.finished) {
-      if (G.state === "ready") { leaveGame(); return; }
-      openModal(`<h2>Duell aufgeben?</h2><p class="muted">${G.role === "from" ? "Dann wird nichts gesendet und das Duell findet nicht statt." : `Alle offenen Fragen zählen als falsch und ${esc(G.vsName)} bekommt das Ergebnis.`}</p>
+      if (G.state === "lobby") { btCancel(G, false); return; }
+      if (G.state === "declined") { leaveGame(); return; }
+      openModal(`<h2>Duell aufgeben?</h2><p class="muted">Dann gewinnt ${esc(G.vsName)} das Duell.</p>
         <div class="row end" style="margin-top:1rem"><button class="btn" data-act="closeModal">Weiterspielen</button><button class="btn danger solid" data-act="btQuit">Aufgeben</button></div>`);
       return;
     }
@@ -6529,29 +6744,59 @@ Object.assign(A, {
     if (S.bt.friends.some(f => f.name === u)) S.bt.vs = u; else toast("Ihr seid nicht mehr befreundet.");
     render(); setTimeout(() => { const el = $(".vs-picks"); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 60);
   },
-  btNew() {
-    const B = S.bt; if (!B.vs) return;
+  async btNew(t) {
+    const B = S.bt; if (!B.vs || S.btBusy) return;
     const pool = gamePool("battle", effSecs(S.cfg.secs, S.cfg.lang));
     if (pool.length < GAME_NEED.battle) { toast(`Für ein Duell brauchst du mindestens ${GAME_NEED.battle} Vokabeln.`); return; }
-    const langs = {}; pool.forEach(x => { langs[x.s.lang] = (langs[x.s.lang] || 0) + 1; });
+    const n = gameOpts().battle.n, langs = {}; pool.forEach(x => { langs[x.s.lang] = (langs[x.s.lang] || 0) + 1; });
     const lang = Object.keys(langs).sort((a, b) => langs[b] - langs[a])[0];
     const secNames = [...new Set(pool.map(x => x.s.name))];
     const title = (secNames.length > 2 ? secNames.slice(0, 2).join(", ") + " …" : secNames.join(", ")).slice(0, 80);
-    startBattle({ role: "from", bid: S.me.username + "-" + uid(), vs: B.vs, vsName: accDisplayName(B.vs, B.acc[B.vs]), qs: buildBattleQs(pool), lang, title, opp: null });
+    const id = S.me.username + "-" + uid();
+    const doc = { from: S.me.username, to: B.vs, fromName: displayName(), toName: accDisplayName(B.vs, B.acc[B.vs]), lang, title, n, qs: buildBattleQs(pool, n), status: "invite",
+      createdAt: Date.now(), doneAt: 0, qi: 0, r: {}, sf: 0, st: 0, quit: "", paidF: false, paidT: false };
+    S.btBusy = true; if (t) t.disabled = true;
+    try { await Store.set(C.bt, id, doc); } catch { S.btBusy = false; toast("Herausforderung konnte nicht gesendet werden."); render(); return; }
+    S.btBusy = false;
+    const b = cleanBattle(Object.assign({}, doc, { id })); S.bt.battles.unshift(b);
+    btEnter(b, "f");
   },
-  btPlay(t) {
-    const b = S.bt.battles.find(x => x.id === t.dataset.id); if (!b || b.status !== "open" || !b.qs.length) return;
-    startBattle({ role: "to", bid: b.id, vs: b.from, vsName: b.fromName, qs: b.qs, lang: b.lang, title: b.title, opp: b.r1 });
+  async btAccept(t) {
+    const id = t.dataset.id; closeModal(true);
+    let ok = false;
+    try {
+      await Store.db.runTransaction(async tx => {
+        const ref = Store.ref(C.bt, id), s = await tx.get(ref); if (!s.exists) return;
+        const b = cleanBattle(Object.assign(s.data(), { id }));
+        if (!btInviteFresh(b) || b.to !== S.me.username) return;
+        tx.update(ref, { status: "live", qi: 0 }); ok = true;
+      });
+    } catch { ok = false; }
+    if (!ok) { toast("Diese Herausforderung ist nicht mehr gültig."); await loadSocial(); render(); return; }
+    const s = await Store.get(C.bt, id).catch(() => null); if (!s) return;
+    btEnter(cleanBattle(Object.assign(s, { id })), "t");
   },
-  btGo() { const G = S.game; if (G && G.state === "ready") btAsk(G); },
+  async btRejoin(t) {
+    const s = await Store.get(C.bt, t.dataset.id).catch(() => null); if (!s) { toast("Dieses Duell gibt es nicht mehr."); await loadSocial(); render(); return; }
+    const b = cleanBattle(Object.assign(s, { id: t.dataset.id }));
+    if (b.status === "done" || b.status === "declined") { await loadSocial(); render(); return; }
+    btEnter(b, btRole(b));
+    if (b.status === "live") { clearInterval(S.game.tick); S.game.timers.forEach(clearTimeout); S.game.timers = []; btShowQ(S.game); }
+  },
+  btCancel() { const G = S.game; if (G && G.kind === "battle") btCancel(G, false); },
   btAns(t) { btAnswer(+t.dataset.i); },
-  btQuit() {
-    const G = S.game; closeModal(true); if (!G) return;
-    if (G.role === "from") { leaveGame(); toast("Duell abgebrochen. Es wurde nichts gesendet."); return; }
-    finishGame(G, { gaveUp: true });
+  async btQuit() {
+    const G = S.game; closeModal(true); if (!G || G.kind !== "battle") return;
+    if (G.state === "lobby") { btCancel(G, false); return; }
+    try {
+      await Store.db.runTransaction(async tx => {
+        const ref = Store.ref(C.bt, G.bid), s = await tx.get(ref); if (!s.exists || s.data().status !== "live") return;
+        tx.update(ref, { status: "done", quit: G.role, doneAt: Date.now() });
+      });
+    } catch { toast("Aufgeben hat nicht geklappt."); }
   },
-  btRetrySave() { const G = S.game; if (G && G.res) { btSave(G); render(); } },
   async btDecline(t) {
+    closeModal(true);
     try { await Store.update(C.bt, t.dataset.id, { status: "declined", doneAt: Date.now() }); toast("Herausforderung abgelehnt."); } catch { toast("Das hat nicht geklappt."); }
     await loadSocial(); render();
   },
@@ -7209,6 +7454,507 @@ function nyFocus() {
   if (T.t === "hear" && G.heard !== G.i) { G.heard = G.i; setTimeout(() => speak(T.w[0], "fr"), 250); }
 }
 /* ---------- Ende 2.1.1 ---------- */
+
+/* 2.1.2: 50 feste Lückentexte. Lücken: [Lösung|Deutsch] */
+const CLOZE50 = [
+  { id: "f01", lang: "fr", title: "Salut, c'est Léa !", t: "[Salut|Hallo] ! Je m'appelle Léa et j'ai douze [ans|Jahre]. J'habite à Paris avec ma [mère|Mutter] et mon petit [frère|Bruder]. J'aime la musique, mais je n'aime pas le [sport|Sport]. Et toi, tu [habites|wohnst] où ?" },
+  { id: "f02", lang: "fr", title: "Dans mon quartier", t: "Dans mon [quartier|Viertel], il y a un parc, un [cinéma|Kino] et une boulangerie. Le [collège|Schule] est à côté de la [gare|Bahnhof]. Le samedi, je vais au [stade|Stadion] avec mes copains." },
+  { id: "f03", lang: "fr", title: "Ma famille", t: "Voilà ma [famille|Familie] ! Mon [père|Vater] s'appelle Marc, il est très sympa. Ma [sœur|Schwester] a quinze ans, elle m'énerve un [peu|bisschen]. Mes [grands-parents|Großeltern] habitent en Bretagne." },
+  { id: "f04", lang: "fr", title: "Ma chambre", t: "Ma [chambre|Zimmer] est petite, mais j'adore ma chambre ! Il y a un [lit|Bett], un [bureau|Schreibtisch] et une [armoire|Schrank]. Sur le [mur|Wand], il y a des posters de mon groupe préféré." },
+  { id: "f05", lang: "fr", title: "Le mercredi", t: "Le mercredi après-[midi|Nachmittag], je n'ai pas [cours|Unterricht]. Je fais mes [devoirs|Hausaufgaben], puis je [joue|spiele] au foot dans le parc. Le soir, je [regarde|schaue] une série avec ma sœur." },
+  { id: "f06", lang: "fr", title: "À la cantine", t: "À midi, je mange à la [cantine|Kantine]. Aujourd'hui, il y a une [soupe|Suppe], du [riz|Reis] et un dessert. Moi, je ne mange pas de [viande|Fleisch], je suis végétarienne. J'ai toujours [faim|Hunger] à midi !" },
+  { id: "f07", lang: "fr", title: "Mon emploi du temps", t: "Le lundi, on commence à huit [heures|Uhr] avec les [maths|Mathe]. Ensuite, on a [anglais|Englisch] et histoire-géo. À dix heures, c'est la [récré|Pause]. J'adore le jeudi parce qu'on a [EPS|Sport]." },
+  { id: "f08", lang: "fr", title: "On fait les courses", t: "Pour le gâteau, il [faut|braucht man] de la farine, du [beurre|Butter], du sucre et trois [œufs|Eier]. Je vais au [supermarché|Supermarkt] avec mon père. Il achète aussi une [bouteille|Flasche] de jus." },
+  { id: "f09", lang: "fr", title: "Bon anniversaire !", t: "Samedi, c'est mon [anniversaire|Geburtstag] ! J'[invite|lade ein] mes copains à la maison. Ma mère prépare un [gâteau|Kuchen] au chocolat. Mes amis m'apportent des [cadeaux|Geschenke]. On va faire la [fête|Feier] !" },
+  { id: "f10", lang: "fr", title: "Mes hobbys", t: "J'ai beaucoup d'[activités|Freizeitaktivitäten]. Je fais du [piano|Klavier] et de l'escalade. J'aime aussi [dessiner|zeichnen] des mangas. Mon frère fait des arts martiaux, mais moi, ce n'est pas mon [truc|Ding]. Et toi, qu'est-ce que tu [fais|machst] ?" },
+  { id: "f11", lang: "fr", title: "Où sont mes clés ?", t: "Je [cherche|suche] mes clés ! Elles ne sont pas [sur|auf] la table. Elles ne sont pas [sous|unter] le lit. Ah, voilà ! Elles sont [dans|in] mon sac, à [côté|neben] de mon portable." },
+  { id: "f12", lang: "fr", title: "Il est quelle heure ?", t: "– Pardon, il est quelle [heure|Uhrzeit] ? – Il est quatre heures et [demie|halb]. – Oh non, je suis en [retard|zu spät] ! J'ai rendez-vous avec Hugo au [café|Café]. On se [retrouve|trifft sich] à quatre heures." },
+  { id: "f13", lang: "fr", title: "Au collège", t: "Mon [collège|Schule] est grand. Il y a un [CDI|Schulbibliothek] avec beaucoup de livres et une grande [cour|Schulhof]. La [principale|Schulleiterin] est sévère, mais les [profs|Lehrer] sont sympas." },
+  { id: "f14", lang: "fr", title: "Le week-end", t: "Le [week-end|Wochenende], je suis chez mon père. Le samedi [matin|Morgen], on fait les courses au [marché|Markt]. L'après-midi, on fait une [balade|Spaziergang] à vélo. Le dimanche, je [reste|bleibe] à la maison." },
+  { id: "f15", lang: "fr", title: "Mon animal", t: "J'ai un [chat|Katze], il s'appelle Bandit. Il est noir et [blanc|weiß]. Il adore le [lait|Milch] et il dort sur mon lit. Ma sœur voudrait un [lapin|Kaninchen], mais mon père est [contre|dagegen]." },
+  { id: "f16", lang: "fr", title: "Un pique-nique", t: "Il fait [beau|schön] aujourd'hui ! On fait un [pique-nique|Picknick] au bord de la Seine. J'apporte des [sandwichs|Sandwiches] au jambon et des [fraises|Erdbeeren]. Mon ami apporte des [boissons|Getränke]." },
+  { id: "f17", lang: "fr", title: "Les vacances", t: "Pendant les [vacances|Ferien], nous allons à la [mer|Meer]. Il fait [chaud|warm] et il y a du [soleil|Sonne]. Je vais à la [plage|Strand] tous les jours. J'écris une carte postale à ma copine." },
+  { id: "f18", lang: "fr", title: "Il pleut !", t: "Oh non, il [pleut|regnet] ! On ne peut pas aller dans le [parc|Park]. Alors on [reste|bleibt] à la maison. On [joue|spielt] à des jeux vidéo et on [écoute|hört] de la musique." },
+  { id: "f19", lang: "fr", title: "Ma copine Inès", t: "Ma [copine|Freundin] s'appelle Inès. Elle est dans la même [classe|Klasse] que moi. Elle est [drôle|lustig] et très sympa. Elle [adore|liebt] la danse et elle chante [souvent|oft]." },
+  { id: "f20", lang: "fr", title: "Au café", t: "Au [café|Café], je prends un [jus|Saft] d'orange et un croissant. Ma mère prend un [café|Kaffee]. Ça [coûte|kostet] combien ? Ça fait sept [euros|Euro]." },
+  { id: "f21", lang: "fr", title: "Paris", t: "Paris est une grande [ville|Stadt]. Il y a la [tour|Turm] Eiffel, le [musée|Museum] du Louvre et beaucoup de [restaurants|Restaurants]. Pour visiter Paris, on prend le [métro|U-Bahn]." },
+  { id: "f22", lang: "fr", title: "Un jour nul", t: "Aujourd'hui, c'est vraiment un jour [nul|doof] ! J'ai [oublié|vergessen] mes devoirs. En maths, je ne [comprends|verstehe] rien. Et à la cantine, il n'y a plus de [dessert|Nachspeise]. C'est l'[horreur|Horror] !" },
+  { id: "f23", lang: "fr", title: "Le cours de français", t: "En cours, la prof dit : « [Ouvrez|Öffnet] vos [livres|Bücher], s'il vous plaît ! » Puis elle [écrit|schreibt] une phrase au [tableau|Tafel]. Nous [répétons|wiederholen] la phrase." },
+  { id: "f24", lang: "fr", title: "Une recette", t: "Pour faire des crêpes, il faut de la [farine|Mehl], du [lait|Milch] et des œufs. D'[abord|zuerst], on prépare la [pâte|Teig]. Ensuite, on cuit les crêpes. Avec du [sucre|Zucker], c'est super bon !" },
+  { id: "f25", lang: "fr", title: "Mon rêve", t: "Mon [rêve|Traum], c'est de visiter la [montagne|Gebirge] en hiver. Je voudrais faire du ski avec mes [parents|Eltern]. Le soir, on [mange|isst] une fondue et on [joue|spielt] aux cartes." },
+  { id: "e01", lang: "en", title: "Hi, I'm Tom!", t: "Hi, my [name|Name] is Tom. I'm twelve years [old|alt]. I live in Bristol with my [parents|Eltern] and my [sister|Schwester]. I've got a [dog|Hund] called Max." },
+  { id: "e02", lang: "en", title: "My school", t: "My [school|Schule] is big. There are thirty [pupils|Schüler] in my class. My favourite [subject|Schulfach] is English because the [teacher|Lehrer] is funny. I don't like [maths|Mathe]." },
+  { id: "e03", lang: "en", title: "A day at home", t: "On Saturday I [get up|aufstehen] at nine. I have [breakfast|Frühstück] with my family. Then I [help|helfe] my mum in the [garden|Garten]. In the evening we [watch|schauen] a film." },
+  { id: "e04", lang: "en", title: "My bedroom", t: "My [bedroom|Schlafzimmer] is small but nice. My [bed|Bett] is next to the [window|Fenster]. There's a [desk|Schreibtisch] with my computer on it. My clothes are in the [wardrobe|Kleiderschrank]." },
+  { id: "e05", lang: "en", title: "Shopping", t: "Let's go [shopping|einkaufen]! We need some [bread|Brot], [milk|Milch] and apples. How [much|viel] is the cheese? It's three [pounds|Pfund]." },
+  { id: "e06", lang: "en", title: "Hobbies", t: "In my free [time|Zeit] I play [football|Fußball] with my friends. My sister [reads|liest] books and she can [play|spielen] the guitar. We both like [swimming|Schwimmen]." },
+  { id: "e07", lang: "en", title: "The weather", t: "Today the [weather|Wetter] is terrible. It's [raining|regnen] and it's very [cold|kalt]. I'm wearing my [jacket|Jacke] and a hat. I hope it's [sunny|sonnig] tomorrow." },
+  { id: "e08", lang: "en", title: "A birthday party", t: "It's my [birthday|Geburtstag] today! My friends are coming to my [party|Party]. Mum is making a big chocolate [cake|Kuchen]. I'm very [happy|glücklich] about all the [presents|Geschenke]." },
+  { id: "e09", lang: "en", title: "In London", t: "London is the [capital|Hauptstadt] of England. You can [visit|besuchen] Big Ben and the Tower. Many tourists take the [underground|U-Bahn] or a red [bus|Bus]. It's an [exciting|aufregend] city." },
+  { id: "e10", lang: "en", title: "My pet", t: "I've got a [rabbit|Kaninchen]. Her name is Snowy and she's [white|weiß]. She likes [carrots|Karotten]. Every day I [feed|füttere] her and [clean|sauber machen] her cage." },
+  { id: "e11", lang: "en", title: "Breakfast", t: "For [breakfast|Frühstück] I usually have [cereal|Müsli] with milk. My dad drinks [coffee|Kaffee] and eats [toast|Toast] with jam. On Sundays we have [eggs|Eier]." },
+  { id: "e12", lang: "en", title: "A school trip", t: "Last week our class went on a [trip|Ausflug] to the zoo. We [saw|sahen] lions and monkeys. The [weather|Wetter] was great. We had a [picnic|Picknick] in the park. It was a [great|toll] day!" },
+  { id: "e13", lang: "en", title: "My best friend", t: "My best [friend|Freund] is called Sam. He's [tall|groß] and he has got brown [hair|Haare]. He's very [funny|lustig] and always [helps|hilft] me with my homework." },
+  { id: "e14", lang: "en", title: "In the kitchen", t: "Let's make [pancakes|Pfannkuchen]! First, put the [flour|Mehl] in a bowl. Then add two eggs and some [milk|Milch]. Mix it all. Now [cook|braten] the pancakes in a [pan|Pfanne]." },
+  { id: "e15", lang: "en", title: "The holidays", t: "In the summer [holidays|Ferien] we go to the [seaside|Meer]. I love [swimming|Schwimmen] in the sea. My little brother [builds|baut] sandcastles on the [beach|Strand]." },
+  { id: "e16", lang: "en", title: "Time to get up!", t: "My [alarm clock|Wecker] rings at seven [o'clock|Uhr]. I get up and [brush|putze] my teeth. Then I get [dressed|angezogen] and go to [school|Schule] by bike." },
+  { id: "e17", lang: "en", title: "At the station", t: "Excuse me, when does the next [train|Zug] to Oxford [leave|abfahren]? – At half past ten. – Which [platform|Gleis]? – Platform three. – Thank you. How much is a [ticket|Fahrkarte]? – Twelve [pounds|Pfund]." },
+  { id: "e18", lang: "en", title: "My town", t: "My [town|Stadt] isn't very big. There's a [library|Bücherei], a sports centre and some [shops|Geschäfte]. On Saturdays there's a [market|Markt] in the town [square|Platz]." },
+  { id: "e19", lang: "en", title: "A rainy afternoon", t: "It's a rainy [afternoon|Nachmittag]. Lisa is [bored|gelangweilt]. She [calls|ruft an] her friend Emma. They [decide|entscheiden] to bake [cookies|Kekse] together." },
+  { id: "e20", lang: "en", title: "Sports day", t: "Today is sports [day|Tag] at our school. I'm in the [race|Rennen]. I [run|renne] as fast as I can and I [win|gewinne]! My friends [cheer|jubeln] for me." },
+  { id: "e21", lang: "en", title: "A new pupil", t: "There's a new [girl|Mädchen] in our class. She [comes|kommt] from Spain. She can [speak|sprechen] three languages. She's a bit [shy|schüchtern], so I [show|zeige] her the school." },
+  { id: "e22", lang: "en", title: "At the doctor's", t: "I don't feel [well|gut]. I've got a [headache|Kopfschmerzen] and a sore [throat|Hals]. The [doctor|Arzt] says I must stay in [bed|Bett] for two days." },
+  { id: "e23", lang: "en", title: "Christmas", t: "At [Christmas|Weihnachten] we put up a [tree|Baum] in the living room. On the 25th of December we open our [presents|Geschenke]. We eat [turkey|Truthahn] and Christmas pudding. I [love|liebe] Christmas!" },
+  { id: "e24", lang: "en", title: "My favourite food", t: "My [favourite|Lieblings-] food is pizza. I like it with [cheese|Käse] and [tomatoes|Tomaten]. I don't like [fish|Fisch]. My mum says I should eat more [vegetables|Gemüse]." },
+  { id: "e25", lang: "en", title: "Saturday plans", t: "What are you [doing|machen] on Saturday? – I'm [going|gehen] to the cinema. Do you want to [come|kommen]? – Yes, great! What [time|Zeit] does the film [start|anfangen]?" }
+];
+
+/* 2.1.2: Lückentext mit 50 festen Texten */
+function clozeParse(c) {
+  const segs = [], gaps = [], re = /\[([^\]|]+)\|([^\]]+)\]/g; let last = 0, m;
+  while ((m = re.exec(c.t))) { segs.push(c.t.slice(last, m.index)); segs.push({ g: gaps.length }); gaps.push({ w: m[1], de: m[2] }); last = re.lastIndex; }
+  segs.push(c.t.slice(last));
+  return { segs, gaps };
+}
+function clozeRandTexts(G, pool) {
+  let langs = S.cfg.lang === "en" || S.cfg.lang === "fr" ? [S.cfg.lang] : [...new Set(pool.map(x => x.s.lang).filter(l => l === "en" || l === "fr"))];
+  if (!langs.length) langs = ["fr", "en"];
+  let recent = []; try { recent = JSON.parse(lsGet("vocabify:clzRecent") || "[]"); } catch {}
+  const cand = CLOZE50.filter(c => langs.includes(c.lang));
+  const fresh = shuffle(cand.filter(c => !recent.includes(c.id))), pick = fresh.concat(shuffle(cand.filter(c => recent.includes(c.id)))).slice(0, G.o.texts);
+  lsSet("vocabify:clzRecent", JSON.stringify(pick.map(c => c.id).concat(recent).slice(0, 30)));
+  return pick.map(c => {
+    const { segs, gaps } = clozeParse(c), seen = new Set(gaps.map(g => norm(g.w))), extra = [];
+    for (const o of shuffle(CLOZE50.filter(x => x.lang === c.lang && x.id !== c.id))) {
+      for (const g of clozeParse(o).gaps) { if (extra.length >= 2) break; if (!seen.has(norm(g.w))) { seen.add(norm(g.w)); extra.push(g.w); } }
+      if (extra.length >= 2) break;
+    }
+    return { fixed: true, id: c.id, lang: c.lang, title: c.title, segs, gaps, fill: gaps.map(() => null), typed: gaps.map(() => ""), sel: 0, checked: false, res: [], hint: false,
+      bank: shuffle(gaps.map(g => g.w).concat(extra)).map(w => ({ w })) };
+  });
+}
+function clozeFixedView(G, T) {
+  const bank = G.o.help === "bank", used = new Set(T.fill.filter(x => x != null));
+  const body = T.segs.map(sg => {
+    if (typeof sg === "string") return esc(sg);
+    const i = sg.g, gp = T.gaps[i];
+    if (T.checked) {
+      const given = bank ? (T.fill[i] != null ? T.bank[T.fill[i]].w : "") : T.typed[i];
+      return T.res[i] ? `<span class="gap ok">${esc(given)}</span>` : `<span class="gap bad">${given ? `<s>${esc(given)}</s> ` : ""}<b>${esc(gp.w)}</b></span>`;
+    }
+    const hint = T.hint ? `<small class="gap-de">${esc(gp.de)}</small>` : "";
+    if (bank) { const f = T.fill[i]; return `<button class="gap${T.sel === i ? " sel" : ""}${f != null ? " filled" : ""}" data-act="clzGap" data-i="${i}" aria-label="Lücke ${i + 1}"><span class="gap-n">${i + 1}</span>${f != null ? esc(T.bank[f].w) : ""}</button>${hint}`; }
+    return `<input class="clz-input" id="clz-${i}" data-i="${i}" value="${esc(T.typed[i])}" placeholder="${T.hint ? esc(gp.de) : i + 1}" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Lücke ${i + 1}" style="width:${Math.min(16, Math.max(7, gp.w.length + 2))}ch">`;
+  }).join("");
+  const nRight = T.res.filter(Boolean).length;
+  return `<article class="clz-paper">
+      <div class="row" style="gap:.5rem"><p class="eyebrow" style="margin:0">Text ${G.t + 1} von ${G.texts.length} · Zufallstext</p><span class="lang-tag ${T.lang}">${LANGS[T.lang].name}</span><span class="spacer"></span>
+        ${T.checked ? "" : `<button class="btn small ghost" data-act="clzHint">${T.hint ? "Tipps ausblenden" : "💡 Deutsche Tipps"}</button>`}</div>
+      <h2>${esc(T.title)}</h2><p class="clz-text">${body}</p></article>
+    ${!T.checked && bank ? `<div class="clz-bank"><span class="eyebrow">Wortkasten · tippe ein Wort an, es landet in der markierten Lücke</span>
+      <div class="clz-words">${T.bank.map((b, i) => `<button class="clz-word" data-act="clzWord" data-i="${i}" ${used.has(i) ? "disabled" : ""}>${esc(b.w)}</button>`).join("")}</div></div>` : ""}
+    ${!T.checked && !bank ? `<p class="g-hint">Schreib das passende Wort in jede Lücke. Mit „Deutsche Tipps“ siehst du die Bedeutung.</p>` : ""}
+    ${T.checked ? `<div class="fb ${nRight === T.gaps.length ? "right" : "wrong"}" role="status">${nRight} von ${T.gaps.length} Lücken richtig${nRight === T.gaps.length ? "!" : "."} ${coinNote(G)}<span class="spacer"></span>
+      <button class="btn small primary" id="nextBtn" data-act="clzNext">${G.t + 1 >= G.texts.length ? "Zur Auswertung" : "Nächster Text"}</button></div>`
+      : `<div class="row end"><button class="btn primary big" data-act="clzCheck">Prüfen</button></div>`}`;
+}
+function clzCheckFixed(G, T) {
+  const bank = G.o.help === "bank";
+  if (!bank) document.querySelectorAll(".clz-input").forEach(el => { T.typed[+el.dataset.i] = el.value; });
+  if (bank && T.fill.some(x => x == null)) { toast("Fülle zuerst alle Lücken aus."); return; }
+  let coins = 0;
+  T.res = T.gaps.map((gp, i) => {
+    const given = bank ? T.bank[T.fill[i]].w : T.typed[i];
+    const ok = !!String(given || "").trim() && checkAnswer(given, gp.w).ok;
+    G.n++; bumpHist(ok);
+    if (ok) { G.right++; G.score += 100; coins += verbCorrect("clz:" + T.id + ":" + i); }
+    else { G.fixedWrongs = G.fixedWrongs || []; G.fixedWrongs.push([gp.w, gp.de]); }
+    return ok;
+  });
+  G.coinsEarned += coins; G.lastCoin = coins; T.checked = true; markDirty("me"); syncCoins();
+  render();
+}
+A.clzHint = () => { const G = S.game, T = G && G.texts[G.t]; if (!T || !T.fixed) return; if (G.o.help !== "bank") document.querySelectorAll(".clz-input").forEach(el => { T.typed[+el.dataset.i] = el.value; }); T.hint = !T.hint; render(); };
+
+/* ===================== 2.1.2: Weihnachten ===================== */
+/* Zeitraum: Weihnachtsstimmung ab dem 1. Advent bis 6. Januar, Weihnachtsshop ab 1. Dezember */
+function xmasPreview() { return isAdmin() ? lsGet("vocabify:xmasPreview") : null; }
+function xmasNow() {
+  const pv = xmasPreview();
+  if (pv && /^\d{4}-\d{2}-\d{2}$/.test(pv)) { const n = new Date(), d = new Date(pv + "T00:00:00"); d.setHours(n.getHours(), n.getMinutes(), n.getSeconds()); return d; }
+  return new Date();
+}
+function firstAdvent(y) { const eve = new Date(y, 11, 24), fourth = new Date(y, 11, 24 - eve.getDay()); return new Date(y, 11, fourth.getDate() - 21); }
+function xmasYear(d = xmasNow()) { return d.getMonth() === 0 ? d.getFullYear() - 1 : d.getFullYear(); }
+function isXmas(d = xmasNow()) {
+  const y = d.getFullYear();
+  if (d.getMonth() === 0) return d.getDate() <= 6;
+  const fa = firstAdvent(y); return d >= fa;
+}
+function xmasShopOpen(d = xmasNow()) { return (d.getMonth() === 11) || (d.getMonth() === 0 && d.getDate() <= 6); }
+function adventCandles(d = xmasNow()) {
+  if (!isXmas(d)) return 0;
+  if (d.getMonth() === 0 || (d.getMonth() === 11 && d.getDate() >= 24)) return 4;
+  const fa = firstAdvent(d.getFullYear()); return Math.min(4, Math.floor((d - fa) / (7 * 86400000)) + 1);
+}
+function calDay(d = xmasNow()) { return d.getMonth() === 11 && d.getDate() <= 24 ? d.getDate() : 0; }
+function bescherungOpen(d = xmasNow()) { return d.getMonth() === 11 && d.getDate() >= 24 && d.getDate() <= 26; }
+function eveDate(d = xmasNow()) { return new Date(xmasYear(d), 11, 24, 0, 0, 0); }
+
+/* ---------- 50 Weihnachtsartikel ---------- */
+const XMAS_ORN = {
+  stern: { name: "Goldener Stern", ic: "⭐", price: 60, slot: "top", desc: "Strahlt ganz oben auf der Baumspitze." },
+  "kugel-rot": { name: "Rote Kugel", ball: "#dc2626", price: 15 }, "kugel-gold": { name: "Goldene Kugel", ball: "#eab308", price: 20 },
+  "kugel-blau": { name: "Blaue Kugel", ball: "#2563eb", price: 15 }, "kugel-silber": { name: "Silberne Kugel", ball: "#cbd5e1", price: 15 },
+  "kugel-lila": { name: "Lila Kugel", ball: "#9333ea", price: 15 }, "kugel-glitzer": { name: "Glitzerkugel", ball: "conic-gradient(#f43f5e,#facc15,#22c55e,#3b82f6,#a855f7,#f43f5e)", price: 35 },
+  lichter: { name: "Lichterkette", ic: "💡", price: 50, slot: "lights", desc: "Bunte Lichter, die am Baum funkeln." },
+  lametta: { name: "Lametta", ic: "✨", price: 30, slot: "tinsel", desc: "Glitzernde Silberfäden." },
+  bonbon: { name: "Bonbon", ic: "🍬", price: 15 }, lebkuchen: { name: "Lebkuchen", ic: "🍪", price: 20 }, glocke: { name: "Glöckchen", ic: "🔔", price: 25 },
+  engel: { name: "Engel", ic: "👼", price: 40 }, flocke: { name: "Schneeflocke", ic: "❄️", price: 20 }, socke: { name: "Nikolausstrumpf", ic: "🧦", price: 25 },
+  kerze: { name: "Kerze", ic: "🕯️", price: 25 }, schleife: { name: "Schleife", ic: "🎀", price: 20 }, apfel: { name: "Roter Apfel", ic: "🍎", price: 15 },
+  nuss: { name: "Walnuss", ic: "🌰", price: 15 }, rentier: { name: "Rentier", ic: "🦌", price: 35 }, strohstern: { name: "Strohstern", ic: "🌟", price: 25 },
+  schneemann: { name: "Schneemann", ic: "☃️", price: 40, slot: "floor" }, geschenk: { name: "Geschenkeberg", ic: "🎁", price: 30, slot: "floor" },
+  teddy: { name: "Teddy", ic: "🧸", price: 35, slot: "floor" }, eisenbahn: { name: "Spielzeugeisenbahn", ic: "🚂", price: 45, slot: "floor" },
+  santa: { name: "Weihnachtsmann", ic: "🎅", price: 60, slot: "floor" }
+};
+const XMAS_SNOW = {
+  glitzer: { name: "Glitzerschnee", desc: "Funkelnde Flocken, die im Licht blitzen.", price: 50 }, sterne: { name: "Sternschnuppen", desc: "Kleine Sterne rieseln herab.", price: 60, ch: "⭐" },
+  herzen: { name: "Herzchenschnee", desc: "Es regnet Herzen.", price: 60, ch: "❤️" }, kekse: { name: "Plätzchenregen", desc: "Lecker: Kekse statt Flocken.", price: 70, ch: "🍪" },
+  gold: { name: "Goldflocken", desc: "Schnee aus purem Gold.", price: 80 }, geschenke: { name: "Geschenkeregen", desc: "Kleine Päckchen fallen vom Himmel.", price: 70, ch: "🎁" },
+  bonbons: { name: "Bonbonschnee", desc: "Süßigkeiten rieseln herunter.", price: 60, ch: "🍬" }, bunt: { name: "Bunter Schnee", desc: "Flocken in allen Farben.", price: 50 },
+  riesen: { name: "Riesenflocken", desc: "Dicke, langsame Schneeflocken.", price: 40, ch: "❄️" }, blizzard: { name: "Schneesturm", desc: "Viel Schnee mit kräftigem Wind.", price: 70 }
+};
+const XMAS_LOGO = {
+  muetze: { name: "Weihnachtsmütze", desc: "Eine rote Mütze mit Bommel für das Logo.", price: 40 }, geweih: { name: "Rentiergeweih", desc: "Das Logo wird zum Rentier.", price: 50 },
+  haube: { name: "Schneehaube", desc: "Eine dicke Schneeschicht auf dem Logo.", price: 30 }, stechpalme: { name: "Stechpalme", desc: "Zweig mit roten Beeren.", price: 30 },
+  gloeckchen: { name: "Glöckchen", desc: "Ein bimmelndes Glöckchen am Logo.", price: 30 }, stern: { name: "Leuchtstern", desc: "Ein funkelnder Stern über dem Logo.", price: 40 }
+};
+Object.assign(ACCENTS, {
+  xtanne: { name: "Tannengrün", price: 60, xmas: 1, l: ["#15803d", "#e6f4ea"], d: ["#4ade80", "#102a19"], h: ["#2f9e5b", "#15803d", "#3fae6a", "#166534"], hd: ["#052e16", "#14532d", "#064e3b", "#14532d"], lg: ["#86efac", "#15803d", "#14532d"] },
+  xrot: { name: "Weihnachtsrot", price: 60, xmas: 1, l: ["#dc2626", "#fdecec"], d: ["#f87171", "#2e1212"], h: ["#f05252", "#dc2626", "#ef4444", "#b91c1c"], hd: ["#7f1d1d", "#991b1b", "#7f1d1d", "#450a0a"], lg: ["#fca5a5", "#dc2626", "#991b1b"] },
+  xgold: { name: "Festgold", price: 60, xmas: 1, l: ["#b45309", "#fdf3dc"], d: ["#fbbf24", "#2b2210"], h: ["#f5c542", "#d4a017", "#f0b429", "#b7791f"], hd: ["#713f12", "#854d0e", "#78350f", "#57340d"], lg: ["#fde68a", "#d97706", "#92400e"] },
+  xeis: { name: "Eisblau", price: 60, xmas: 1, l: ["#0284c7", "#e6f4fb"], d: ["#7dd3fc", "#0c2533"], h: ["#9ad8f7", "#38bdf8", "#bae6fd", "#60a5fa"], hd: ["#0c4a6e", "#075985", "#0e7490", "#1e3a8a"], lg: ["#e0f2fe", "#38bdf8", "#0369a1"] },
+  xgluehwein: { name: "Glühwein", price: 60, xmas: 1, l: ["#9f1239", "#fbe9ee"], d: ["#fb7185", "#2c1018"], h: ["#c2185b", "#9f1239", "#be123c", "#7f1d4b"], hd: ["#4c0519", "#881337", "#500724", "#3b0764"], lg: ["#fda4af", "#be123c", "#881337"] },
+  xlebkuchen: { name: "Lebkuchen", price: 60, xmas: 1, l: ["#9a5b24", "#f7ede3"], d: ["#e0a46c", "#2a1d12"], h: ["#c58447", "#a0602a", "#d19a5b", "#8a4f1d"], hd: ["#4a2c13", "#6b3f18", "#5a3412", "#3d240f"], lg: ["#f4c99a", "#a0602a", "#6b3f18"] },
+  xzucker: { name: "Zuckerstange", price: 60, xmas: 1, l: ["#e11d48", "#fde8ee"], d: ["#fb7185", "#2e1219"], h: ["#ff6b8a", "#e11d48", "#ff9fb4", "#f43f5e"], hd: ["#881337", "#9f1239", "#831843", "#4c0519"], lg: ["#fecdd3", "#e11d48", "#9f1239"] },
+  xnordlicht: { name: "Nordlicht", price: 60, xmas: 1, l: ["#0f766e", "#e3f6f3"], d: ["#5eead4", "#0e2826"], h: ["#34d399", "#14b8a6", "#818cf8", "#a78bfa"], hd: ["#064e3b", "#115e59", "#312e81", "#4c1d95"], lg: ["#a7f3d0", "#14b8a6", "#6d28d9"] }
+});
+(function xmasAccentCss() {
+  let css = "";
+  for (const [k, a] of Object.entries(ACCENTS)) {
+    if (!a.xmas) continue;
+    const hd = h => h.map((c, i) => `--hd${i + 1}:${c}`).join(";"), lg = a.lg.map((c, i) => `--lg${i + 1}:${c}`).join(";");
+    const light = `--brand:${a.l[0]};--brand-soft:${a.l[1]};--check:${a.l[0]};--acc-soft:${a.l[1]};${hd(a.h)};${lg}`, dark = `--brand:${a.d[0]};--brand-soft:${a.d[1]};--check:${a.d[0]};--acc-soft:${a.d[1]};${hd(a.hd)}`;
+    css += `html[data-accent="${k}"]{${light}}\nhtml[data-accent="${k}"][data-theme="dark"]{${dark}}\n@media (prefers-color-scheme:dark){html[data-accent="${k}"]:not([data-theme="light"]){${dark}}}\n`;
+  }
+  const st = document.createElement("style"); st.textContent = css; document.head.append(st);
+})();
+/* alle 50 Artikel: o: Baumschmuck (26), n: Schnee (10), c: Farben (8), z: Logo-Deko (6) */
+const XMAS_ITEMS = [].concat(
+  Object.entries(XMAS_ORN).map(([k, v]) => ({ key: "o:" + k, cat: "o", id: k, name: v.name, price: v.price, desc: v.desc || (v.slot === "floor" ? "Steht unter deinem Weihnachtsbaum." : "Schmückt deinen Weihnachtsbaum auf der Startseite.") })),
+  Object.entries(XMAS_SNOW).map(([k, v]) => ({ key: "n:" + k, cat: "n", id: k, name: v.name, price: v.price, desc: v.desc })),
+  Object.entries(ACCENTS).filter(([, a]) => a.xmas).map(([k, a]) => ({ key: "c:" + k, cat: "c", id: k, name: a.name, price: a.price, desc: "Weihnachtliche Farbe für Menüleiste, Knöpfe und Logo. Bleibt auch nach Weihnachten." })),
+  Object.entries(XMAS_LOGO).map(([k, v]) => ({ key: "z:" + k, cat: "z", id: k, name: v.name, price: v.price, desc: v.desc }))
+);
+const XMAS_CAL = ["o:kugel-rot", "n:glitzer", "o:lebkuchen", "z:muetze", "o:socke", "o:kugel-gold", "o:flocke", "c:xtanne", "o:glocke", "o:kerze", "n:sterne", "o:schleife",
+  "o:apfel", "z:haube", "o:kugel-blau", "o:engel", "n:kekse", "o:rentier", "c:xrot", "o:lametta", "o:strohstern", "o:lichter", "n:gold", "o:stern"];
+const CAL_ORDER = [7, 15, 1, 22, 10, 4, 18, 12, 24, 3, 20, 9, 14, 6, 17, 2, 23, 11, 5, 19, 13, 8, 21, 16];
+
+function xmasState() {
+  const x = (S.me && S.me.settings && S.me.settings.xmas) || {};
+  return { owned: Array.isArray(x.owned) ? x.owned.slice() : [], snow: x.snow || "", logo: x.logo == null ? "muetze0" : x.logo, off: !!x.off, cal: Object.assign({}, x.cal || {}), gift: Object.assign({}, x.gift || {}) };
+}
+function setXmas(patch) { setSetting("xmas", Object.assign(xmasState(), patch)); }
+function xmasOwns(key) {
+  const [t, id] = key.split(":");
+  if (t === "c") return designOwns(key);
+  return xmasState().owned.includes(key);
+}
+function xmasItem(key) { return XMAS_ITEMS.find(i => i.key === key); }
+function xmasGrant(key) {
+  const [t, id] = key.split(":");
+  if (t === "c" || t === "s" || t === "g" || t === "l") { const d = designState(); if (!d.owned.includes(key)) setSetting("design", Object.assign({}, d, { owned: [...d.owned, key] })); return; }
+  if (t === "p") { if (!S.me.pets.includes(id)) { S.me.pets.push(id); if (!S.me.activePet || id === "aurelius") S.me.activePet = id; } markDirty("me"); return; }
+  if (t === "a") { if (!accOwned().includes(id)) setSetting("acc", [...accOwned(), id]); return; }
+  const x = xmasState(); if (!x.owned.includes(key)) { x.owned.push(key); if (t === "n" && !x.snow) x.snow = id; setSetting("xmas", x); }
+}
+function xmasIcon(key) {
+  const [t, id] = key.split(":");
+  if (t === "o") { const o = XMAS_ORN[id]; return o.ball ? `<i class="xo-ball" style="--b:${o.ball}"></i>` : `<span class="xo-ic">${o.ic}</span>`; }
+  if (t === "n") { const s = XMAS_SNOW[id]; return `<span class="xo-ic">${s.ch || (id === "gold" ? "✨" : id === "bunt" ? "🌈" : id === "blizzard" ? "🌬️" : "❄️")}</span>`; }
+  if (t === "c") { const a = ACCENTS[id]; return `<i class="xo-sw" style="background:linear-gradient(135deg,${a.h[0]},${a.h[1]} 55%,${a.h[3]})"></i>`; }
+  if (t === "z") return `<span class="xo-logo">${LOGO_SVG(false)}${logoDecoSVG(id)}</span>`;
+  if (t === "p") return `<span class="xo-ic">${PET_DEFS[id] ? (PET_DEFS[id].e || "🐾") : "🐾"}</span>`;
+  if (t === "a") { const f = accFind(id); return `<span class="xo-ic">${f && f.a.ic ? f.a.ic : "🎀"}</span>`; }
+  if (t === "l") return `<span class="xo-ic">✨</span>`;
+  if (t === "s") return `<span class="xo-ic">⬛</span>`;
+  if (t === "g") return `<span class="xo-ic">🫧</span>`;
+  return `<span class="xo-ic">🎁</span>`;
+}
+function giftName(key) {
+  const [t, id] = key.split(":");
+  if (t === "p") return PET_DEFS[id] ? (PET_DEFS[id].legendary ? "Legendär: " : "") + PET_DEFS[id].name : id;
+  if (t === "a") { const f = accFind(id); return f ? `${f.a.name} für ${PET_DEFS[f.pet].name}` : id; }
+  if (t === "c") return "Farbe " + (ACCENTS[id] ? ACCENTS[id].name : id);
+  if (t === "s") return "Form " + SHAPES[id].name;
+  if (t === "g") return GLASS.name;
+  if (t === "l") return "Ladescreen " + LOADERS[id].name;
+  const it = xmasItem(key); return it ? it.name : key;
+}
+
+/* ---------- Logo-Deko ---------- */
+function logoDecoSVG(id) {
+  switch (id) {
+    case "muetze": case "muetze0": return `<svg class="ld-deco ld-muetze" viewBox="0 0 40 34" aria-hidden="true"><path d="M5 26 C8 12 18 3 30 6 C35 7 37 12 36 16 L31 14 C30 11 27 10 24 12 C19 15 18 22 18 26Z" fill="#dc2626"/><rect x="2" y="23" width="20" height="8" rx="4" fill="#fff"/><circle cx="34" cy="17" r="4.5" fill="#fff"/></svg>`;
+    case "geweih": return `<svg class="ld-deco ld-geweih" viewBox="0 0 48 30" aria-hidden="true"><g fill="none" stroke="#92400e" stroke-width="3.2" stroke-linecap="round"><path d="M14 28 C12 18 8 12 3 8 M10 17 C6 16 4 13 4 12 M12 22 C9 9 13 4 14 2"/><path d="M34 28 C36 18 40 12 45 8 M38 17 C42 16 44 13 44 12 M36 22 C39 9 35 4 34 2"/></g></svg>`;
+    case "haube": return `<svg class="ld-deco ld-haube" viewBox="0 0 44 18" aria-hidden="true"><path d="M2 14 C2 6 10 2 22 2 C34 2 42 6 42 14 C38 12 36 17 32 14 C29 18 25 13 22 16 C18 13 15 18 12 14 C8 17 5 12 2 14Z" fill="#fff" stroke="#dbeafe" stroke-width="1"/></svg>`;
+    case "stechpalme": return `<svg class="ld-deco ld-stech" viewBox="0 0 36 26" aria-hidden="true"><path d="M17 14 C10 4 3 8 1 6 C3 12 2 16 6 18 C9 19 14 17 17 14Z" fill="#15803d"/><path d="M19 14 C26 4 33 8 35 6 C33 12 34 16 30 18 C27 19 22 17 19 14Z" fill="#16a34a"/><circle cx="15" cy="17" r="3.3" fill="#dc2626"/><circle cx="21" cy="17" r="3.3" fill="#ef4444"/><circle cx="18" cy="12.5" r="3.3" fill="#b91c1c"/></svg>`;
+    case "gloeckchen": return `<span class="ld-deco ld-bell" aria-hidden="true">🔔</span>`;
+    case "stern": return `<span class="ld-deco ld-star" aria-hidden="true">⭐</span>`;
+  }
+  return "";
+}
+function xmasLogoDeco() {
+  if (!isXmas() || !S.me) return "";
+  const x = xmasState(); let id = x.logo;
+  if (id === "none") return "";
+  if (id !== "muetze0" && !x.owned.includes("z:" + id)) id = "muetze0";
+  return logoDecoSVG(id);
+}
+
+/* ---------- Schneefall ---------- */
+const Snow = {
+  cv: null, ctx: null, raf: 0, flakes: [], style: "", w: 0, h: 0, last: 0,
+  want() { return S.me && isXmas() && !xmasState().off && !document.hidden; },
+  sync() {
+    const on = this.want(), style = on ? (xmasState().snow || "classic") : "";
+    if (!on) { this.stop(); return; }
+    if (!this.cv) {
+      this.cv = document.createElement("canvas"); this.cv.id = "snow"; this.cv.setAttribute("aria-hidden", "true");
+      document.body.append(this.cv); this.ctx = this.cv.getContext("2d");
+      addEventListener("resize", () => this.resize());
+    }
+    if (style !== this.style) { this.style = style; this.resize(true); }
+    if (!this.raf) { this.last = performance.now(); this.raf = requestAnimationFrame(t => this.tick(t)); }
+    this.cv.hidden = false;
+  },
+  stop() { cancelAnimationFrame(this.raf); this.raf = 0; if (this.cv) this.cv.hidden = true; this.style = ""; },
+  resize(reseed) {
+    if (!this.cv) return;
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    this.w = innerWidth; this.h = innerHeight; this.cv.width = this.w * dpr; this.cv.height = this.h * dpr; this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let n = Math.round(Math.min(140, this.w * this.h / 11000));
+    if (this.style === "blizzard") n *= 2; if (this.style === "riesen") n = Math.round(n * .45); if (XMAS_SNOW[this.style] && XMAS_SNOW[this.style].ch) n = Math.round(n * .45);
+    if (reduce) n = Math.round(n * .3);
+    if (reseed || this.flakes.length !== n) this.flakes = Array.from({ length: n }, () => this.flake(true));
+  },
+  flake(any) {
+    const st = this.style, big = st === "riesen";
+    const r = big ? 6 + Math.random() * 7 : 1.2 + Math.random() * 2.8;
+    const hue = Math.floor(Math.random() * 360);
+    return { x: Math.random() * this.w, y: any ? Math.random() * this.h : -20, r, vy: (big ? .35 : .5) + Math.random() * (st === "blizzard" ? 2.2 : .9), vx: (Math.random() - .5) * .4,
+      ph: Math.random() * 6.28, sp: .01 + Math.random() * .02, hue, rot: Math.random() * 6.28, tw: Math.random() * 6.28 };
+  },
+  tick(t) {
+    this.raf = 0;
+    if (!this.want()) { this.stop(); return; }
+    const dt = Math.min(3, (t - this.last) / 16.7); this.last = t;
+    if (!this.bgT || t - this.bgT > 2000) { this.bgT = t; const bg = getComputedStyle(document.body).backgroundColor.match(/\d+/g) || [0, 0, 0]; this.lightBg = (+bg[0] + +bg[1] + +bg[2]) / 3 > 140; }
+    const c = this.ctx, st = this.style, ch = XMAS_SNOW[st] && XMAS_SNOW[st].ch, wind = st === "blizzard" ? 1.6 + Math.sin(t / 1800) * .8 : Math.sin(t / 4000) * .25;
+    c.clearRect(0, 0, this.w, this.h);
+    for (const f of this.flakes) {
+      f.ph += f.sp * dt; f.y += f.vy * dt; f.x += (f.vx + Math.sin(f.ph) * .45 + wind) * dt; f.rot += .01 * dt; f.tw += .08 * dt;
+      if (f.y > this.h + 20 || f.x < -30 || f.x > this.w + 30) { Object.assign(f, this.flake(false)); if (wind > 1) f.x = Math.random() * this.w - this.w * .3; }
+      if (ch) { c.save(); c.translate(f.x, f.y); c.rotate(Math.sin(f.rot) * .5); c.globalAlpha = .9; c.font = `${f.r * 5 + 6}px serif`; c.textAlign = "center"; c.fillText(ch, 0, 0); c.restore(); continue; }
+      const lightBg = this.lightBg;
+      let col = lightBg ? "rgba(173,203,238,.95)" : "rgba(255,255,255,.88)";
+      if (st === "gold") col = `hsla(45,95%,${55 + Math.sin(f.tw) * 12}%,.95)`;
+      if (st === "bunt") col = `hsla(${f.hue},90%,70%,.9)`;
+      if (st === "glitzer") col = `rgba(255,255,255,${.55 + Math.abs(Math.sin(f.tw)) * .45})`;
+      c.beginPath(); c.fillStyle = col; c.shadowColor = lightBg ? "rgba(70,100,150,.45)" : "rgba(120,140,170,.55)"; c.shadowBlur = st === "glitzer" || st === "gold" ? 6 : lightBg ? 3 : 2;
+      c.arc(f.x, f.y, f.r, 0, 6.283); c.fill();
+      if (st === "glitzer" && Math.sin(f.tw) > .93) { c.fillStyle = "#fff"; c.fillRect(f.x - f.r * 2.5, f.y - .4, f.r * 5, .8); c.fillRect(f.x - .4, f.y - f.r * 2.5, .8, f.r * 5); }
+    }
+    c.shadowBlur = 0;
+    this.raf = requestAnimationFrame(tt => this.tick(tt));
+  }
+};
+document.addEventListener("visibilitychange", () => { if (S.me) Snow.sync(); });
+
+/* ---------- Kopfzeile und Startseite ---------- */
+function xmasHeaderDeco() {
+  if (!isXmas()) return "";
+  const cols = ["#ef4444", "#facc15", "#22c55e", "#3b82f6", "#f97316", "#ec4899"];
+  return `<div class="xmas-snowcap" aria-hidden="true"></div><div class="xmas-lights" aria-hidden="true">${Array.from({ length: 34 }, (_, i) => `<i style="--c:${cols[i % cols.length]};--d:${(i * 0.37) % 2}s"></i>`).join("")}</div>`;
+}
+function wreathSVG(n) {
+  const candles = [[46, "#b91c1c"], [78, "#b91c1c"], [110, "#b91c1c"], [142, "#b91c1c"]].map(([x, c], i) => `<g class="cd${i < n ? " lit" : ""}">
+      <rect x="${x - 7}" y="${i % 2 ? 26 : 20}" width="14" height="${i % 2 ? 40 : 46}" rx="3" fill="${c}"/><rect x="${x - 7}" y="${i % 2 ? 26 : 20}" width="14" height="5" rx="2" fill="rgba(255,255,255,.25)"/>
+      <line x1="${x}" y1="${i % 2 ? 26 : 20}" x2="${x}" y2="${i % 2 ? 21 : 15}" stroke="#333" stroke-width="1.5"/>
+      ${i < n ? `<path class="fl" d="M${x} ${i % 2 ? 6 : 0} C${x + 6} ${i % 2 ? 13 : 7} ${x + 4} ${i % 2 ? 21 : 15} ${x} ${i % 2 ? 21 : 15} C${x - 4} ${i % 2 ? 21 : 15} ${x - 6} ${i % 2 ? 13 : 7} ${x} ${i % 2 ? 6 : 0}Z" fill="#fbbf24"/><circle class="glow" cx="${x}" cy="${i % 2 ? 15 : 9}" r="14" fill="url(#cglow)"/>` : ""}</g>`).join("");
+  return `<svg class="wreath" viewBox="0 0 190 110" aria-hidden="true"><defs><radialGradient id="cglow"><stop offset="0" stop-color="#fde68a" stop-opacity=".7"/><stop offset="1" stop-color="#fde68a" stop-opacity="0"/></radialGradient></defs>
+    <ellipse cx="95" cy="80" rx="88" ry="24" fill="#166534"/><ellipse cx="95" cy="76" rx="80" ry="19" fill="#15803d"/>
+    ${Array.from({ length: 18 }, (_, i) => { const a = i / 18 * 6.283; return `<ellipse cx="${(95 + Math.cos(a) * 78).toFixed(1)}" cy="${(78 + Math.sin(a) * 20).toFixed(1)}" rx="13" ry="7" fill="${i % 2 ? "#14532d" : "#22803f"}" transform="rotate(${(a * 57.3 + 90).toFixed(0)} ${(95 + Math.cos(a) * 78).toFixed(1)} ${(78 + Math.sin(a) * 20).toFixed(1)})"/>`; }).join("")}
+    ${[[20, 84], [60, 96], [130, 96], [170, 84], [95, 100]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="#dc2626"/>`).join("")}
+    ${candles}</svg>`;
+}
+function treeSVG(ownedKeys) {
+  const has = k => ownedKeys.includes("o:" + k);
+  const slots = [[100, 70], [80, 92], [122, 96], [64, 122], [100, 118], [138, 124], [52, 150], [86, 146], [116, 152], [150, 148], [42, 178], [72, 176], [102, 182], [132, 178], [160, 176], [58, 204], [90, 206], [124, 208], [150, 204], [104, 92]];
+  const hang = Object.entries(XMAS_ORN).filter(([k, o]) => !o.slot && has(k));
+  const floor = Object.entries(XMAS_ORN).filter(([k, o]) => o.slot === "floor" && has(k));
+  const orn = hang.slice(0, slots.length).map(([k, o], i) => { const [x, y] = slots[i];
+    return o.ball ? `<div class="to-ball" style="left:${x / 2}%;top:${y / 2.6}%;--b:${o.ball};--d:${i * .3}s" title="${esc(o.name)}"></div>` : `<div class="to-ic" style="left:${x / 2}%;top:${y / 2.6}%;--d:${i * .3}s" title="${esc(o.name)}">${o.ic}</div>`; }).join("");
+  return `<div class="xtree${has("lichter") ? " lights" : ""}${has("lametta") ? " tinsel" : ""}">
+    <svg viewBox="0 0 200 260" aria-hidden="true"><rect x="88" y="222" width="24" height="26" rx="3" fill="#7c4a24"/>
+      <path d="M100 18 L150 92 L128 92 L170 158 L144 158 L190 226 L10 226 L56 158 L30 158 L72 92 L50 92Z" fill="#15803d"/>
+      <path d="M100 18 L150 92 L128 92 L170 158 L144 158 L190 226 L100 226Z" fill="#166534"/>
+      ${has("lametta") ? `<g class="tinsel" stroke="#e2e8f0" stroke-width="1.6" fill="none" opacity=".9"><path d="M64 96 Q100 116 138 94"/><path d="M44 162 Q100 186 158 160"/><path d="M30 222 Q100 240 172 220"/></g>` : ""}
+      ${has("lichter") ? Array.from({ length: 26 }, (_, i) => { const row = i % 3, t = Math.floor(i / 3) / 8; const y = [100, 166, 222][row], w = [40, 62, 80][row]; return `<circle class="tl" cx="${100 - w + t * w * 2}" cy="${y - 6 + Math.sin(t * 6) * 4}" r="3" fill="${["#ef4444", "#facc15", "#3b82f6", "#22c55e"][i % 4]}" style="--d:${(i * .23) % 1.6}s"/>`; }).join("") : ""}
+    </svg>
+    ${has("stern") ? `<div class="to-top">⭐</div>` : ""}
+    ${orn}
+    <div class="to-floor">${floor.map(([, o]) => `<span title="${esc(o.name)}">${o.ic}</span>`).join("")}</div>
+  </div>`;
+}
+function xmasCountdownText(short) {
+  const now = xmasNow(), eve = eveDate(now);
+  if (bescherungOpen(now)) return "Frohe Weihnachten!";
+  if (now > eve) return "Frohes neues Jahr!";
+  const ms = eve - now, d = Math.floor(ms / 86400000), h = Math.floor(ms / 3600000) % 24, m = Math.floor(ms / 60000) % 60, s = Math.floor(ms / 1000) % 60;
+  return short ? (d ? `Noch ${d} ${d === 1 ? "Tag" : "Tage"} bis Heiligabend` : "Heute ist Heiligabend!") : `${d} ${d === 1 ? "Tag" : "Tage"} · ${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
+function xmasHome() {
+  if (!isXmas()) return "";
+  const n = adventCandles(), x = xmasState(), day = calDay(), y = xmasYear(), opened = x.cal[y] || [];
+  const missing = day ? Array.from({ length: day }, (_, i) => i + 1).filter(d => !opened.includes(d)).length : 0;
+  const giftDone = !!(x.gift[y] && x.gift[y].length);
+  const cta = bescherungOpen() && !giftDone ? `<button class="btn xmas-btn" data-act="xmasGift">🎁 Bescherung: 4 Geschenke auspacken</button>`
+    : missing ? `<button class="btn xmas-btn" data-act="xmasShop">🗓️ ${missing === 1 ? "Heutiges Türchen öffnen" : `${missing} Türchen warten auf dich`}</button>`
+    : xmasShopOpen() ? `<button class="btn" data-act="xmasShop">🎄 Zum Weihnachtsshop</button>` : `<span class="muted" style="font-size:.88rem">Ab dem 1. Dezember: Adventskalender und Weihnachtsshop</span>`;
+  const owned = x.owned.filter(k => k.startsWith("o:"));
+  return `<section class="card xmas-home">
+      <div class="xh-wreath">${wreathSVG(n)}</div>
+      <div class="xh-main"><p class="eyebrow">${n ? `${n}. Advent` : "Adventszeit"}${n === 4 && xmasNow().getMonth() !== 11 ? "" : ""}</p>
+        <h2>${bescherungOpen() ? "Joyeux Noël ! Frohe Weihnachten!" : xmasCountdownText(true)}</h2>
+        <p class="muted">${bescherungOpen() ? "Unter dem Baum liegen Geschenke für dich." : `Countdown: <b class="xmas-cd num">${xmasCountdownText()}</b>`}</p>
+        <div class="row" style="gap:.5rem">${cta}</div></div>
+      <div class="xh-tree"><p class="eyebrow">Dein Weihnachtsbaum · ${owned.length}/${Object.keys(XMAS_ORN).length}</p>${treeSVG(owned)}
+        ${owned.length ? "" : `<p class="muted xh-hint">Schmück ihn mit Baumschmuck aus dem Adventskalender oder dem Weihnachtsshop.</p>`}</div>
+    </section>`;
+}
+setInterval(() => { const e = document.querySelector(".xmas-cd"); if (e) e.textContent = xmasCountdownText(); }, 1000);
+
+/* ---------- Weihnachtsshop ---------- */
+function xmasBuyBtn(it, total) {
+  if (S.confirm === "x:" + it.key) return `<button class="btn small" data-act="cancelConfirm">Nein</button><button class="btn small primary" data-act="xmasBuy" data-k="${it.key}">Kaufen!</button>`;
+  return `<button class="btn small" data-act="askConfirm" data-k="x:${it.key}" ${total < it.price ? "disabled" : ""}>${total < it.price ? `Noch ${it.price - total}` : `${COIN}${it.price} kaufen`}</button>`;
+}
+function xmasUseBtn(it) {
+  const x = xmasState(), d = designState();
+  if (it.cat === "n") return (x.snow || "classic") === it.id ? `<span class="status approved">Aktiv</span>` : `<button class="btn small" data-act="xmasUse" data-k="${it.key}">Auswählen</button>`;
+  if (it.cat === "z") return x.logo === it.id ? `<span class="status approved">Aktiv</span>` : `<button class="btn small" data-act="xmasUse" data-k="${it.key}">Auswählen</button>`;
+  if (it.cat === "c") return d.accent === it.id ? `<span class="status approved">Aktiv</span>` : `<button class="btn small" data-act="useDesign" data-id="${it.key}">Anwenden</button>`;
+  return `<span class="status approved">Am Baum</span>`;
+}
+function xmasShopView(total) {
+  const x = xmasState(), y = xmasYear(), day = calDay(), opened = x.cal[y] || [];
+  const doors = CAL_ORDER.map(d => {
+    const open = opened.includes(d), can = day && d <= day && !open, key = XMAS_CAL[d - 1];
+    return `<button class="door${open ? " open" : can ? " ready" : ""}${d === 24 ? " big" : ""}" data-act="xmasDoor" data-d="${d}" ${can ? "" : "disabled"} aria-label="Türchen ${d}${open ? ": " + esc(giftName(key)) : ""}">
+      ${open ? `<span class="door-in">${xmasIcon(key)}<small>${esc(giftName(key))}</small></span>` : `<span class="door-n">${d}</span>`}</button>`;
+  }).join("");
+  const giftDone = x.gift[y] && x.gift[y].length;
+  const sec = (cat, title, sub) => {
+    const items = XMAS_ITEMS.filter(i => i.cat === cat);
+    const own = items.filter(i => xmasOwns(i.key)).length;
+    return `<section><div class="card-head"><h2>${title}</h2><span class="muted" style="font-size:.88rem">${own}/${items.length} · ${sub}</span></div>
+      <div class="xi-grid">${items.map(it => { const has = xmasOwns(it.key);
+        return `<article class="xi-card${has ? " owned" : ""}"><span class="xi-ico">${xmasIcon(it.key)}</span><div class="d-info"><b>${esc(it.name)}</b><span class="muted">${esc(it.desc)}</span></div>
+          <div class="row">${has ? xmasUseBtn(it) : xmasBuyBtn(it, total)}</div></article>`; }).join("")}</div></section>`;
+  };
+  return `<section class="xmas-shop-head">
+      <div><p class="eyebrow">Countdown bis Heiligabend</p><div class="xs-cd num xmas-cd">${xmasCountdownText()}</div></div>
+      <div class="xs-side">${bescherungOpen() ? (giftDone ? `<span class="status approved">Bescherung ausgepackt</span>` : `<button class="btn primary xmas-btn" data-act="xmasGift">🎁 4 Geschenke auspacken</button>`) : `<span class="muted">Am 24. Dezember gibt es 4 Überraschungen aus dem ganzen Shop, vielleicht sogar Aurelius!</span>`}
+        <button class="btn small ghost" data-act="xmasSnowToggle">${x.off ? "❄️ Schnee einschalten" : "❄️ Schnee ausschalten"}</button></div>
+    </section>
+    <section><div class="card-head"><h2>Adventskalender</h2><span class="muted" style="font-size:.88rem">${day ? `Jeden Tag vom 1. bis 24. Dezember ein Geschenk. Verpasste Türchen kannst du nachholen.` : "Vom 1. bis 24. Dezember jeden Tag ein Geschenk."}</span></div>
+      <div class="cal">${doors}</div></section>
+    ${sec("o", "Baumschmuck", "Schmückt deinen Baum auf der Startseite")}
+    ${sec("n", "Schnee", "Bestimmt, was über den Bildschirm rieselt")}
+    ${sec("c", "Weihnachtsfarben", "Auch nach Weihnachten unter Gestaltung")}
+    ${sec("z", "Logo-Deko", "Schmückt das Vocabify-Logo in der Menüleiste")}
+    <p class="muted" style="font-size:.85rem">Schnee, Baum und Logo-Deko siehst du vom 1. Advent bis zum 6. Januar. ${x.logo !== "none" ? `<button class="linklike" data-act="xmasUse" data-k="z:none">Logo-Deko ausblenden</button>` : `<button class="linklike" data-act="xmasUse" data-k="z:muetze0">Logo-Deko wieder anzeigen</button>`}</p>`;
+}
+function bescherungPool() {
+  const pool = [];
+  Object.keys(PET_DEFS).forEach(id => { if (!S.me.pets.includes(id)) pool.push("p:" + id); });
+  Object.entries(ACC_DEFS).forEach(([p, l]) => l.forEach(a => { if (!accOwned().includes(p + "." + a.k)) pool.push("a:" + p + "." + a.k); }));
+  Object.keys(ACCENTS).forEach(k => { if (!designOwns("c:" + k)) pool.push("c:" + k); });
+  if (!designOwns("s:square")) pool.push("s:square");
+  if (!designOwns("g:glass")) pool.push("g:glass");
+  Object.keys(LOADERS).forEach(k => { if (!designOwns("l:" + k)) pool.push("l:" + k); });
+  XMAS_ITEMS.forEach(i => { if (!xmasOwns(i.key)) pool.push(i.key); });
+  return pool;
+}
+function giftModal(keys, opened) {
+  return `<h2>🎄 Frohe Weihnachten!</h2><p class="muted">${opened.length < keys.length ? "Tippe auf die Geschenke, um sie auszupacken." : "Alles ausgepackt. Viel Freude damit!"}</p>
+    <div class="gifts">${keys.map((k, i) => opened.includes(i) ? `<div class="gift open">${xmasIcon(k)}<b>${esc(giftName(k))}</b></div>`
+      : `<button class="gift" data-act="xmasUnwrap" data-i="${i}" style="--h:${[0, 120, 210, 280][i]}" aria-label="Geschenk ${i + 1} auspacken"><span class="gbox"></span></button>`).join("")}</div>
+    ${opened.length === keys.length ? `<button class="btn primary" data-act="closeModal">Danke!</button>` : ""}`;
+}
+Object.assign(A, {
+  xmasShop() { S.view = "shop"; S.shopCat = "xmas"; render(); window.scrollTo({ top: 0 }); },
+  async xmasBuy(t) {
+    const it = xmasItem(t.dataset.k); if (!it || xmasOwns(it.key) || coinsTotal() < it.price || !xmasShopOpen()) return;
+    S.me.coins = (S.me.coins || 0) - it.price; S.confirm = null; xmasGrant(it.key);
+    if (it.cat === "c") setDesign({ accent: it.id });
+    if (it.cat === "n") setXmas({ snow: it.id });
+    if (it.cat === "z") setXmas({ logo: it.id });
+    markDirty("me"); await flush(); Snow.sync(); render(); toast(`${it.name} gehört jetzt dir!`);
+  },
+  xmasUse(t) {
+    const [c, id] = t.dataset.k.split(":");
+    if (c === "n") setXmas({ snow: id });
+    if (c === "z") setXmas({ logo: id });
+    Snow.sync(); render();
+  },
+  xmasSnowToggle() { setXmas({ off: !xmasState().off }); Snow.sync(); render(); },
+  async xmasDoor(t) {
+    const d = +t.dataset.d, x = xmasState(), y = xmasYear(), day = calDay(), opened = x.cal[y] || [];
+    if (!day || d > day || opened.includes(d)) return;
+    const key = XMAS_CAL[d - 1], had = xmasOwns(key);
+    x.cal = Object.assign({}, x.cal, { [y]: [...opened, d] }); setSetting("xmas", x);
+    if (had) { S.me.coins = (S.me.coins || 0) + 20; markDirty("me"); } else xmasGrant(key);
+    await flush(); Snow.sync(); render();
+    openModal(`<div class="door-reveal">${xmasIcon(key)}</div><h2>Türchen ${d}</h2><p>${had ? `Du hattest „${esc(giftName(key))}“ schon, deshalb gibt es <b>20 Münzen</b>.` : `Du bekommst: <b>${esc(giftName(key))}</b>`}</p><button class="btn primary" data-act="closeModal">Super!</button>`);
+  },
+  async xmasGift() {
+    if (!bescherungOpen()) return;
+    const x = xmasState(), y = xmasYear();
+    let keys = x.gift[y];
+    if (!keys || !keys.length) {
+      const pool = shuffle(bescherungPool()); keys = pool.slice(0, 4);
+      const coins = (4 - keys.length) * 50;
+      keys.forEach(k => xmasGrant(k));
+      const x2 = xmasState(); x2.gift = Object.assign({}, x2.gift, { [y]: keys.length ? keys : ["coins"] }); setSetting("xmas", x2);
+      if (coins) { S.me.coins = (S.me.coins || 0) + coins; markDirty("me"); }
+      await flush(); applyDesign();
+    }
+    S.giftOpen = [];
+    if (keys[0] === "coins") { openModal(`<h2>🎄 Frohe Weihnachten!</h2><p>Du hast schon alles aus dem Shop! Dafür gibt es <b>200 Münzen</b>.</p><button class="btn primary" data-act="closeModal">Danke!</button>`); return; }
+    render(); openModal(giftModal(keys, S.giftOpen));
+  },
+  xmasUnwrap(t) {
+    const keys = xmasState().gift[xmasYear()] || []; const i = +t.dataset.i;
+    if (!S.giftOpen.includes(i)) S.giftOpen.push(i);
+    $("#modal .modal").innerHTML = giftModal(keys, S.giftOpen);
+    if (keys[i] === "p:aurelius") toast("WOW! Aurelius, der Goldene Phönix-Drache, gehört jetzt dir!");
+  },
+  xmasPreview(t) { lsSet("vocabify:xmasPreview", t.dataset.k || null); Snow.sync(); render(); toast(t.dataset.k ? "Weihnachts-Vorschau: " + t.dataset.k : "Weihnachts-Vorschau aus"); }
+});
+/* ---------- Ende 2.1.2 Weihnachten ---------- */
 
 document.addEventListener("click", e => {
   const t = e.target.closest("[data-act]");
