@@ -1819,6 +1819,25 @@ html[data-shape="square"] :is(.cal,.door,.xi-card,.xi-ico,.xmas-shop-head,.xmas-
 .bt-pop{text-align:center;display:flex;flex-direction:column;align-items:center;gap:.4rem}
 .bt-pop .gt-art.big{width:72px;height:72px;border-radius:22px}.bt-pop .gt-art.big .g-ico{width:36px;height:36px}
 .vs-pick .online-dot{margin-left:-.2rem}
+.sc-wrap{overflow-x:auto;margin:.2rem -.2rem 0;padding-bottom:.3rem}
+.sec-chart{display:block;min-width:100%;font-family:var(--f-body)}
+.sec-chart path,.sec-chart line,.sec-chart .sc-ylab,.sec-chart .sc-avgl{pointer-events:none}
+.sc-grid{stroke:var(--line);stroke-width:1}
+.sc-ylab,.sc-xsub{fill:var(--muted);font-size:11px}
+.sc-xlab{fill:var(--ink);font-size:12.5px;font-weight:700}
+.sc-avg{stroke:var(--muted);stroke-width:1.3;stroke-dasharray:5 5;opacity:.7}
+.sc-avgl{fill:var(--muted);font-size:11px;font-weight:700}
+.sc-line{fill:none;stroke:var(--brand);stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.sc-pt{cursor:pointer;outline:none}
+.sc-hit{fill:transparent}
+.sc-dot{stroke:var(--surface);stroke-width:3;transition:r .15s}
+.sc-pt:hover .sc-dot,.sc-pt:focus-visible .sc-dot,.sc-pt.on .sc-dot{r:10}
+.sc-pt.on .sc-xlab{fill:var(--brand)}
+.sc-val{fill:var(--ink);font-size:12px;font-weight:800}
+.sc-row{cursor:pointer}.sc-row.on td{background:var(--brand-soft)}
+.sc-bar{display:inline-block;vertical-align:middle;width:90px;height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin-right:.5rem}
+.sc-bar i{display:block;height:100%;border-radius:inherit}
+.sc-note{font-size:.88rem;margin:.6rem 0 0}
 </style>
 
 <div id="intro" aria-hidden="true"></div>
@@ -1888,7 +1907,7 @@ function buildIntro(kind, el) {
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js"></script>
 <script>
 "use strict";
-const APP_VERSION = "2.1.3";
+const APP_VERSION = "2.1.4";
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDokUR1eZjbE_JfiLyMGx9JDYmSBMpHTM8",
   authDomain: "vocabify-8abb9.firebaseapp.com",
@@ -1899,6 +1918,7 @@ const FIREBASE_CONFIG = {
 };
 const EMAIL_DOMAIN = "users.vocabify.app"; /* interne Login-Adressen, es werden keine E-Mails verschickt */
 const CHANGELOG = [
+  { v: "2.1.4", items: ["Erfolge: Neues Diagramm „Fehlerquote pro Abschnitt“ als Punkte-Linie, umschaltbar auf eine Tabelle", "Sortierung wie angelegt oder nach Fehlerquote, mit Durchschnittslinie", "Tippe auf einen Abschnitt, um nur seine Vokabeln zu sehen, oder übe ihn direkt mit Fehler-Fokus"] },
   { v: "2.1.3", items: ["Vokabel-Battle jetzt live: Beide spielen gleichzeitig dieselbe Frage. Wer zuerst richtig antwortet, bekommt den Punkt", "Rundenlänge beim Herausfordern wählbar: 10, 20, 30 oder 50 Vokabeln", "Herausforderungen erscheinen sofort als Einladung beim Gegner, mit Lobby und Countdown", "Falsche Antwort sperrt dich für diese Frage, dein Gegner kann den Punkt dann noch holen"] },
   { v: "2.1.2", items: ["Weihnachtszeit ab dem 1. Advent: Schneefall, Lichterkette an der Menüleiste, Weihnachtsmütze auf dem Logo und weihnachtliche Begrüßung", "Auf der Startseite: Adventskranz, dessen Kerzen mit jedem Adventssonntag angehen, Countdown bis Heiligabend und dein eigener Weihnachtsbaum", "Ab dem 1. Dezember im Shop: Weihnachten mit 50 Artikeln (Baumschmuck, Schneearten, Weihnachtsfarben und Logo-Deko)", "Adventskalender: vom 1. bis 24. Dezember jeden Tag ein Geschenk, verpasste Türchen kannst du nachholen", "Bescherung am 24. Dezember: 4 Überraschungen aus dem ganzen Shop, sogar Aurelius ist möglich", "Schnee lässt sich in den Einstellungen ausschalten", "Lückentext: Neue Textquelle mit 50 fertigen Geschichten auf Französisch und Englisch"] },
   { v: "2.1.1", items: ["Neuer Menüpunkt „Nachholen“ mit dem Unterpunkt „Lernjahr 1“", "Lernstraße wie bei Duolingo: alle Vokabeln aus À plus ! 1 (C'est parti, Unités 1–5, Modules 1–6), aufgeteilt nach Unités und Volets", "Dazu 36 Grammatikthemen mit Erklärung und Übung, jeweils an der passenden Stelle der Straße", "Lektionen mit Wortkarten, Paare finden, Auswahl- und Schreibaufgaben. Sterne für wenige Fehler, am Ende jedes Abschnitts eine Truhe mit 20 Münzen", "Abschnitte, die du schon kannst, überspringst du mit einem kurzen Test", "Jeder Vokabelteil lässt sich mit einem Tipp zu deinen eigenen Vokabeln hinzufügen"] },
@@ -4235,7 +4255,8 @@ function statsView() {
       <div class="stat"><span class="l">Richtig beantwortet</span><span class="v ok">${totR}</span></div>
       <div class="stat"><span class="l">Falsch beantwortet</span><span class="v no">${totW}</span></div>
     </section>
-    <section class="card">
+    ${secRatesCard()}
+    <section class="card" id="vocab-stats">
       <div class="card-head" style="align-items:center"><h2>Erfolge pro Vokabel</h2><span class="spacer"></span>
         <select class="input" id="stats-filter" data-change="statsFilter" style="width:auto;max-width:100%">${opts}</select></div>
       ${rows.length ? `<div class="table-wrap"><table><thead><tr><th>Vokabel</th><th>Deutsch</th><th>Abschnitt</th><th class="n">Richtig</th><th class="n">Falsch</th><th class="n">Fehlerquote</th></tr></thead><tbody>
@@ -7955,6 +7976,66 @@ Object.assign(A, {
   xmasPreview(t) { lsSet("vocabify:xmasPreview", t.dataset.k || null); Snow.sync(); render(); toast(t.dataset.k ? "Weihnachts-Vorschau: " + t.dataset.k : "Weihnachts-Vorschau aus"); }
 });
 /* ---------- Ende 2.1.2 Weihnachten ---------- */
+
+/* 2.1.4: Fehlerquote pro Abschnitt als Punkte-Linien-Diagramm */
+function secRates() {
+  return S.sections.filter(s => !S.statsLang || s.lang === S.statsLang).map((s, i) => {
+    const r = s.vocab.reduce((a, v) => a + (v.r || 0), 0), w = s.vocab.reduce((a, v) => a + (v.w || 0), 0);
+    return { s, i, r, w, n: r + w, q: r + w ? w / (r + w) : -1, learned: s.vocab.filter(v => (v.r || 0) + (v.w || 0) > 0).length };
+  });
+}
+function rateCol(q) { return q < 0 ? "var(--muted)" : q >= .5 ? "var(--bad)" : q >= .25 ? "var(--warn)" : "var(--good)"; }
+function secChartSVG(list) {
+  const pts = list.filter(x => x.q >= 0);
+  if (!pts.length) return `<div class="empty"><strong>Noch keine Daten</strong><p>Lerne ein paar Runden, dann siehst du hier, in welchem Abschnitt du die meisten Fehler machst.</p></div>`;
+  const step = 140, padL = 52, padR = 36, padT = 22, H = 240, plotH = 180, W = Math.max(560, padL + padR + step * (pts.length - 1) + 60);
+  const x = i => padL + 50 + (pts.length === 1 ? (W - padL - padR - 100) / 2 : i * Math.max(step, (W - padL - padR - 100) / (pts.length - 1))), y = q => padT + plotH * (1 - q);
+  const maxQ = Math.max(.5, ...pts.map(p => p.q)), top = Math.min(1, Math.ceil(maxQ * 4) / 4), yy = q => padT + plotH * (1 - q / top);
+  const ticks = [0, .25, .5, .75, 1].filter(t => t <= top + 1e-9);
+  const avg = pts.reduce((a, p) => a + p.w, 0) / pts.reduce((a, p) => a + p.n, 0);
+  const line = pts.map((p, i) => `${i ? "L" : "M"}${x(i)} ${yy(p.q)}`).join(" ");
+  const area = `${line} L${x(pts.length - 1)} ${padT + plotH} L${x(0)} ${padT + plotH} Z`;
+  const short = t => t.length > 18 ? t.slice(0, 17) + "…" : t;
+  return `<div class="sc-wrap"><svg class="sec-chart" viewBox="0 0 ${W} ${H + 46}" width="100%" style="min-width:${Math.round(W * .62)}px;max-width:${W}px;margin:0 auto" role="img" aria-label="Fehlerquote pro Abschnitt">
+    <defs><linearGradient id="scg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--brand)" stop-opacity=".22"/><stop offset="1" stop-color="var(--brand)" stop-opacity="0"/></linearGradient></defs>
+    ${ticks.map(t => `<line x1="${padL}" x2="${W - padR}" y1="${yy(t)}" y2="${yy(t)}" class="sc-grid"/><text x="${padL - 10}" y="${yy(t) + 4}" class="sc-ylab" text-anchor="end">${Math.round(t * 100)} %</text>`).join("")}
+    <path d="${area}" fill="url(#scg)"/>
+    <line x1="${padL}" x2="${W - padR}" y1="${yy(avg)}" y2="${yy(avg)}" class="sc-avg"/><text x="${padL + 6}" y="${yy(avg) - 6}" class="sc-avgl" text-anchor="start">Ø ${Math.round(avg * 100)} %</text>
+    <path d="${line}" class="sc-line"/>
+    ${pts.map((p, i) => `<g class="sc-pt${S.statsFilter === p.s.id ? " on" : ""}" data-act="secPick" data-id="${p.s.id}" tabindex="0" role="button" aria-label="${esc(p.s.name)}: ${Math.round(p.q * 100)} Prozent Fehlerquote">
+        <title>${esc(p.s.name)}: ${Math.round(p.q * 100)} % Fehler (${p.w} von ${p.n} Antworten falsch)</title>
+        <circle cx="${x(i)}" cy="${yy(p.q)}" r="16" class="sc-hit"/>
+        <circle cx="${x(i)}" cy="${yy(p.q)}" r="7" style="fill:${rateCol(p.q)}" class="sc-dot"/>
+        <text x="${x(i)}" y="${yy(p.q) - 14}" text-anchor="middle" class="sc-val">${Math.round(p.q * 100)} %</text>
+        <text x="${x(i)}" y="${padT + plotH + 22}" text-anchor="middle" class="sc-xlab">${esc(short(p.s.name))}</text>
+        <text x="${x(i)}" y="${padT + plotH + 38}" text-anchor="middle" class="sc-xsub">${p.n} Antworten</text></g>`).join("")}
+  </svg></div>`;
+}
+function secRatesCard() {
+  let list = secRates();
+  if (!list.length) return "";
+  const mode = S.secChart || "chart", sort = S.secSort || "order";
+  if (sort === "rate") list = list.slice().sort((a, b) => b.q - a.q || b.n - a.n);
+  const noData = list.filter(x => x.q < 0);
+  const seg = (k, opts) => `<div class="seg">${opts.map(([v, l]) => `<button data-act="${k}" data-k="${v}" aria-pressed="${(k === "secChart" ? mode : sort) === v}">${l}</button>`).join("")}</div>`;
+  const table = `<div class="table-wrap"><table><thead><tr><th>Abschnitt</th><th class="n">Vokabeln</th><th class="n">Richtig</th><th class="n">Falsch</th><th>Fehlerquote</th></tr></thead><tbody>
+    ${list.map(x => `<tr class="sc-row${S.statsFilter === x.s.id ? " on" : ""}" data-act="secPick" data-id="${x.s.id}"><td><span class="lang-dot ${x.s.lang}"></span> ${esc(x.s.name)}</td><td class="n">${x.learned}/${x.s.vocab.length}</td><td class="n ok">${x.r}</td><td class="n no">${x.w}</td>
+      <td><div class="sc-bar"><i style="width:${x.q < 0 ? 0 : Math.max(2, x.q * 100)}%;background:${rateCol(x.q)}"></i></div><span class="rate" style="color:${rateCol(x.q)}">${x.q < 0 ? "–" : Math.round(x.q * 100) + " %"}</span></td></tr>`).join("")}
+  </tbody></table></div>`;
+  const worst = list.filter(x => x.q >= 0 && x.n >= 5).sort((a, b) => b.q - a.q)[0];
+  return `<section class="card">
+    <div class="card-head" style="align-items:center;flex-wrap:wrap;gap:.6rem"><h2>Fehlerquote pro Abschnitt</h2><span class="spacer"></span>
+      ${seg("secSort", [["order", "Wie angelegt"], ["rate", "Nach Fehlerquote"]])}${seg("secChart", [["chart", "Diagramm"], ["table", "Tabelle"]])}</div>
+    ${mode === "chart" ? secChartSVG(list) : table}
+    <p class="muted sc-note">${worst ? `Am meisten Fehler machst du in <b>${esc(worst.s.name)}</b> (${Math.round(worst.q * 100)} %). <button class="linklike" data-act="secTrain" data-id="${worst.s.id}">Jetzt mit Fehler-Fokus üben</button> · ` : ""}Tippe auf einen ${mode === "chart" ? "Punkt" : "Abschnitt"}, um unten nur dessen Vokabeln zu sehen.${noData.length && mode === "chart" ? ` Noch ohne Antworten: ${noData.map(x => esc(x.s.name)).join(", ")}.` : ""}</p>
+  </section>`;
+}
+Object.assign(A, {
+  secChart(t) { S.secChart = t.dataset.k; render(); },
+  secSort(t) { S.secSort = t.dataset.k; render(); },
+  secPick(t) { S.statsFilter = S.statsFilter === t.dataset.id ? "all" : t.dataset.id; renderKeepScroll(); },
+  secTrain(t) { S.cfg.secs = [t.dataset.id]; S.cfg.lang = ""; S.cfg.mode = "errors"; S.cfg.game = "classic"; lsSet("vocabify:game", "classic"); A.nav({ dataset: { v: "learn" } }); }
+});
 
 document.addEventListener("click", e => {
   const t = e.target.closest("[data-act]");
