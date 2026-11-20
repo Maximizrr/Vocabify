@@ -1,11 +1,11 @@
 {
-  "name": "Vocabify",
-  "short_name": "Vocabify",
+  "name": "Vokara – Die smarte Art, Vokabeln zu lernen",
+  "short_name": "Vokara",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#2f6fed",
-  "theme_color": "#4f8ff7",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
   "lang": "de",
   "icons": [
     {
@@ -20,5 +20,6 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "description": "Die smarte Art, Vokabeln zu lernen"
 }
